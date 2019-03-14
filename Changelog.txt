@@ -1,0 +1,56 @@
+Versioning:
+     Major.Minor.Fix-Build
+
+ Legend:
+==================
+    + Add
+    - Remove
+    ! Fix
+    * Change
+    ^ Update
+==================
+
+AHKGTAV V10
+Date: 201903
+    Changes:
+
+    Todo:
+
+AHKGTAV V9
+Date: 20190313 23:57
+    Changes:
+
+    ! Bug with tpaystate not always firing off
+    * Seatbelt default hotkey from Control+F to F1
+    + F11 for Valet Call and Shift+F11 for Valet phone app
+    + Phone Recording Audio/Video by F6
+    ! Fields not updating: tsend,towad,phrechmsg
+    + Scrollable help section, shrinks the window
+    + CIV panel for civilian commands
+    + Control+R to rob someone
+
+    Todo:
+
+    ! Role Selection stay in memory
+    + Update check and auto updater
+    + More SAFR related ideas/commands
+    + Criminal related commands
+    + Civilian related commands
+
+AHKGTAV V8
+Date: 20190312 22:57
+    Changes:
+
+    + Hotkeys are now user custmizable
+    ! Version ini compatibility improved
+    ! Stopped holding of the last vehicle searched
+    ! Typo for Role Variable
+    * Reworked ini generation
+    + "Untitled - Notepad" allowed application
+    + SoE Seatblet hotkey support
+
+AHKGTAV V7
+Date: 20190308 17:56
+    Changes:
+
+    + SAFR tab and role 
