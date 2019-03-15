@@ -11,10 +11,19 @@ Versioning:
 ==================
 
 AHKGTAV V10
-Date: 201903
+Date: 20190315
     Changes:
 
+    ! GUI positioning for the LEO TAB
+    ! GUI positioning for the TOW TAB
+    ! GUI positioning for the CIV TAB along with order of tabs
+    ! GUI positioning for the Help TAB
+    ! GUI positioning for the General TAB
+
     Todo:
+    ! Role Selection stay in memory
+    + Update check and auto updater
+    ! Not keeping on the last used primary window
 
 AHKGTAV V9
 Date: 20190313 23:57

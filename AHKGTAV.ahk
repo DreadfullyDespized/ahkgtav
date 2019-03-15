@@ -1,17 +1,84 @@
+/**
+ * =============================================================================================== *
+ * @Author           : DreadfullyDespized (darkestdread@gmail.com)
+ * @Script Name      : AHKGTAV - SOE Autohotkey doohicky
+ * @Script Version   : 9.0.0
+ * @Homepage         : https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/
+ * @Creation Date    : 20180718
+ * @Modification Date: 20190314
+ * @Description      : Simple autohotkey script to be used with GTAV FiveM SoE.
+ *                     Really just built around to automating repetitive RP related tasks.
+ * -----------------------------------------------------------------------------------------------
+ * @License          : Copyright ©2019-2019 DreadfullyDespized <GPLv3>
+ *                     This program is free software: you can redistribute it and/or modify it under the terms of
+ *                     the GNU General Public License as published by the Free Software Foundation,
+ *                     either version 3 of  the  License,  or (at your option) any later version.
+ *                     This program is distributed in the hope that it will be useful,
+ *                     but WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY  OF MERCHANTABILITY
+ *                     or FITNESS FOR A PARTICULAR  PURPOSE.  See  the GNU General Public License for more details.
+ *                     You should have received a copy of the GNU General Public License along with this program.
+ *                     If not, see <http://www.gnu.org/licenses/gpl-3.0.txt>
+ * -----------------------------------------------------------------------------------------------
+ */
+
+if (a_ahkversion < 1.1){
+    Msgbox, 0x10
+        , % "Error"
+        , % "The AutoHotkey installed in your computer is not compatible with`n"
+        . "this version of AHKGTAV Doohicky.`n`n"
+        . "Please use the compiled version of my script or upgrade your AutoHotkey.`n"
+        . "The application will exit now."
+    Exitapp
+}
+
+; Includes section if needed{
+;}
+
+
+; Directives{
 #NoEnv
-#Persistent
-#InstallKeybdHook
-; #InstallMouseHook
-#SingleInstance, force
+#SingleInstance, Force
 SetWorkingDir, %A_ScriptDir%
+;}
 
-Menu, Tray, Icon, shell32.dll, 
+Menu, Tray, Icon, shell32.dll, 194
 
+; Basic Script Info{
+global script := {  based           : scriptobj
+                    ,name           : "AHKGTAV"
+                    ,version        : "9.0.0"
+                    ,author         : "DreadfullyDespized"
+                    ,email          : "darkestdread@gmail.com"
+                    ,Homepage       : "https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/"
+                    ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
+                    ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
+                    ,crtdate        : "20180718"
+                    ,moddate        : "20190314"
+                    ,conf           : "GTAV-Config.ini"}
+; }
 
+; update(9.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
+
+/*
+This has been disabled for the time being until I get more time to look at it and work on it.
+
+if the version is in line 1 of the log file and your compiled script is in that url, lVersion is a variable containing a number that will be compared to the one in the log file.
+
+note that my function is designed to open the file downloaded by default
+so if the downloaded file is an archive it will be opened
+if it is a script it will be run so as if it is an EXE file...
+the best would be if the file being downloaded is an installer (or installer script) that will copy the necessary files/folders to the user automatically.
+*/
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
 update(lversion, logurl="", rfile="github", vline=13){
-    global s_author, s_name
+    global s_author=script.author, s_name=script.name
+    Msgbox, 0x10
+          , % "Error"
+          , % "Author: " . script.author . "`n"
+            . "Name: " . script.name . "`n"
+            . "Version: " . script.version . "`n"
+            . "Email: " . script.email
     
     `(rfile = "github") ? logurl := "https://www.github.com/" s_author "/" s_name "/raw/master/Changelog.txt"
 
@@ -19,10 +86,22 @@ update(lversion, logurl="", rfile="github", vline=13){
     
     if connected := !ErrorLevel
     {
-        UrlDownloadToFile, %logurl%, %a_temp%\logurl
+        msgbox, Connected
+        ; This one actually worked and created the changelog file.
+        UrlDownloadToFile, %logurl%, %a_temp%\Changelog.txt ; C:\Users\username\AppData\Local\Temp\logurl
+        ; UrlDownloadToFile is being blocked at work
+        if ErrorLevel
+            msgbox, The file failed to download
         FileReadLine, logurl, %a_temp%\logurl, %vline%
-        RegexMatch(logurl, "v(.*)", Version)
+        RegexMatch(logurl, "v(*)", Version)
         if (rfile = "github"){
+            ; So far it is getting to this point at home
+            msgbox, 0x10
+                  , % "It got passsed the regex"
+                  , % "Version: " . Version . "`n" ; Not getting anything from this one.
+                  . "logurl: " . logurl . "`n"
+                  . "Version1: " . Version1 . "`n" ; Not getting anything from this one.
+                  . "lversion: " . lversion ; Not getting anything from this one.
             if (a_iscompiled)
                 rfile := "https://github.com/downloads/" s_author "/" s_name "/" s_name "-" Version "-Compiled.zip"
             else 
@@ -294,7 +373,6 @@ hit the keys together to configure the hotkey.
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
 ; Removes all of the standard options from the system tray
 Menu, Tray, NoStandard
-Menu, Tray, Add, &Update, ^+F5
 Menu, Tray, Add, &Reconfigure/Help, ^1
 Menu, Tray, Add, GTAV &Car Search, vehimghk
 Menu, Tray, Add, E&xit,Exit
@@ -351,11 +429,6 @@ SetScrollLockState, AlwaysOff
 ; RControl & RShift::AltTab  ; Hold down right-control then press right-shift repeatedly to move forward.
 ; Minor issue with this.  It is holding the normal 0 from being sent.  Will need to look into that.
 ; Numpad0 & Numpad3::AltTab ; Hold down Numpad0 and press Numpad3 to move forward in the AltTab.  Select the window with left click afterwards.
-
-; ============================================ START UPDATE CHECKER ============================================
-^+F5::
-Gosub, Update
-Return
 
 ; This will setup all of the variables for the script
 ^1::
@@ -448,7 +521,7 @@ Return
     } else {
         Gui, Msgs:Add, Tab3,, LEO|TOW|CIV|SAFR|Help|General
     }
-    Gui, Msgs:Add, Text,, %helptext2% 
+    Gui, Msgs:Add, Text,, %helptext2%
     Gui, Msgs:Add, Text, w100, tcuffmsg1:
     Gui, Msgs:Add, Text,, tcuffmsg2:
     Gui, Msgs:Add, Text,, t911msg:
@@ -1752,3 +1825,18 @@ UpdateConfig:
     IniRead, phrechkmsg, %config%, Normal, phrechkmsg, /do Pulls out their phone and starts recording audio and video
     IniRead, robhkmsg, %config%, Normal, robhkmsg, /me takes the persons phone`, weapons`, and any cash on them
 Return
+
+/*
+ * * * Compile_AHK SETTINGS BEGIN * * *
+[AHK2EXE]
+Exe_File=AHKGTAV.exe
+[VERSION]
+Set_Version_Info=1
+File_Version=9.0.0
+Internal_Name=AHKGTAV
+Legal_Copyright=GNU General Public License 3.0
+Original_Filename=AHKGTAV.exe
+Product_Name=AHKGTAV
+Product_Version=9.0.0
+* * * Compile_AHK SETTINGS END * * *
+*/
