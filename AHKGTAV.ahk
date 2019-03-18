@@ -2,10 +2,10 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKGTAV - SOE Autohotkey doohicky
- * @Script Version   : 9.0.0
+ * @Script Version   : 10.0.0
  * @Homepage         : https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/
  * @Creation Date    : 20180718
- * @Modification Date: 20190314
+ * @Modification Date: 20190318
  * @Description      : Simple autohotkey script to be used with GTAV FiveM SoE.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
@@ -46,18 +46,18 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKGTAV"
-                    ,version        : "9.0.0"
+                    ,version        : "10.0.0"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
                     ,Homepage       : "https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/"
                     ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,crtdate        : "20180718"
-                    ,moddate        : "20190314"
+                    ,moddate        : "20190318"
                     ,conf           : "GTAV-Config.ini"}
 ; }
 
-; update(9.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
+; update(10.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
 
 /*
 This has been disabled for the time being until I get more time to look at it and work on it.
