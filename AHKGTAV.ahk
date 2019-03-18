@@ -180,7 +180,7 @@ config = GTAV-Config.ini
 ; Section to write the configuration file if it does not exist
 IfNotExist, %config%
 {
-    IniWrite, LEO, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
+    IniWrite, LEO, %config%, Yourself, role
     IniWrite, A06, %config%, Yourself, callsign
     IniWrite, 1, %config%, Yourself, myid
     IniWrite, skinnydick, %config%, Yourself, towcompany
@@ -241,7 +241,11 @@ IfNotExist, %config%
 ; Section to read in the configuration file if it exists
 IfExist, %config%
 {
-    IniRead, rolepick, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE, LEO
+    ; Cleanup some of the old ini configuration portions
+    IniDelete, %config%, Yourself, rolepick
+    IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
+    ; Back to the reading of the configuration
+    IniRead, rolepick, %config%, Yourself, role, LEO
     IniRead, callsign, %config%, Yourself, callsign, A06
     IniRead, myid, %config%, Yourself, myid, 1
     IniRead, towcompany, %config%, Yourself, towcompany, skinnydick
@@ -431,62 +435,62 @@ SetScrollLockState, AlwaysOff
 ; Numpad0 & Numpad3::AltTab ; Hold down Numpad0 and press Numpad3 to move forward in the AltTab.  Select the window with left click afterwards.
 
 ; This will setup all of the variables for the script
+
 ^1::
-    Gosub, fuckakey
-    Gui, Yourself:Destroy
-    Gui, Yourself:Font,, Consolas
-    Gui, Yourself:Add, Tab3,, Help|Configure ME!
-    ; Gui, Yourself:Add, Text, w600, %helptext%
-    ; This one works but it doesn't highlight the tabs
-    Gui, Yourself:Add, Edit, Readonly vhelptext r34 w600, %helptext%
-    Gui, Yourself:Tab, 2
-    Gui, Yourself:Add, Text,, Role:
-    Gui, Yourself:Add, Text,, CallSign:
-    Gui, Yourself:Add, Text,, MyID:
-    Gui, Yourself:Add, Text,, TowCompany:
-    Gui, Yourself:Add, Text,, Name:
-    Gui, Yourself:Add, Text,, Title:
-    Gui, Yourself:Add, Text,, Department:
-    Gui, Yourself:Add, Text,, ms Delay:
-    Gui, Yourself:Add, Text,, The following should only be modified if playing on a different server.
-    Gui, Yourself:Add, Text,, Radio:
-    Gui, Yourself:Add, Text,, CallAnswer:
-    Gui, Yourself:Add, Text,, CallReply:
-    Gui, Yourself:Add, Text,, Third Party Action:
-    Gui, Yourself:Add, Text,, First Party Action:
-    Gui, Yourself:Add, Text,, Advertisement:
-    Gui, Yourself:Add, Text,, Local OOC:
-    Gui, Yourself:Add, Checkbox, vtestmode x100 y460, Enable TestMode? Allows commands to work outside of the game.
-    Gui, Yourself:Add, DropDownList, vrolepick w80 x100 y30, |LEO|TOW|CIV|SAFR|GEORGE
-    Gui, Yourself:Add, Edit, vcallsign w80, %callsign% ; The ym option starts a new column of controls.
-    Gui, Yourself:Add, Edit, vmyid w80, %myid%
-    Gui, Yourself:Add, Edit, vtowcompany w80, %towcompany%
-    Gui, Yourself:Add, Edit, vname w80, %name%
-    Gui, Yourself:Add, Edit, vtitle w80, %title%
-    Gui, Yourself:Add, Edit, vdepartment w80, %department%
-    Gui, Yourself:Add, Edit, vdelay w80, %delay%
-    Gui, Yourself:Add, Edit, vrs w80 x150 y272, %rs%
-    Gui, Yourself:Add, Edit, vca w80, %ca%
-    Gui, Yourself:Add, Edit, vcs w80, %cs%
-    Gui, Yourself:Add, Edit, vds w80, %ds%
-    Gui, Yourself:Add, Edit, vms w80, %ms%
-    Gui, Yourself:Add, Edit, vas w80, %as%
-    Gui, Yourself:Add, Edit, vlos w80, %los%
-    Gui, Yourself:Tab
-    Gui, Yourself:Add, Button, default w80 xm, &Next
-    Gui, Yourself:Show,, Your basic information first
-    Gosub, ReadConfig
+    gosub, fuckakey
+    ; ============================================ TESTING GUI ============================================
+    Gui, 1:Destroy
+    Gui, 1:Font,, Consolas
+    Gui, 1:Add, Tab3,, Help|Configure ME!
+    Gui, 1:Add, Edit, Readonly r36 w600 vhelptext, %helptext%
+    Gui, 1:Tab, 2
+    Gui, 1:Add, Text,, Role:
+    Gui, 1:Add, Text,, CallSign:
+    Gui, 1:Add, Text,, MyID:
+    Gui, 1:Add, Text,, TowCompany:
+    Gui, 1:Add, Text,, Name:
+    Gui, 1:Add, Text,, Title:
+    Gui, 1:Add, Text,, Department:
+    Gui, 1:Add, Text,, ms Delay:
+    Gui, 1:Add, Text,, The following should only be modified if playing on a different server.
+    Gui, 1:Add, Text,, Radio:
+    Gui, 1:Add, Text,, CallAnswer:
+    Gui, 1:Add, Text,, CallReply:
+    Gui, 1:Add, Text,, Third Party Action:
+    Gui, 1:Add, Text,, First Party Action:
+    Gui, 1:Add, Text,, Advertisement:
+    Gui, 1:Add, Text,, Local OOC:
+    Gui, 1:Add, DropDownList, x100 y30 w80 vrolepick, |LEO|TOW|CIV|SAFR|GEORGE
+    Gui, 1:Add, Edit, vcallsign w80, %callsign%
+    Gui, 1:Add, Edit, vmyid w80, %myid%
+    Gui, 1:Add, Edit, vtowcompany w80, %towcompany%
+    Gui, 1:Add, Edit, vname w80, %name%
+    Gui, 1:Add, Edit, vtitle w80, %title%
+    Gui, 1:Add, Edit, vdepartment w80, %department%
+    Gui, 1:Add, Edit, vdelay w80, %delay%
+    Gui, 1:Add, Edit, vrs w80 x150 y272, %rs%
+    Gui, 1:Add, Edit, vca w80, %ca%
+    Gui, 1:Add, Edit, vcs w80, %cs%
+    Gui, 1:Add, Edit, vds w80, %ds%
+    Gui, 1:Add, Edit, vms w80, %ms%
+    Gui, 1:Add, Edit, vas w80, %as%
+    Gui, 1:Add, Edit, vlos w80, %los%
+    Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Allows commands to work outside of the game.
+    Gui, 1:Add, Button, x280 y490 w80 gSave1, &Save
+    Gui, 1:Show,, Making the world a better place
+    Gosub, ReadConfiguration ; Load configuration previously saved.
     Return
 
-    YourselfGuiEscape:
-    YourselfGuiClose:
-    MsgBox Nope lol
-    Gui, Yourself:Cancel
+    GuiEscape: ; Hitting escape key while open
+    GuiClose: ; Hitting the X while open
+    ; MsgBox Nope lol
+    Gui, 1:Cancel
     Return
 
-    YourselfButtonNext:
-    Gui, Yourself:Submit ; Save each control's contents to its associated variable.
-    IniWrite, %rolepick%, %config%, Yourself, rolepick
+    Save1:
+    Gui, 1:Submit
+    ; IniWrite, value, filename, section, key
+    IniWrite, %rolepick%, %config%, Yourself, role
     IniWrite, %callsign%, %config%, Yourself, callsign
     IniWrite, %myid%, %config%, Yourself, myid
     IniWrite, %towcompany%, %config%, Yourself, towcompany
@@ -502,149 +506,150 @@ SetScrollLockState, AlwaysOff
     IniWrite, %ms%, %config%, Server, ms
     IniWrite, %as%, %config%, Server, as
     IniWrite, %los%, %config%, Server, los
+    ; Return
 
     ; ============================================ CUSTOM MSGS GUI ============================================
     ; Gui for all of the customized messages to display in-game
-    Gui, Msgs:Destroy
-    Gui, Msgs:Font,, Consolas
+    Gui, 2:Destroy
+    Gui, 2:Font,, Consolas
     if (rolepick = "LEO") {
-        Gui, Msgs:Add, tab3,, LEO|Help|General
+        Gui, 2:Add, tab3,, LEO|Help|General
     } else if (rolepick = "TOW") {
-        Gui, Msgs:Add, tab3,, TOW|Help|General
-        Gui, Msgs:Tab, 12
+        Gui, 2:Add, tab3,, TOW|Help|General
+        Gui, 2:Tab, 12
     } else if (rolepick = "SAFR") {
-        Gui, Msgs:Add, tab3,, SAFR|Help|General
-        Gui, Msgs:Tab, 12
+        Gui, 2:Add, tab3,, SAFR|Help|General
+        Gui, 2:Tab, 12
     } else if (rolepick = "CIV") {
-        Gui, Msgs:Add, tab3,, CIV|Help|General
-        Gui, Msgs:Tab, 12
+        Gui, 2:Add, tab3,, CIV|Help|General
+        Gui, 2:Tab, 12
     } else {
-        Gui, Msgs:Add, Tab3,, LEO|TOW|CIV|SAFR|Help|General
+        Gui, 2:Add, Tab3,, LEO|TOW|CIV|SAFR|Help|General
     }
-    Gui, Msgs:Add, Text,, %helptext2%
-    Gui, Msgs:Add, Text, w100, tcuffmsg1:
-    Gui, Msgs:Add, Text,, tcuffmsg2:
-    Gui, Msgs:Add, Text,, t911msg:
-    Gui, Msgs:Add, Text,, t311msg:
-    Gui, Msgs:Add, Text,r2, tdutystartmsg1:
-    Gui, Msgs:Add, Text,r2, tdutystartmsg2:
-    Gui, Msgs:Add, Text,, tdutystartmsg3:
-    Gui, Msgs:Add, Text,, towmsg1:
-    Gui, Msgs:Add, Text,r2, tfriskmsg:
-    Gui, Msgs:Add, Text,r2, tsearchmsg:
-    Gui, Msgs:Add, Text,r4, tmedicalmsg:
-    Gui, Msgs:Add, Text,, Spikes:
-    Gui, Msgs:Add, Text,, Vehicle Image Search:
-    Gui, Msgs:Add, Text,, RunPlate:
-    Gui, Msgs:Add, Text,, CPIC:
-    Gui, Msgs:Add, Text,x350 y475, 911 Responding:
-    Gui, Msgs:Add, Text,, Tow Initiate:
-    Gui, Msgs:Add, Text,, Tow Information:
-    Gui, Msgs:Add, Edit, r1 vcuffmsg1 w500 x115 y80, %cuffmsg1% ; The ym option starts a new column of controls.
-    Gui, Msgs:Add, Edit, r1 vcuffmsg2 w500, %cuffmsg2%
-    Gui, Msgs:Add, Edit, r1 v911msg w500, %911msg%
-    Gui, Msgs:Add, Edit, r1 v311msg w500, %311msg%
-    Gui, Msgs:Add, Edit, r2 vdutystartmsg1 w500, %dutystartmsg1%
-    Gui, Msgs:Add, Edit, r2 vdutystartmsg2 w500, %dutystartmsg2%
-    Gui, Msgs:Add, Edit, vdutystartmsg3 w500, %dutystartmsg3%
-    Gui, Msgs:Add, Edit, r1 vtowmsg1 w500, %towmsg1%
-    Gui, Msgs:Add, Edit, r2 vfriskmsg w500, %friskmsg%
-    Gui, Msgs:Add, Edit, r2 vsearchmsg w500, %searchmsg%
-    Gui, Msgs:Add, Edit, r4 vmedicalmsg w500, %medicalmsg%
-    Gui, Msgs:Add, Hotkey, w150 x150 y470 vspikeshk, %spikeshk%
-    Gui, Msgs:Add, Hotkey, w150 vvehimgsearchhk, %vehimgsearchhk%
-    Gui, Msgs:Add, Hotkey, w150 vrunplatehk, %runplatehk%
-    Gui, Msgs:Add, Hotkey, w150 vcpichk, %cpichk%
-    Gui, Msgs:Add, Hotkey, w150 x450 y470 v911respondhk, %911respondhk%
-    Gui, Msgs:Add, Hotkey, w150 vtowcallhk, %towcallhk%
-    Gui, Msgs:Add, Hotkey, w150 vtowrespondhk, %towrespondhk%
+    Gui, 2:Add, Text,, %helptext2%
+    Gui, 2:Add, Text, w100, tcuffmsg1:
+    Gui, 2:Add, Text,, tcuffmsg2:
+    Gui, 2:Add, Text,, t911msg:
+    Gui, 2:Add, Text,, t311msg:
+    Gui, 2:Add, Text,r2, tdutystartmsg1:
+    Gui, 2:Add, Text,r2, tdutystartmsg2:
+    Gui, 2:Add, Text,, tdutystartmsg3:
+    Gui, 2:Add, Text,, towmsg1:
+    Gui, 2:Add, Text,r2, tfriskmsg:
+    Gui, 2:Add, Text,r2, tsearchmsg:
+    Gui, 2:Add, Text,r4, tmedicalmsg:
+    Gui, 2:Add, Text,, Spikes:
+    Gui, 2:Add, Text,, Vehicle Image Search:
+    Gui, 2:Add, Text,, RunPlate:
+    Gui, 2:Add, Text,, CPIC:
+    Gui, 2:Add, Text,x350 y475, 911 Responding:
+    Gui, 2:Add, Text,, Tow Initiate:
+    Gui, 2:Add, Text,, Tow Information:
+    Gui, 2:Add, Edit, r1 vcuffmsg1 w500 x115 y80, %cuffmsg1% ; The ym option starts a new column of controls.
+    Gui, 2:Add, Edit, r1 vcuffmsg2 w500, %cuffmsg2%
+    Gui, 2:Add, Edit, r1 v911msg w500, %911msg%
+    Gui, 2:Add, Edit, r1 v311msg w500, %311msg%
+    Gui, 2:Add, Edit, r2 vdutystartmsg1 w500, %dutystartmsg1%
+    Gui, 2:Add, Edit, r2 vdutystartmsg2 w500, %dutystartmsg2%
+    Gui, 2:Add, Edit, vdutystartmsg3 w500, %dutystartmsg3%
+    Gui, 2:Add, Edit, r1 vtowmsg1 w500, %towmsg1%
+    Gui, 2:Add, Edit, r2 vfriskmsg w500, %friskmsg%
+    Gui, 2:Add, Edit, r2 vsearchmsg w500, %searchmsg%
+    Gui, 2:Add, Edit, r4 vmedicalmsg w500, %medicalmsg%
+    Gui, 2:Add, Hotkey, w150 x150 y470 vspikeshk, %spikeshk%
+    Gui, 2:Add, Hotkey, w150 vvehimgsearchhk, %vehimgsearchhk%
+    Gui, 2:Add, Hotkey, w150 vrunplatehk, %runplatehk%
+    Gui, 2:Add, Hotkey, w150 vcpichk, %cpichk%
+    Gui, 2:Add, Hotkey, w150 x450 y470 v911respondhk, %911respondhk%
+    Gui, 2:Add, Hotkey, w150 vtowcallhk, %towcallhk%
+    Gui, 2:Add, Hotkey, w150 vtowrespondhk, %towrespondhk%
     if (rolepick = "LEO") {
-        Gui, Msgs:Tab, 12
+        Gui, 2:Tab, 12
     } else if (rolepick = "TOW") {
-        Gui, Msgs:Tab, 1
+        Gui, 2:Tab, 1
     } else if (rolepick = "SAFR") {
-        Gui, Msgs:Tab, 13
+        Gui, 2:Tab, 13
     } else if (rolepick = "CIV") {
-        Gui, Msgs:Tab, 13
+        Gui, 2:Tab, 13
     } else {
-        Gui, Msgs:Tab, 2
+        Gui, 2:Tab, 2
     }
-    Gui, Msgs:Add, Text,r3 w100, towad:
-    Gui, Msgs:Add, Text,r1, tsend:
-    Gui, Msgs:Add, Text,r2, ttowmsg1:
-    Gui, Msgs:Add, Text,r2, ttowmsg2:
-    Gui, Msgs:Add, Text,r2, tsecure1:
-    Gui, Msgs:Add, Text,r2, tsecure2:
-    Gui, Msgs:Add, Text,r2, treleasemsg1:
-    Gui, Msgs:Add, Text,r2, treleasemsg2:
-    Gui, Msgs:Add, Edit, r3 vtowad w500 x100 y30, %towad%
-    Gui, Msgs:Add, Edit, r1 vtsend w500, %tsend%
-    Gui, Msgs:Add, Edit, r2 vttowmsg1 w500, %ttowmsg1%
-    Gui, Msgs:Add, Edit, r2 vttowmsg2 w500, %ttowmsg2%
-    Gui, Msgs:Add, Edit, r2 vtsecure1 w500, %tsecure1%
-    Gui, Msgs:Add, Edit, r2 vtsecure2 w500, %tsecure2%
-    Gui, Msgs:Add, Edit, r2 vtreleasemsg1 w500, %treleasemsg1%
-    Gui, Msgs:Add, Edit, r2 vtreleasemsg2 w500, %treleasemsg2%
+    Gui, 2:Add, Text,r3 w100, towad:
+    Gui, 2:Add, Text,r1, tsend:
+    Gui, 2:Add, Text,r2, ttowmsg1:
+    Gui, 2:Add, Text,r2, ttowmsg2:
+    Gui, 2:Add, Text,r2, tsecure1:
+    Gui, 2:Add, Text,r2, tsecure2:
+    Gui, 2:Add, Text,r2, treleasemsg1:
+    Gui, 2:Add, Text,r2, treleasemsg2:
+    Gui, 2:Add, Edit, r3 vtowad w500 x100 y30, %towad%
+    Gui, 2:Add, Edit, r1 vtsend w500, %tsend%
+    Gui, 2:Add, Edit, r2 vttowmsg1 w500, %ttowmsg1%
+    Gui, 2:Add, Edit, r2 vttowmsg2 w500, %ttowmsg2%
+    Gui, 2:Add, Edit, r2 vtsecure1 w500, %tsecure1%
+    Gui, 2:Add, Edit, r2 vtsecure2 w500, %tsecure2%
+    Gui, 2:Add, Edit, r2 vtreleasemsg1 w500, %treleasemsg1%
+    Gui, 2:Add, Edit, r2 vtreleasemsg2 w500, %treleasemsg2%
     if (rolepick = "LEO") {
-        Gui, Msgs:Tab, 13
+        Gui, 2:Tab, 13
     } else if (rolepick = "TOW") {
-        Gui, Msgs:Tab, 13
+        Gui, 2:Tab, 13
     } else if (rolepick = "SAFR") {
-        Gui, Msgs:Tab, 1
+        Gui, 2:Tab, 1
     } else if (rolepick = "CIV") {
-        Gui, Msgs:Tab, 14
+        Gui, 2:Tab, 14
     } else {
-        Gui, Msgs:Tab, 3
+        Gui, 2:Tab, 3
     }
-    Gui, Msgs:Add, Text,r1 w100, SAFR Placeholder - ideas certainly welcome :P
+    Gui, 2:Add, Text,r1 w100, SAFR Placeholder - ideas certainly welcome :P
     if (rolepick = "LEO") {
-        Gui, Msgs:Tab, 14
+        Gui, 2:Tab, 14
     } else if (rolepick = "TOW") {
-        Gui, Msgs:Tab, 14
+        Gui, 2:Tab, 14
     } else if (rolepick = "SAFR") {
-        Gui, Msgs:Tab, 14
+        Gui, 2:Tab, 14
     } else if (rolepick = "CIV") {
-        Gui, Msgs:Tab, 1
+        Gui, 2:Tab, 1
     } else {
-        Gui, Msgs:Tab, 4
+        Gui, 2:Tab, 4
     }
-    Gui, Msgs:Add, Text, w150, robhkmsg:
-    Gui, Msgs:Add, Text,, Robbery Hotkey:
-    Gui, Msgs:Add, Edit, r1 vrobhkmsg w500 x80 y30, %robhkmsg%
-    Gui, Msgs:Add, Hotkey, w150 x120 y56 vrobhk, %robhk%
-    Gui, Msgs:Tab, Help,, Exact
-    Gui, Msgs:Add, Text,r3 w100, tmicmsg:
-    Gui, Msgs:Add, Text,r2, tpaystatemsg:
-    Gui, Msgs:Add, Edit, r3 vmicmsg w500 x100 y30, %micmsg%
-    Gui, Msgs:Add, Edit, r2 vpaystatemsg w500, %paystatemsg%
-    Gui, Msgs:Tab, General,, Exact
-    Gui, Msgs:Add, Text, w150, tgunmsg:
-    Gui, Msgs:Add, Text, r2 w150, valet2hkmsg:
-    Gui, Msgs:Add, Text, w150, phrechkmsg:
-    Gui, Msgs:Add, Text, w150 y200 x20, Seatbelt Hotkey:
-    Gui, Msgs:Add, Text,, Valet App Hotkey:
-    Gui, Msgs:Add, Text,, Valet Call Hotkey:
-    Gui, Msgs:Add, Text,, Phone Record Hotkey:
-    Gui, Msgs:Add, Edit, r1 vgunmsg w500 x100 y30, %gunmsg%
-    Gui, Msgs:Add, Edit, r2 vvalet2hkmsg w500, %valet2hkmsg%
-    Gui, Msgs:Add, Edit, r1 vphrechkmsg w500, %phrechkmsg%
-    Gui, Msgs:Add, Hotkey, w150 x150 y195 vseatbelthk, %seatbelthk%
-    Gui, Msgs:Add, Hotkey, w150 vvalet1hk, %valet1hk%
-    Gui, Msgs:Add, Hotkey, w150 vvalet2hk, %valet2hk%
-    Gui, Msgs:Add, Hotkey, w150 vphrechk, %phrechk%
-    Gui, Msgs:Tab
-    Gui, Msgs:Add, Button, default w80 xm, &OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
-    Gui, Msgs:Show,, Main responses for the system - builds from original variables
+    Gui, 2:Add, Text, w150, robhkmsg:
+    Gui, 2:Add, Text,, Robbery Hotkey:
+    Gui, 2:Add, Edit, r1 vrobhkmsg w500 x80 y30, %robhkmsg%
+    Gui, 2:Add, Hotkey, w150 x120 y56 vrobhk, %robhk%
+    Gui, 2:Tab, Help,, Exact
+    Gui, 2:Add, Text,r3 w100, tmicmsg:
+    Gui, 2:Add, Text,r2, tpaystatemsg:
+    Gui, 2:Add, Edit, r3 vmicmsg w500 x100 y30, %micmsg%
+    Gui, 2:Add, Edit, r2 vpaystatemsg w500, %paystatemsg%
+    Gui, 2:Tab, General,, Exact
+    Gui, 2:Add, Text, w150, tgunmsg:
+    Gui, 2:Add, Text, r2 w150, valet2hkmsg:
+    Gui, 2:Add, Text, w150, phrechkmsg:
+    Gui, 2:Add, Text, w150 y200 x20, Seatbelt Hotkey:
+    Gui, 2:Add, Text,, Valet App Hotkey:
+    Gui, 2:Add, Text,, Valet Call Hotkey:
+    Gui, 2:Add, Text,, Phone Record Hotkey:
+    Gui, 2:Add, Edit, r1 vgunmsg w500 x100 y30, %gunmsg%
+    Gui, 2:Add, Edit, r2 vvalet2hkmsg w500, %valet2hkmsg%
+    Gui, 2:Add, Edit, r1 vphrechkmsg w500, %phrechkmsg%
+    Gui, 2:Add, Hotkey, w150 x150 y195 vseatbelthk, %seatbelthk%
+    Gui, 2:Add, Hotkey, w150 vvalet1hk, %valet1hk%
+    Gui, 2:Add, Hotkey, w150 vvalet2hk, %valet2hk%
+    Gui, 2:Add, Hotkey, w150 vphrechk, %phrechk%
+    Gui, 2:Tab
+    Gui, 2:Add, Button, default w80 xm, &OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
+    Gui, 2:Show,, Main responses for the system - builds from original variables
     Return
 
-    MsgsGuiClose:
-    MsgsGuiEscape:
+    2GuiClose:
+    2GuiEscape:
     Msgbox Nope lol
-    Gui, Msgs:Cancel
+    Gui, 2:Cancel
     Return
 
-    MsgsButtonOK:
-    Gui, Msgs:Submit  ; Save the input from the user to each control's associated variable.
+    2ButtonOK:
+    Gui, 2:Submit  ; Save the input from the user to each control's associated variable.
     Gosub, UpdateConfig
     Gosub, hotkeys
 Return
@@ -1669,12 +1674,13 @@ Return
 
 ; ============================================ MAIN RUN FUNCTIONS ============================================
 
-ReadConfig:
-    IfExist, %config%
-    {
-        IniRead, rolepick, %config%, Yourself, rolepick
-        GuiControl, ChooseString, rolepick, %rolepick%
-    }
+ReadConfiguration: ; Read the saved configuration
+IfExist, %config% ; First check if it was saved.
+{
+; IniRead, outputvar, filename, section, key, default
+IniRead, rolepick, %config%, Yourself, role
+GuiControl, ChooseString, rolepick, %rolepick% ; Submit
+}
 Return
 
 ; ============================================ CUSTOM DEFINED HOTKEYS ============================================
@@ -1712,7 +1718,7 @@ Return
 
 UpdateConfig:
 ; ============================================ WRITE INI SECTION ============================================
-    IniWrite, %rolepick%, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
+    IniWrite, %rolepick%, %config%, Yourself, role
     IniWrite, %callsign%, %config%, Yourself, callsign
     IniWrite, %myid%, %config%, Yourself, myid
     IniWrite, %towcompany%, %config%, Yourself, towcompany
@@ -1769,7 +1775,7 @@ UpdateConfig:
     IniWrite, %robhkmsg%, %config%, Normal, robhkmsg
 ; ============================================ READ INI SECTION ============================================
     ; Re-reads all of the configuration information to validate
-    IniRead, rolepick, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE, LEO
+    IniRead, rolepick, %config%, Yourself, role, LEO
     IniRead, callsign, %config%, Yourself, callsign, A06
     IniRead, myid, %config%, Yourself, myid, 1
     IniRead, towcompany, %config%, Yourself, towcompany, skinnydick
