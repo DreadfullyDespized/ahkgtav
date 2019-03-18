@@ -183,6 +183,7 @@ IfExist, %config%
     ; Cleanup some of the old ini configuration portions
     IniDelete, %config%, Yourself, rolepick
     IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
+    IniDelete, %config%, Normal, val2hkmsg
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
