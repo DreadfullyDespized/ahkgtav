@@ -11,7 +11,7 @@ Versioning:
 ==================
 
 AHKGTAV V10
-Date: 20190315
+Date: 20190318
     Changes:
 
     ! GUI positioning for the LEO TAB
@@ -19,9 +19,10 @@ Date: 20190315
     ! GUI positioning for the CIV TAB along with order of tabs
     ! GUI positioning for the Help TAB
     ! GUI positioning for the General TAB
+    ! Role Selection stay in memory
+    ! Removed two unused ini's from ini file
 
     Todo:
-    ! Role Selection stay in memory
     + Update check and auto updater
     ! Not keeping on the last used primary window
 
