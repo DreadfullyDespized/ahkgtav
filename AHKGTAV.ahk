@@ -176,67 +176,6 @@ update(lversion, logurl="", rfile="github", vline=13){
 ; Though if you enter them in the data entry.  They save within the ini.
 ; Configure these variables as you wish to be presented
 config = GTAV-Config.ini
-; ============================================ INI WRITING ============================================
-; Section to write the configuration file if it does not exist
-IfNotExist, %config%
-{
-    IniWrite, LEO, %config%, Yourself, role
-    IniWrite, A06, %config%, Yourself, callsign
-    IniWrite, 1, %config%, Yourself, myid
-    IniWrite, skinnydick, %config%, Yourself, towcompany
-    IniWrite, Dread, %config%, Yourself, name
-    IniWrite, Officer, %config%, Yourself, title
-    IniWrite, LSPD, %config%, Yourself, department
-    IniWrite, 150, %config%, Yourself, delay
-    IniWrite, 0, %config%, Yourself, testmode
-    IniWrite, /r, %config%, Server, rs
-    IniWrite, /answer, %config%, Server, ca
-    IniWrite, /c, %config%, Server, cs
-    IniWrite, /do, %config%, Server, ds
-    IniWrite, /me, %config%, Server, ms
-    IniWrite, /ad, %config%, Server, as
-    IniWrite, /l, %config%, Server, los
-    ; The hotkey related section
-    IniWrite, ^., %config%, Keys, spikeshk
-    IniWrite, ^/, %config%, Keys, vehimgsearchhk
-    IniWrite, ^-, %config%, Keys, runplatehk
-    IniWrite, ^=, %config%, Keys, cpichk
-    IniWrite, ^9, %config%, Keys, 911respondhk
-    IniWrite, ^k, %config%, Keys, towcallhk
-    IniWrite, ^j, %config%, Keys, towrespondhk
-    IniWrite, F1, %config%, Keys, seatbelthk
-    IniWrite, +F11, %config%, Keys, valet1hk
-    IniWrite, F11, %config%, Keys, valet2hk
-    IniWrite, F6, %config%, Keys, phrechk
-    IniWrite, ^r, %config%, Keys, robhk
-    ; Messages that correspond with the hotkeys
-    IniWrite, /do pull out his hand cuffs to cuff the Subject, %config%, Police, cuffmsg1
-    IniWrite, /do pulls out his keys to release the Subject from the cuffs, %config%, Police, cuffmsg2
-    IniWrite, /c What is the nature of your emergency and the location?, %config%, Police, 911msg
-    IniWrite, /c What may I be able to assist you with today?, %config%, Police, 311msg
-    IniWrite, /do secures the bodycam to the chest and then turns it on and validates that it is recording and listening., %config%, Police, dutystartmsg1
-    IniWrite, /do Validates that the Dashcam is functional in both audio and video., %config%, Police, dutystartmsg2
-    IniWrite, /do Logs into the MWS computer., %config%, Police, dutystartmsg3
-    IniWrite, /do Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them, %config%, Police, friskmsg
-    IniWrite, /do Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags, %config%, Police, searchmsg
-    IniWrite, /l Hello I am ^1Officer Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0., %config%, Police, medicalmsg
-    IniWrite, /r [^1A06^0] to [^3TOW^0], %config%, Police, towmsg1
-    IniWrite, /ad I work for [^3skinnydick^0] and we do cool tow stuff that makes tows happy 555-99999!!, %config%, Towing, towad
-    IniWrite, /r [^3TOW1^0] Send it, %config%, Towing, tsend
-    IniWrite, /do attaches the winch cable to the front of the vehicle, %config%, Towing, ttowmsg1
-    IniWrite, /do attaches the winch cable to the rear of the vehicle, %config%, Towing, ttowmsg2
-    IniWrite, /do secures the rear of the vehicle with extra tow straps, %config%, Towing, tsecure1
-    IniWrite, /do secures the front of the vehicle with extra tow straps, %config%, Towing, tsecure2
-    IniWrite, /do releases the extra tow cables from the rear and pulls the winch release lever, %config%, Towing, treleasemsg1
-    IniWrite, /do releases the extra tow cables from the front and pulls the winch release lever, %config%, Towing, treleasemsg2
-    IniWrite, /l How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match aduio devices to the one you are using., %config%, Help, micmsg
-    IniWrite, /l To be able to see your current state debt type "/paystate" to pay off state debt "/paystate amount"., %config%, Help, paystatemsg
-    IniWrite, /do pulls out his ^1pistol ^0from under his shirt, %config%, Normal, gunmsg
-    IniWrite, /me puts in his ticket into the valet and presses the button to receive his selected vehicle, %config%, Normal, valet2hkmsg
-    IniWrite, /do Pulls out their phone and starts recording audio and video, %config%, Normal, phrechkmsg
-    IniWrite, /me takes the persons phone`, weapons`, and any cash on them, %config%, Normal, robhkmsg
-}
-
 ; ============================================ INI READING ============================================
 ; Section to read in the configuration file if it exists
 IfExist, %config%
@@ -244,63 +183,70 @@ IfExist, %config%
     ; Cleanup some of the old ini configuration portions
     IniDelete, %config%, Yourself, rolepick
     IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
-    ; Back to the reading of the configuration
-    IniRead, rolepick, %config%, Yourself, role, LEO
-    IniRead, callsign, %config%, Yourself, callsign, A06
-    IniRead, myid, %config%, Yourself, myid, 1
-    IniRead, towcompany, %config%, Yourself, towcompany, skinnydick
-    IniRead, name, %config%, Yourself, name, Dread
-    IniRead, title, %config%, Yourself, title, Officer
-    IniRead, department, %config%, Yourself, department, LSPD
-    IniRead, delay, %config%, Yourself, delay, 150
-    IniRead, testmode, %config%, Yourself, testmode, 0
-    IniRead, rs, %config%, Server, rs, /r
-    IniRead, ca, %config%, Server, ca, /answer
-    IniRead, cs, %config%, Server, cs, /c
-    IniRead, ds, %config%, Server, ds, /do
-    IniRead, ms, %config%, Server, ms, /me
-    IniRead, as, %config%, Server, as, /ad
-    IniRead, los, %config%, Server, los, /l
-    ; The hotkey related section
-    IniRead, spikeshk, %config%, Keys, spikeshk, ^.
-    IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
-    IniRead, runplatehk, %config%, Keys, runplatehk, ^-
-    IniRead, cpichk, %config%, Keys, cpichk, ^=
-    IniRead, 911respondhk, %config%, Keys, 911respondhk, ^9
-    IniRead, towcallhk, %config%, Keys, towcallhk, ^k
-    IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
-    IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
-    IniRead, valet1hk, %config%, Keys, valet1hk, +F11
-    IniRead, valet2hk, %config%, Keys, valet2hk, F11
-    IniRead, phrechk, %config%, Keys, phrechk, F6
-    IniRead, robhk, %config%, Keys, robhk, ^r
-    ; Messages that correspond with the hotkeys
-    IniRead, cuffmsg1, %config%, Police, cuffmsg1, /do pull out his hand cuffs to cuff the Subject
-    IniRead, cuffmsg2, %config%, Police, cuffmsg2, /do pulls out his keys to release the Subject from the cuffs
-    IniRead, 911msg, %config%, Police, 911msg, /c What is the nature of your emergency and the location?
-    IniRead, 311msg, %config%, Police, 311msg, /c What may I be able to assist you with today?
-    IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, /do secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
-    IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, /do Validates that the Dashcam is functional in both audio and video.
-    IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, /do Logs into the MWS computer.
-    IniRead, friskmsg, %config%, Police, friskmsg, /do Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
-    IniRead, searchmsg, %config%, Police, searchmsg, /do Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
-    IniRead, medicalmsg, %config%, Police, medicalmsg, /l Hello I am ^1Officer Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0.
-    IniRead, towmsg1, %config%, Police, towmsg1, /r [^1A06^0] to [^3TOW^0]
-    IniRead, towad, %config%, Towing, towad, /ad I work for [^3skinnydick^0] and we do cool tow stuff that makes tows happy 555-99999!!
-    IniRead, tsend, %config%, Towing, tsend, /r [^3TOW1^0] Send it!
-    IniRead, ttowmsg1, %config%, Towing, ttowmsg1, /do attaches the winch cable to the front of the vehicle
-    IniRead, ttowmsg2, %config%, Towing, ttowmsg2, /do attaches the winch cable to the rear of the vehicle
-    IniRead, tsecure1, %config%, Towing, tsecure1, /do secures the rear of the vehicle with extra tow straps
-    IniRead, tsecure2, %config%, Towing, tsecure2, /do secures the front of the vehicle with extra tow straps
-    IniRead, treleasemsg1, %config%, Towing, treleasemsg1, /do releases the extra tow cables from the rear and pulls the winch release lever
-    IniRead, treleasemsg2, %config%, Towing, treleasemsg2, /do releases the extra tow cables from the front and pulls the winch release lever
-    IniRead, micmsg, %config%, Help, micmsg, /l How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match aduio devices to the one you are using.
-    IniRead, paystatemsg, %config%, Help, paystatemsg, /l To be able to see your current state debt type "/paystate" to pay off state debt "/paystate amount".
-    IniRead, gunmsg, %config%, Normal, gunmsg, /do pulls out his ^1pistol ^0from under his shirt
-    IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, /me puts in his ticket into the valet and presses the button to receive his selected vehicle
-    IniRead, phrechkmsg, %config%, Normal, phrechkmsg, /do Pulls out their phone and starts recording audio and video
-    IniRead, robhkmsg, %config%, Normal, robhkmsg, /me takes the persons phone`, weapons`, and any cash on them
 }
+; Back to the reading of the configuration
+IniRead, rolepick, %config%, Yourself, role, LEO
+IniRead, callsign, %config%, Yourself, callsign, A06
+IniRead, myid, %config%, Yourself, myid, 1
+IniRead, towcompany, %config%, Yourself, towcompany, skinnydick
+IniRead, name, %config%, Yourself, name, Dread
+IniRead, title, %config%, Yourself, title, Officer
+IniRead, department, %config%, Yourself, department, LSPD
+IniRead, phone, %config%, Yourself, phone, 38915
+; Client communication and test mode
+IniRead, delay, %config%, Yourself, delay, 150
+IniRead, testmode, %config%, Yourself, testmode, 0
+; Server related section
+IniRead, rs, %config%, Server, rs, /r
+IniRead, ca, %config%, Server, ca, /answer
+IniRead, cs, %config%, Server, cs, /c
+IniRead, ds, %config%, Server, ds, /do
+IniRead, ms, %config%, Server, ms, /me
+IniRead, as, %config%, Server, as, /ad
+IniRead, los, %config%, Server, los, /l
+; The hotkey related section
+IniRead, spikeshk, %config%, Keys, spikeshk, ^.
+IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
+IniRead, runplatehk, %config%, Keys, runplatehk, ^-
+IniRead, cpichk, %config%, Keys, cpichk, ^=
+IniRead, 911respondhk, %config%, Keys, 911respondhk, ^9
+IniRead, towcallhk, %config%, Keys, towcallhk, ^k
+IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
+IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
+IniRead, valet1hk, %config%, Keys, valet1hk, +F11
+IniRead, valet2hk, %config%, Keys, valet2hk, F11
+IniRead, phrechk, %config%, Keys, phrechk, F6
+IniRead, robhk, %config%, Keys, robhk, ^r
+; Messages that correspond with the hotkeys
+; Police related section
+IniRead, cuffmsg1, %config%, Police, cuffmsg1, %ds% pull out his hand cuffs to cuff the Subject
+IniRead, cuffmsg2, %config%, Police, cuffmsg2, %ds% pulls out his keys to release the Subject from the cuffs
+IniRead, 911msg, %config%, Police, 911msg, %cs% What is the nature of your emergency and the location?
+IniRead, 311msg, %config%, Police, 311msg, %cs% What may I be able to assist you with today?
+IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
+IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, %ds% Validates that the Dashcam is functional in both audio and video.
+IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, %ds% Logs into the MWS computer.
+IniRead, friskmsg, %config%, Police, friskmsg, %ds% Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
+IniRead, searchmsg, %config%, Police, searchmsg, %ds% Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
+IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0.
+IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
+; Towing related section
+IniRead, towad, %config%, Towing, towad, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
+IniRead, tsend, %config%, Towing, tsend, %rs% [^3TOW%myid%^0] Send it!
+IniRead, ttowmsg1, %config%, Towing, ttowmsg1, %ds% attaches the winch cable to the front of the vehicle
+IniRead, ttowmsg2, %config%, Towing, ttowmsg2, %ds% attaches the winch cable to the rear of the vehicle
+IniRead, tsecure1, %config%, Towing, tsecure1, %ds% secures the rear of the vehicle with extra tow straps
+IniRead, tsecure2, %config%, Towing, tsecure2, %ds% secures the front of the vehicle with extra tow straps
+IniRead, treleasemsg1, %config%, Towing, treleasemsg1, %ds% releases the extra tow cables from the rear and pulls the winch release lever
+IniRead, treleasemsg2, %config%, Towing, treleasemsg2, %ds% releases the extra tow cables from the front and pulls the winch release lever
+; Help related section
+IniRead, micmsg, %config%, Help, micmsg, %los% How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
+IniRead, paystatemsg, %config%, Help, paystatemsg, %los% State Debt is from medical/legal bills.  If you have any it takes 50`% of your wages.  To be able to see your current state debt type "/paystate" to pay off state debt "/paystate amount".
+; Normal related section
+IniRead, gunmsg, %config%, Normal, gunmsg, %ds% pulls out his ^1pistol ^0from under his shirt
+IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, %ms% puts in his ticket into the valet and presses the button to receive his selected vehicle
+IniRead, phrechkmsg, %config%, Normal, phrechkmsg, %ds% Pulls out their phone and starts recording audio and video
+IniRead, robhkmsg, %config%, Normal, robhkmsg, %ms% takes the persons phone`, weapons`, and any cash on them
 ; ============================================ HELP TEXT FORMAT ============================================
 ; Main portion of the help text that is displayed
 helptext = 
@@ -460,24 +406,36 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Text,, First Party Action:
     Gui, 1:Add, Text,, Advertisement:
     Gui, 1:Add, Text,, Local OOC:
+    Gui, 1:Add, Text, x210 y34, Phone Number:
     Gui, 1:Add, DropDownList, x100 y30 w80 vrolepick, |LEO|TOW|CIV|SAFR|GEORGE
-    Gui, 1:Add, Edit, vcallsign w80, %callsign%
-    Gui, 1:Add, Edit, vmyid w80, %myid%
-    Gui, 1:Add, Edit, vtowcompany w80, %towcompany%
-    Gui, 1:Add, Edit, vname w80, %name%
-    Gui, 1:Add, Edit, vtitle w80, %title%
-    Gui, 1:Add, Edit, vdepartment w80, %department%
-    Gui, 1:Add, Edit, vdelay w80, %delay%
-    Gui, 1:Add, Edit, vrs w80 x150 y272, %rs%
-    Gui, 1:Add, Edit, vca w80, %ca%
-    Gui, 1:Add, Edit, vcs w80, %cs%
-    Gui, 1:Add, Edit, vds w80, %ds%
-    Gui, 1:Add, Edit, vms w80, %ms%
-    Gui, 1:Add, Edit, vas w80, %as%
-    Gui, 1:Add, Edit, vlos w80, %los%
-    Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Allows commands to work outside of the game.
-    Gui, 1:Add, Button, x280 y490 w80 gSave1, &Save
+    rolepick_TT := "Select the character role that you will be playing as"
+    Gui, 1:Add, Edit, w80 vcallsign, %callsign%
+    callsign_TT := "Callsign for your LEO/EMS character"
+    Gui, 1:Add, Edit, w80 vmyid, %myid%
+    myid_TT := "Your Train Ticket ID"
+    Gui, 1:Add, Edit, w80 vtowcompany, %towcompany%
+    towcompany_TT := "Towing company you work for. Name for /clockin command"
+    Gui, 1:Add, Edit, w80 vname, %name%
+    name_TT := "Last Name of your character"
+    Gui, 1:Add, Edit, w80 vtitle, %title%
+    title_TT := "Title of your character"
+    Gui, 1:Add, Edit, w80 vdepartment, %department%
+    department_TT := "Department that your character works for"
+    Gui, 1:Add, Edit, w80 vdelay, %delay%
+    delay_TT := "milisecond delay.  Take your ping to the server x2"
+    Gui, 1:Add, Edit, x150 y272 w80 vrs, %rs%
+    Gui, 1:Add, Edit, w80 vca, %ca%
+    Gui, 1:Add, Edit, w80 vcs, %cs%
+    Gui, 1:Add, Edit, w80 vds, %ds%
+    Gui, 1:Add, Edit, w80 vms, %ms%
+    Gui, 1:Add, Edit, w80 vas, %as%
+    Gui, 1:Add, Edit, w80 vlos, %los%
+    Gui, 1:Add, Edit, x290 y30 w80 vphone, %phone%
+    phone_TT := "Last 5 of your current characters phone number"
+    Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Default, works in-game and notepad.
+    Gui, 1:Add, Button, x280 y490 w80 gSave1, Save
     Gui, 1:Show,, Making the world a better place
+    OnMessage(0x200, "WM_MOUSEMOVE")
     Gosub, ReadConfiguration ; Load configuration previously saved.
     Return
 
@@ -497,8 +455,11 @@ SetScrollLockState, AlwaysOff
     IniWrite, %name%, %config%, Yourself, name
     IniWrite, %title%, %config%, Yourself, title
     IniWrite, %department%, %config%, Yourself, department
+    IniWrite, %phone%, %config%, Yourself, phone
+    ; Client communication and test mode
     IniWrite, %delay%, %config%, Yourself, delay
     IniWrite, %testmode%, %config%, Yourself, testmode
+    ; Server related section
     IniWrite, %rs%, %config%, Server, rs
     IniWrite, %ca%, %config%, Server, ca
     IniWrite, %cs%, %config%, Server, cs
@@ -546,23 +507,41 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,, Tow Initiate:
     Gui, 2:Add, Text,, Tow Information:
     Gui, 2:Add, Edit, r1 vcuffmsg1 w500 x115 y80, %cuffmsg1% ; The ym option starts a new column of controls.
+    cuffmsg1_TT := "Displayed message for putting someone in cuffs"
     Gui, 2:Add, Edit, r1 vcuffmsg2 w500, %cuffmsg2%
+    cuffmsg2_TT := "Displayed message for taking someone out of cuffs"
     Gui, 2:Add, Edit, r1 v911msg w500, %911msg%
+    911msg_TT := "Initial response message when answering 911"
     Gui, 2:Add, Edit, r1 v311msg w500, %311msg%
+    311msg_TT := "Initial response message when answering 311"
     Gui, 2:Add, Edit, r2 vdutystartmsg1 w500, %dutystartmsg1%
+    dutystartmsg1_TT := "Bodycam duty start message"
     Gui, 2:Add, Edit, r2 vdutystartmsg2 w500, %dutystartmsg2%
+    dutystartmsg2_TT := "Dashcam duty start message"
     Gui, 2:Add, Edit, vdutystartmsg3 w500, %dutystartmsg3%
+    dutystartmsg3_TT := "Log into the MWS/CAD"
     Gui, 2:Add, Edit, r1 vtowmsg1 w500, %towmsg1%
+    towmsg1_TT := "Initial call to tow on radio"
     Gui, 2:Add, Edit, r2 vfriskmsg w500, %friskmsg%
+    friskmsg_TT := "Message for when frisking a subject"
     Gui, 2:Add, Edit, r2 vsearchmsg w500, %searchmsg%
+    searchmsg_TT := "Message for when searching a subject completely"
     Gui, 2:Add, Edit, r4 vmedicalmsg w500, %medicalmsg%
+    medicalmsg_TT := "OOC message that you would tell someone to perform their own medical process"
     Gui, 2:Add, Hotkey, w150 x150 y470 vspikeshk, %spikeshk%
+    spikeshk_TT := "Hotkey to be used to deploy/remove spike strip"
     Gui, 2:Add, Hotkey, w150 vvehimgsearchhk, %vehimgsearchhk%
+    vehimgsearchhk_TT := "Hotkey to search for a vehicle's image on google"
     Gui, 2:Add, Hotkey, w150 vrunplatehk, %runplatehk%
+    runplatehk_TT := "Hotkey to run a plate and keep it on clipboard"
     Gui, 2:Add, Hotkey, w150 vcpichk, %cpichk%
+    cpichk_TT := "Hotkey to cpic a name and keep name on clipboard"
     Gui, 2:Add, Hotkey, w150 x450 y470 v911respondhk, %911respondhk%
+    911respondhk_TT := "Hotkey to tell the 911/311 that units are on the way"
     Gui, 2:Add, Hotkey, w150 vtowcallhk, %towcallhk%
+    towcallhk_TT := "Initiates the request for a tow truck"
     Gui, 2:Add, Hotkey, w150 vtowrespondhk, %towrespondhk%
+    towrespondhk_TT := "Lets the tow truck know where you are and what you want them to tow"
     if (rolepick = "LEO") {
         Gui, 2:Tab, 12
     } else if (rolepick = "TOW") {
@@ -583,13 +562,21 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,r2, treleasemsg1:
     Gui, 2:Add, Text,r2, treleasemsg2:
     Gui, 2:Add, Edit, r3 vtowad w500 x100 y30, %towad%
+    towad_TT := "Advertisement you use for your tow company"
     Gui, 2:Add, Edit, r1 vtsend w500, %tsend%
+    tsend_TT := "Typical send it tow response to call for tow"
     Gui, 2:Add, Edit, r2 vttowmsg1 w500, %ttowmsg1%
+    ttowmsg1_TT := "Hooking up vehicle from the front"
     Gui, 2:Add, Edit, r2 vttowmsg2 w500, %ttowmsg2%
+    ttowmsg2_TT := "Hooking up vehicle from the rear"
     Gui, 2:Add, Edit, r2 vtsecure1 w500, %tsecure1%
+    tsecure1_TT := "Securing the tow straps to the rear"
     Gui, 2:Add, Edit, r2 vtsecure2 w500, %tsecure2%
+    tsecure2_TT := "Securing the tow straps to the front"
     Gui, 2:Add, Edit, r2 vtreleasemsg1 w500, %treleasemsg1%
+    treleasemsg1_TT := "Releasing the cables and the winch from the rear"
     Gui, 2:Add, Edit, r2 vtreleasemsg2 w500, %treleasemsg2%
+    treleasemsg2_TT := "Releasing the cables and the winch from the front"
     if (rolepick = "LEO") {
         Gui, 2:Tab, 13
     } else if (rolepick = "TOW") {
@@ -616,12 +603,16 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text, w150, robhkmsg:
     Gui, 2:Add, Text,, Robbery Hotkey:
     Gui, 2:Add, Edit, r1 vrobhkmsg w500 x80 y30, %robhkmsg%
+    robhkmsg_TT := "Action to be used to rob someone"
     Gui, 2:Add, Hotkey, w150 x120 y56 vrobhk, %robhk%
+    robhk_TT := "Hotkey to be used to rob someone"
     Gui, 2:Tab, Help,, Exact
     Gui, 2:Add, Text,r3 w100, tmicmsg:
     Gui, 2:Add, Text,r2, tpaystatemsg:
     Gui, 2:Add, Edit, r3 vmicmsg w500 x100 y30, %micmsg%
+    micmsg_TT := "Message used to explain how to use/configure microphone"
     Gui, 2:Add, Edit, r2 vpaystatemsg w500, %paystatemsg%
+    paystatemsg_TT := "Message used to explain how to handle state debt"
     Gui, 2:Tab, General,, Exact
     Gui, 2:Add, Text, w150, tgunmsg:
     Gui, 2:Add, Text, r2 w150, valet2hkmsg:
@@ -631,15 +622,23 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,, Valet Call Hotkey:
     Gui, 2:Add, Text,, Phone Record Hotkey:
     Gui, 2:Add, Edit, r1 vgunmsg w500 x100 y30, %gunmsg%
+    gunmsg_TT := "Action message to draw a firearm"
     Gui, 2:Add, Edit, r2 vvalet2hkmsg w500, %valet2hkmsg%
+    valet2hkmsg_TT := "Action to be used to pull out a vehicle from the valet"
     Gui, 2:Add, Edit, r1 vphrechkmsg w500, %phrechkmsg%
+    phrechkmsg_TT := "Action message to be used when pulling out phone to record"
     Gui, 2:Add, Hotkey, w150 x150 y195 vseatbelthk, %seatbelthk%
+    seatbelthk_TT := "Hotkey to be used to put on or take off seatbelt"
     Gui, 2:Add, Hotkey, w150 vvalet1hk, %valet1hk%
+    valet1hk_TT := "Hotkey to use your phone valet app"
     Gui, 2:Add, Hotkey, w150 vvalet2hk, %valet2hk%
+    valet2hk_TT := "Hotkey to call for the valet to get your vehicle"
     Gui, 2:Add, Hotkey, w150 vphrechk, %phrechk%
+    phrechk_TT := "Hotkey to start recording with your phone"
     Gui, 2:Tab
-    Gui, 2:Add, Button, default w80 xm, &OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
+    Gui, 2:Add, Button, default w80 xm, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
     Gui, 2:Show,, Main responses for the system - builds from original variables
+    OnMessage(0x200, "WM_MOUSEMOVE")
     Return
 
     2GuiClose:
@@ -1683,6 +1682,32 @@ GuiControl, ChooseString, rolepick, %rolepick% ; Submit
 }
 Return
 
+; ============================================ TOOLTIP FUNCTION ============================================
+
+WM_MOUSEMOVE()
+{
+    static CurrControl, PrevControl, _TT  ; _TT is kept blank for use by the ToolTip command below.
+    CurrControl := A_GuiControl
+    If (CurrControl <> PrevControl and not InStr(CurrControl, " "))
+    {
+        ToolTip  ; Turn off any previous tooltip.
+        SetTimer, DisplayToolTip, 500
+        PrevControl := CurrControl
+    }
+    return
+
+    DisplayToolTip:
+    SetTimer, DisplayToolTip, Off
+    ToolTip % %CurrControl%_TT  ; The leading percent sign tell it to use an expression.
+    SetTimer, RemoveToolTip, 3000
+    return
+
+    RemoveToolTip:
+    SetTimer, RemoveToolTip, Off
+    ToolTip
+    return
+}
+
 ; ============================================ CUSTOM DEFINED HOTKEYS ============================================
 ; Initializes the hotkeys for generation.
 
@@ -1725,8 +1750,11 @@ UpdateConfig:
     IniWrite, %name%, %config%, Yourself, name
     IniWrite, %title%, %config%, Yourself, title
     IniWrite, %department%, %config%, Yourself, department
+    IniWrite, %phone%, %config%, Yourself, phone
+    ; Client communication and test mode
     IniWrite, %delay%, %config%, Yourself, delay
     IniWrite, %testmode%, %config%, Yourself, testmode
+    ; Server related section
     IniWrite, %rs%, %config%, Server, rs
     IniWrite, %ca%, %config%, Server, ca
     IniWrite, %cs%, %config%, Server, cs
@@ -1748,6 +1776,7 @@ UpdateConfig:
     IniWrite, %phrechk%, %config%, Keys, phrechk
     IniWrite, %robhk%, %config%, Keys, robhk
     ; Messages that correspond with the hotkeys
+    ; Police related section
     IniWrite, %cuffmsg1%, %config%, Police, cuffmsg1
     IniWrite, %cuffmsg2%, %config%, Police, cuffmsg2
     IniWrite, %911msg%, %config%, Police, 911msg
@@ -1759,6 +1788,7 @@ UpdateConfig:
     IniWrite, %searchmsg%, %config%, Police, searchmsg
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
     IniWrite, %towmsg1%, %config%, Police, towmsg1
+    ; Towing related section
     IniWrite, %towad%, %config%, Towing, towad
     IniWrite, %tsend%, %config%, Towing, tsend
     IniWrite, %ttowmsg1%, %config%, Towing, ttowmsg1
@@ -1767,8 +1797,10 @@ UpdateConfig:
     IniWrite, %tsecure2%, %config%, Towing, tsecure2
     IniWrite, %treleasemsg1%, %config%, Towing, treleasemsg1
     IniWrite, %treleasemsg2%, %config%, Towing, treleasemsg2
+    ; Help related section
     IniWrite, %micmsg%, %config%, Help, micmsg
     IniWrite, %paystatemsg%, %config%, Help, paystatemsg
+    ; Normal related section
     IniWrite, %gunmsg%, %config%, Normal, gunmsg
     IniWrite, %valet2hkmsg%, %config%, Normal, valet2hkmsg
     IniWrite, %phrechkmsg%, %config%, Normal, phrechkmsg
@@ -1782,8 +1814,11 @@ UpdateConfig:
     IniRead, name, %config%, Yourself, name, Dread
     IniRead, title, %config%, Yourself, title, Officer
     IniRead, department, %config%, Yourself, department, LSPD
+    IniRead, phone, %config%, Yourself, phone, 38915
+    ; Client communication and test mode
     IniRead, delay, %config%, Yourself, delay, 150
     IniRead, testmode, %config%, Yourself, testmode, 0
+    ; Server related section
     IniRead, rs, %config%, Server, rs, /r
     IniRead, ca, %config%, Server, ca, /answer
     IniRead, cs, %config%, Server, cs, /c
@@ -1805,6 +1840,7 @@ UpdateConfig:
     IniRead, phrechk, %config%, Keys, phrechk, F6
     IniRead, robhk, %config%, Keys, robhk, ^r
     ; Messages that correspond with the hotkeys
+    ; Police related section
     IniRead, cuffmsg1, %config%, Police, cuffmsg1, /do pull out his hand cuffs to cuff the Subject
     IniRead, cuffmsg2, %config%, Police, cuffmsg2, /do pulls out his keys to release the Subject from the cuffs
     IniRead, 911msg, %config%, Police, 911msg, /c What is the nature of your emergency and the location?
@@ -1816,6 +1852,7 @@ UpdateConfig:
     IniRead, searchmsg, %config%, Police, searchmsg, /do Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
     IniRead, medicalmsg, %config%, Police, medicalmsg, /l Hello I am ^1Officer Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0.
     IniRead, towmsg1, %config%, Police, towmsg1, /r [^1A06^0] to [^3TOW^0]
+    ; Towing related section
     IniRead, towad, %config%, Towing, towad, /ad I work for [^3skinnydick^0] and we do cool tow stuff that makes tows happy 555-99999!!
     IniRead, tsend, %config%, Towing, tsend, /r [^3TOW1^0] Send it
     IniRead, ttowmsg1, %config%, Towing, ttowmsg1, /do attaches the winch cable to the front of the vehicle
@@ -1824,8 +1861,10 @@ UpdateConfig:
     IniRead, tsecure2, %config%, Towing, tsecure2, /do secures the front of the vehicle with extra tow straps
     IniRead, treleasemsg1, %config%, Towing, treleasemsg1, /do releases the extra tow cables from the rear and pulls the winch release lever
     IniRead, treleasemsg2, %config%, Towing, treleasemsg2, /do releases the extra tow cables from the front and pulls the winch release lever
+    ; Help related section
     IniRead, micmsg, %config%, Help, micmsg, /l How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match aduio devices to the one you are using.
     IniRead, paystatemsg, %config%, Help, paystatemsg, /l To be able to see your current state debt type "/paystate" to pay off state debt "/paystate amount".
+    ; Normal related section
     IniRead, gunmsg, %config%, Normal, gunmsg, /do pulls out his ^1pistol ^0from under his shirt
     IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, /me puts in his ticket into the valet and presses the button to receive his selected vehicle
     IniRead, phrechkmsg, %config%, Normal, phrechkmsg, /do Pulls out their phone and starts recording audio and video

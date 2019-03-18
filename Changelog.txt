@@ -21,10 +21,13 @@ Date: 20190318
     ! GUI positioning for the General TAB
     ! Role Selection stay in memory
     ! Removed two unused ini's from ini file
+    + ini variable for phone number
+    ! Default message typo's
+    ^ Paystate message
+    + Tooltips for all edit boxes
 
     Todo:
     + Update check and auto updater
-    ! Not keeping on the last used primary window
 
 AHKGTAV V9
 Date: 20190313 23:57
