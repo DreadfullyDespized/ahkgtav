@@ -184,6 +184,7 @@ IfExist, %config%
     IniDelete, %config%, Yourself, rolepick
     IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
     IniDelete, %config%, Normal, val2hkmsg
+    IniDelete, %config%, Towing, towmsg1
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
