@@ -679,7 +679,7 @@ Return
 #if (rolepick = "LEO")
 
     ; This will play the sound file when enabling lights
-    e:: ; E in-game
+    F5:: ; E in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
@@ -690,7 +690,7 @@ Return
         Return
     }
     ; This will play the sound file when enabling siren
-    g:: ; G in-game
+    F6:: ; G in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
