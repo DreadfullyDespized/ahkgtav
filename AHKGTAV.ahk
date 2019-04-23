@@ -677,8 +677,32 @@ Return
 
 ; ============================================ LEO Stuff ============================================
 #if (rolepick = "LEO")
+
+    ; This will play the sound file when enabling lights
+    e:: ; E in-game
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
+        Send e
+        Return
+    } else {
+        Send e
+        Return
+    }
+    ; This will play the sound file when enabling siren
+    g:: ; G in-game
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
+        Send g
+        Return
+    } else {
+        Send g
+        Return
+    }
+
     ; This will lay the spikes or remove the spikes based on variable.
-    ;  ^.:: ; Control + . in-game
+    ; ^.:: ; Control + . in-game
     sphk:
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
