@@ -15,7 +15,6 @@ Date: 20190516 22:32
     Changes:
 
     + F7 assigned to do /engine on to fix cruise control
-    + LEO Testing audio sounds for emergency lighting/buttons
     ! TOW towad changed to tadv for towing advertisement
     ! Settings for first window didn't bring over to send window
     
