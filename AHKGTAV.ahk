@@ -2,14 +2,14 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKGTAV - SOE Autohotkey doohicky
- * @Script Version   : 10.0.0
+ * @Script Version   : 11.0.0
  * @Homepage         : https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/
  * @Creation Date    : 20180718
- * @Modification Date: 20190318
+ * @Modification Date: 20190516
  * @Description      : Simple autohotkey script to be used with GTAV FiveM SoE.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
- * @License          : Copyright ©2019-2019 DreadfullyDespized <GPLv3>
+ * @License          : Copyright ©2019-2020 DreadfullyDespized <GPLv3>
  *                     This program is free software: you can redistribute it and/or modify it under the terms of
  *                     the GNU General Public License as published by the Free Software Foundation,
  *                     either version 3 of  the  License,  or (at your option) any later version.
@@ -46,18 +46,18 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKGTAV"
-                    ,version        : "10.0.0"
+                    ,version        : "11.0.0"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
                     ,Homepage       : "https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/"
                     ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,crtdate        : "20180718"
-                    ,moddate        : "20190318"
+                    ,moddate        : "20190516"
                     ,conf           : "GTAV-Config.ini"}
 ; }
 
-; update(10.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
+; update(11.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
 
 /*
 This has been disabled for the time being until I get more time to look at it and work on it.
@@ -215,6 +215,7 @@ IniRead, 911respondhk, %config%, Keys, 911respondhk, ^9
 IniRead, towcallhk, %config%, Keys, towcallhk, ^k
 IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
 IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
+IniRead, enginehk, %config%, Keys, enginehk, F7
 IniRead, valet1hk, %config%, Keys, valet1hk, +F11
 IniRead, valet2hk, %config%, Keys, valet2hk, F11
 IniRead, phrechk, %config%, Keys, phrechk, F6
@@ -309,6 +310,7 @@ General Commands:
 tgun - use firearm
 tscrap - rp the scrap to truck
 F1 - enables/disables seatbelt
+F7 - /engine on
 Shift+F11 - valet phone check
 F11 - Pull vehicle out from valet
 F6 - Pull out phone to record
@@ -620,6 +622,7 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text, r2 w150, valet2hkmsg:
     Gui, 2:Add, Text, w150, phrechkmsg:
     Gui, 2:Add, Text, w150 y200 x20, Seatbelt Hotkey:
+    Gui, 2:Add, Text,, Engine On Hotkey:
     Gui, 2:Add, Text,, Valet App Hotkey:
     Gui, 2:Add, Text,, Valet Call Hotkey:
     Gui, 2:Add, Text,, Phone Record Hotkey:
@@ -631,6 +634,8 @@ SetScrollLockState, AlwaysOff
     phrechkmsg_TT := "Action message to be used when pulling out phone to record"
     Gui, 2:Add, Hotkey, w150 x150 y195 vseatbelthk, %seatbelthk%
     seatbelthk_TT := "Hotkey to be used to put on or take off seatbelt"
+    Gui, 2:Add, Hotkey, w150 venginehk, %enginehk%
+    enginehk_TT := "Hotkey to be used to force the /engine on when cruise doesn't work"
     Gui, 2:Add, Hotkey, w150 vvalet1hk, %valet1hk%
     valet1hk_TT := "Hotkey to use your phone valet app"
     Gui, 2:Add, Hotkey, w150 vvalet2hk, %valet2hk%
@@ -1588,6 +1593,22 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
 }
 Return
 
+; This will run the /engine on command to fix cruise control
+; F7:: ; Press F7 in-game
+enhk:
+if (WinActive("FiveM") || WinActive("Untitled-Notepad") || (testmode = 1)) {
+    clipaboard = %clipboard%
+    Sleep, %delay%
+    Send, {t down}
+    Sleep, %delay%
+    Send, {t up}
+    Sleep, %delay%
+    clipboard = /engine on
+    Send, {Rctrl down}v{Rctrl up}{enter}
+    Sleep, %delay%
+    clipboard = %clipaboard%
+}
+
 ; This is the ability to check your valet on the phone
 ; +F11:: ; Press Shift+F11 in-game
 val1hk:
@@ -1746,6 +1767,7 @@ hotkeys:
     hotkey, %towcallhk%, tchk, On
     hotkey, %towrespondhk%, trhk, On
     hotkey, %seatbelthk%, sbhk, On
+    hotkey, %enginehk%, enhk, On
     hotkey, %valet1hk%, val1hk, On
     hotkey, %valet2hk%, val2hk, On
     hotkey, %phrechk%, phrhk, On
@@ -1761,6 +1783,7 @@ fuckakey:
     hotkey, %towcallhk%, tchk, Off
     hotkey, %towrespondhk%, trhk, Off
     hotkey, %seatbelthk%, sbhk, Off
+    hotkey, %enginehk%, enhk, Off
     hotkey, %valet1hk%, val1hk, Off
     hotkey, %valet2hk%, val2hk, Off
     hotkey, %phrechk%, phrhk, Off
@@ -1797,6 +1820,7 @@ UpdateConfig:
     IniWrite, %towcallhk%, %config%, Keys, towcallhk
     IniWrite, %towrespondhk%, %config%, Keys, towrespondhk
     IniWrite, %seatbelthk%, %config%, Keys, seatbelthk
+    IniWrite, %enginehk%, %config%, Keys, enginehk
     IniWrite, %valet1hk%, %config%, Keys, valet1hk
     IniWrite, %valet2hk%, %config%, Keys, valet2hk
     IniWrite, %phrechk%, %config%, Keys, phrechk
@@ -1861,6 +1885,7 @@ UpdateConfig:
     IniRead, towcallhk, %config%, Keys, towcallhk, ^k
     IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
     IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
+    IniRead, enginehk, %config%, Keys, enginehk, F7
     IniRead, valet1hk, %config%, Keys, valet1hk, +F11
     IniRead, valet2hk, %config%, Keys, valet2hk, F11
     IniRead, phrechk, %config%, Keys, phrechk, F6
