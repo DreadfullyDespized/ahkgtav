@@ -10,6 +10,19 @@ Versioning:
     ^ Update
 ==================
 
+AHKGTAV V11
+Date: 20190516 21:51
+    Changes:
+
+    + F7 assigned to do /engine on to fix cruise control
+    + LEO Testing audio sounds for emergency lighting/buttons
+    ! TOW towad changed to tadv for towing advertisement
+    
+    Todo:
+    + Update check and auto updater
+
+
+
 AHKGTAV V10
 Date: 20190318 17:11
     Changes:
