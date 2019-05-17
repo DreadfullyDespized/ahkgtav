@@ -234,7 +234,7 @@ IniRead, searchmsg, %config%, Police, searchmsg, %ds% Searches the Subject compl
 IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0.
 IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
 ; Towing related section
-IniRead, towad, %config%, Towing, towad, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
+IniRead, tadv, %config%, Towing, tadv, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
 IniRead, tsend, %config%, Towing, tsend, %rs% [^3TOW%myid%^0] Send it!
 IniRead, ttowmsg1, %config%, Towing, ttowmsg1, %ds% attaches the winch cable to the front of the vehicle
 IniRead, ttowmsg2, %config%, Towing, ttowmsg2, %ds% attaches the winch cable to the rear of the vehicle
@@ -291,7 +291,7 @@ Control+J - tell tow whats going on
 
 Tow Commands:
 -----------------------
-towad - display your towing advertisement
+tadv - display your towing advertisement
 tstart - start tow shift/company
 tsend - initial send it
 tonway - showing 76 to them
@@ -557,7 +557,7 @@ SetScrollLockState, AlwaysOff
     } else {
         Gui, 2:Tab, 2
     }
-    Gui, 2:Add, Text,r3 w100, towad:
+    Gui, 2:Add, Text,r3 w100, tadv:
     Gui, 2:Add, Text,r1, tsend:
     Gui, 2:Add, Text,r2, ttowmsg1:
     Gui, 2:Add, Text,r2, ttowmsg2:
@@ -565,8 +565,8 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,r2, tsecure2:
     Gui, 2:Add, Text,r2, treleasemsg1:
     Gui, 2:Add, Text,r2, treleasemsg2:
-    Gui, 2:Add, Edit, r3 vtowad w500 x100 y30, %towad%
-    towad_TT := "Advertisement you use for your tow company"
+    Gui, 2:Add, Edit, r3 vtadv w500 x100 y30, %tadv%
+    tadv_TT := "Advertisement you use for your tow company"
     Gui, 2:Add, Edit, r1 vtsend w500, %tsend%
     tsend_TT := "Typical send it tow response to call for tow"
     Gui, 2:Add, Edit, r2 vttowmsg1 w500, %ttowmsg1%
@@ -1315,11 +1315,11 @@ Return
     }
     Return
 
-    :*:towad:: ; Type towad in-game
+    :*:tadv:: ; Type tadv in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
-        Clipboard = %towad%
+        Clipboard = %tadv%
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
@@ -1839,7 +1839,7 @@ UpdateConfig:
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
     IniWrite, %towmsg1%, %config%, Police, towmsg1
     ; Towing related section
-    IniWrite, %towad%, %config%, Towing, towad
+    IniWrite, %tadv%, %config%, Towing, tadv
     IniWrite, %tsend%, %config%, Towing, tsend
     IniWrite, %ttowmsg1%, %config%, Towing, ttowmsg1
     IniWrite, %ttowmsg2%, %config%, Towing, ttowmsg2
@@ -1904,7 +1904,7 @@ UpdateConfig:
     IniRead, medicalmsg, %config%, Police, medicalmsg, /l Hello I am ^1Officer Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0.
     IniRead, towmsg1, %config%, Police, towmsg1, /r [^1A06^0] to [^3TOW^0]
     ; Towing related section
-    IniRead, towad, %config%, Towing, towad, /ad I work for [^3skinnydick^0] and we do cool tow stuff that makes tows happy 555-99999!!
+    IniRead, tadv, %config%, Towing, tadv, /ad I work for [^3skinnydick^0] and we do cool tow stuff that makes tows happy 555-99999!!
     IniRead, tsend, %config%, Towing, tsend, /r [^3TOW1^0] Send it
     IniRead, ttowmsg1, %config%, Towing, ttowmsg1, /do attaches the winch cable to the front of the vehicle
     IniRead, ttowmsg2, %config%, Towing, ttowmsg2, /do attaches the winch cable to the rear of the vehicle
