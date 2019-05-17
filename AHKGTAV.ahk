@@ -701,7 +701,7 @@ Return
     F5:: ; E in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
-        SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
+        ; SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
         Send e
         Return
     } else {
@@ -712,7 +712,7 @@ Return
     F6:: ; G in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
-        SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
+        ; SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
         Send g
         Return
     } else {
