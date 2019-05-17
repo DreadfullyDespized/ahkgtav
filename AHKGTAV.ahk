@@ -471,6 +471,20 @@ SetScrollLockState, AlwaysOff
     IniWrite, %ms%, %config%, Server, ms
     IniWrite, %as%, %config%, Server, as
     IniWrite, %los%, %config%, Server, los
+    ; Police related section
+    medicalmsg = %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0.
+    towmsg1 = %rs% [^1%callsign%^0] to [^3TOW^0]
+    IniWrite, %medicalmsg%, %config%, Police, medicalmsg
+    IniWrite, %towmsg1%, %config%, Police, towmsg1
+    IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the Officer in^0.
+    IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
+    ; Towing related section
+    tadv = %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
+    tsend = %rs% [^3TOW%myid%^0] Send it!
+    IniWrite, %tadv%, %config%, Towing, tadv
+    IniWrite, %tsend%, %config%, Towing, tsend
+    IniRead, tadv, %config%, Towing, tadv, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
+    IniRead, tsend, %config%, Towing, tsend, %rs% [^3TOW%myid%^0] Send it!
     ; Return
 
     ; ============================================ CUSTOM MSGS GUI ============================================
@@ -1928,11 +1942,11 @@ Return
 Exe_File=AHKGTAV.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=9.0.0
+File_Version=11.0.0
 Internal_Name=AHKGTAV
 Legal_Copyright=GNU General Public License 3.0
 Original_Filename=AHKGTAV.exe
 Product_Name=AHKGTAV
-Product_Version=9.0.0
+Product_Version=11.0.0
 * * * Compile_AHK SETTINGS END * * *
 */
