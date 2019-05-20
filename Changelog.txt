@@ -11,12 +11,13 @@ Versioning:
 ==================
 
 AHKGTAV V11
-Date: 20190516 22:32
+Date: 20190519 19:44
     Changes:
 
     + F7 assigned to do /engine on to fix cruise control
     ! TOW towad changed to tadv for towing advertisement
     ! Settings for first window didn't bring over to send window
+    ! F7 should no longer initiate vallet and /engine on
     
     Todo:
     + Update check and auto updater

@@ -1610,7 +1610,7 @@ Return
 ; This will run the /engine on command to fix cruise control
 ; F7:: ; Press F7 in-game
 enhk:
-if (WinActive("FiveM") || WinActive("Untitled-Notepad") || (testmode = 1)) {
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
     clipaboard = %clipboard%
     Sleep, %delay%
     Send, {t down}
@@ -1618,10 +1618,12 @@ if (WinActive("FiveM") || WinActive("Untitled-Notepad") || (testmode = 1)) {
     Send, {t up}
     Sleep, %delay%
     clipboard = /engine on
+    ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
     Sleep, %delay%
     clipboard = %clipaboard%
 }
+Return
 
 ; This is the ability to check your valet on the phone
 ; +F11:: ; Press Shift+F11 in-game
