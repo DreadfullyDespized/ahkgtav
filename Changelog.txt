@@ -10,6 +10,20 @@ Versioning:
     ^ Update
 ==================
 
+AHKGTAV V12
+Date: 20190605 19:26
+    Changes:
+
+    + Seatbelt audio for click and unclick (must download and place in same dir)
+    ! /spikes not firing off first time
+    ! Front and Back towing more stable
+    ! spike strip memory improved
+    ^ Optimized the if statements for on/off variables
+    
+    Todo:
+    + Update check and auto updater
+
+
 AHKGTAV V11
 Date: 20190519 19:44
     Changes:

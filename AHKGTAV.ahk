@@ -2,10 +2,10 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKGTAV - SOE Autohotkey doohicky
- * @Script Version   : 11.0.0
+ * @Script Version   : 12.0.0
  * @Homepage         : https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/
  * @Creation Date    : 20180718
- * @Modification Date: 20190516
+ * @Modification Date: 20190605
  * @Description      : Simple autohotkey script to be used with GTAV FiveM SoE.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
@@ -46,18 +46,18 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKGTAV"
-                    ,version        : "11.0.0"
+                    ,version        : "12.0.0"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
                     ,Homepage       : "https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/"
                     ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,crtdate        : "20180718"
-                    ,moddate        : "20190516"
+                    ,moddate        : "20190605"
                     ,conf           : "GTAV-Config.ini"}
 ; }
 
-; update(11.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
+; update(12.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
 
 /*
 This has been disabled for the time being until I get more time to look at it and work on it.
@@ -324,6 +324,10 @@ This is the section to do so. Click on the box and then
 hit the keys together to configure the hotkey.
 )
 
+spikes = 0
+towtype = f
+seatbelt = 0
+
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
 ; Removes all of the standard options from the system tray
 Menu, Tray, NoStandard
@@ -364,12 +368,6 @@ Return
 ; Both numbers should match to work with your ping to the server.
 ; Take your ping to the server and then times it by two to equal the delay numbers
 SetKeyDelay, 0, 100
-
-; Configure Variables to be used
-; Do not touch or change this section
-spikes = 0
-towtype = f
-stopped = 0
 
 ; Default state of lock keys
 SetNumLockState, AlwaysOn
@@ -700,23 +698,49 @@ Return
     ; This will play the sound file when enabling lights
     F5:: ; E in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
-        Send e
+        SoundPlay, SSP3000_stages.wav
+        Sleep, 120
+        Send, {e down}
+        Sleep, 120
+        Send, {e up}
         Return
     } else {
-        Send e
+        Sleep, 120
+        Send, {e down}
+        Sleep, 120
+        Send, {e up}
         Return
     }
     ; This will play the sound file when enabling siren
     F6:: ; G in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        SoundPlay, D:\Documents\Docs\Streaming\Audios\EMS\SSP3000_stages.wav
-        Send g
+        SoundPlay, SSP3000_stages.wav
+        Sleep, 120
+        Send, {g down}
+        Sleep, 120
+        Send, {g up}
         Return
     } else {
-        Send g
+        Sleep, 120
+        Send, {g down}
+        Sleep, 120
+        Send, {g up}
+        Return
+    }
+    ; This will play the sound file when enabling siren change
+    F7:: ; Y in-game
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+        SoundPlay, SSP3000_stages.wav
+        Sleep, 120
+        Send, {y down}
+        Sleep, 120
+        Send, {y up}
+        Return
+    } else {
+        Sleep, 120
+        Send, {y down}
+        Sleep, 120
+        Send, {y up}
         Return
     }
 
@@ -726,25 +750,20 @@ Return
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
         if (spikes = 0) {
-            Send, {t down}
-            Sleep, %delay%
-            Send, {t up}
-            Sleep, %delay%
             Clipboard = /spikes
             ClipWait
-            Send, {RCtrl down}v{RCtrl up}{enter}
             spikes = 1
         } else {
-            Send, {t down}
-            Sleep, %delay%
-            Send, {t up}
-            Sleep, %delay%
             Clipboard = /rspikes
             ClipWait
-            Send, {Rctrl down}v{Rctrl up}{enter}
             spikes = 0
         }
+        Send, {RCtrl down}v{RCtrl up}{enter}
         Sleep, %delay%
         clipboard = %clipaboard%
     }
@@ -1602,6 +1621,13 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
     clipboard = /seatbelt
     ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
+    if (seatbelt = 0) {
+        SoundPlay, GTAV-Seatbelt.mp3
+        seatbelt = 1
+    } else {
+        SoundPlay, GTAV-Seatbelt2.mp3
+        seatbelt = 0
+    }
     Sleep, %delay%
     clipboard = %clipaboard%
 }
@@ -1944,11 +1970,11 @@ Return
 Exe_File=AHKGTAV.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=11.0.0
+File_Version=12.0.0
 Internal_Name=AHKGTAV
 Legal_Copyright=GNU General Public License 3.0
 Original_Filename=AHKGTAV.exe
 Product_Name=AHKGTAV
-Product_Version=11.0.0
+Product_Version=12.0.0
 * * * Compile_AHK SETTINGS END * * *
 */
