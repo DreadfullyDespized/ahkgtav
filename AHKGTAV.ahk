@@ -1235,7 +1235,7 @@ Return
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
-        Clipboard = /e notepad2
+        Clipboard = /e notepad
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
