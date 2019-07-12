@@ -21,6 +21,12 @@
  * -----------------------------------------------------------------------------------------------
  */
 
+IF NOT A_IsAdmin
+{
+   Run *RunAs "%A_ScriptFullPath%"
+   ExitApp
+}
+
 if (a_ahkversion < 1.1){
     Msgbox, 0x10
         , % "Error"
