@@ -705,15 +705,15 @@ Return
     F5:: ; E in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         SoundPlay, SSP3000_stages.wav
-        Sleep, 120
+        Sleep, %delay%
         Send, {e down}
-        Sleep, 120
+        Sleep, %delay%
         Send, {e up}
         Return
     } else {
-        Sleep, 120
+        Sleep, %delay%
         Send, {e down}
-        Sleep, 120
+        Sleep, %delay%
         Send, {e up}
         Return
     }
@@ -721,15 +721,15 @@ Return
     F6:: ; G in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         SoundPlay, SSP3000_stages.wav
-        Sleep, 120
+        Sleep, %delay%
         Send, {g down}
-        Sleep, 120
+        Sleep, %delay%
         Send, {g up}
         Return
     } else {
-        Sleep, 120
+        Sleep, %delay%
         Send, {g down}
-        Sleep, 120
+        Sleep, %delay%
         Send, {g up}
         Return
     }
@@ -737,15 +737,15 @@ Return
     F7:: ; Y in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         SoundPlay, SSP3000_stages.wav
-        Sleep, 120
+        Sleep, %delay%
         Send, {y down}
-        Sleep, 120
+        Sleep, %delay%
         Send, {y up}
         Return
     } else {
-        Sleep, 120
+        Sleep, %delay%
         Send, {y down}
-        Sleep, 120
+        Sleep, %delay%
         Send, {y up}
         Return
     }
