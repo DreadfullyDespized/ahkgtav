@@ -288,7 +288,7 @@ tvin = notes the vin
 ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
 
 Control+. - spikes/rspikes
-Control+/ - vehicle image search (uses google)
+Control+/ - vehicle image search (uses google images in browser)
 Control+- - runs plate along with saving plate on clipboard
 Control+= - cpic name along with saving name on clipboard
 Control+9 - 911 units on the way
