@@ -195,7 +195,7 @@ IfExist, %config%
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
 IniRead, callsign, %config%, Yourself, callsign, P06
-IniRead, myid, %config%, Yourself, myid, 1
+IniRead, myid, %config%, Yourself, myid, 31
 IniRead, name, %config%, Yourself, name, Dread
 IniRead, title, %config%, Yourself, title, Deputy
 IniRead, department, %config%, Yourself, department, LSSD
@@ -1020,14 +1020,14 @@ UpdateConfig:
 ; ============================================ READ INI SECTION ============================================
     ; Re-reads all of the configuration information to validate
     IniRead, rolepick, %config%, Yourself, role, LEO
-    IniRead, callsign, %config%, Yourself, callsign, A06
-    IniRead, myid, %config%, Yourself, myid, 1
+    IniRead, callsign, %config%, Yourself, callsign, P06
+    IniRead, myid, %config%, Yourself, myid, 31
     IniRead, name, %config%, Yourself, name, Dread
-    IniRead, title, %config%, Yourself, title, Officer
-    IniRead, department, %config%, Yourself, department, LSPD
-    IniRead, phone, %config%, Yourself, phone, 38915
+    IniRead, title, %config%, Yourself, title, Deputy
+    IniRead, department, %config%, Yourself, department, LSSD
+    IniRead, phone, %config%, Yourself, phone, 00031
     ; Client communication and test mode
-    IniRead, delay, %config%, Yourself, delay, 150
+    IniRead, delay, %config%, Yourself, delay, 110
     IniRead, testmode, %config%, Yourself, testmode, 0
     ; Server related section
     IniRead, rs, %config%, Server, rs, /r
@@ -1047,10 +1047,10 @@ UpdateConfig:
     IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, /do Logs into the MWS computer.
     IniRead, friskmsg, %config%, Police, friskmsg, /do Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
     IniRead, searchmsg, %config%, Police, searchmsg, /do Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
-    IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1Officer Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
     ; Help related section
     IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match aduio devices to the one you are using.
-    IniRead, paystatemsg, %config%, Help, paystatemsg, To be able to see your current state debt type "/paystate" to pay off state debt "/paystate amount".
+    IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
 Return
 
 /*
