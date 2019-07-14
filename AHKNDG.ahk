@@ -344,12 +344,13 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Text,, Title:
     Gui, 1:Add, Text,, Department:
     Gui, 1:Add, Text,, ms Delay:
+    Gui, 1:Add, Text,, The following should only be modified if playing on a different server.
     Gui, 1:Add, Text,, Radio:
     Gui, 1:Add, Text,, Third Party Action:
     Gui, 1:Add, Text,, First Party Action:
     Gui, 1:Add, Text,, Advertisement:
     Gui, 1:Add, Text, x210 y34, Phone Number:
-    Gui, 1:Add, DropDownList, x100 y30 w80 vrolepick, |LEO|TOW|CIV|SAFR|GEORGE
+    Gui, 1:Add, DropDownList, x100 y30 w80 vrolepick, |LEO|TOW|CIV|SAFR
     rolepick_TT := "Select the character role that you will be playing as"
     Gui, 1:Add, Edit, w80 vcallsign, %callsign%
     callsign_TT := "Callsign for your LEO/EMS character"
@@ -363,7 +364,7 @@ SetScrollLockState, AlwaysOff
     department_TT := "Department that your character works for"
     Gui, 1:Add, Edit, w80 vdelay, %delay%
     delay_TT := "milisecond delay.  Take your ping to the server x2"
-    Gui, 1:Add, Edit, x150 y272 w80 vrs, %rs%
+    Gui, 1:Add, Edit, x150 y245 w80 vrs, %rs%
     Gui, 1:Add, Edit, w80 vds, %ds%
     Gui, 1:Add, Edit, w80 vms, %ms%
     Gui, 1:Add, Edit, w80 vas, %as%
