@@ -188,13 +188,13 @@ IfExist, %config%
 {
     ; Cleanup some of the old ini configuration portions
     IniDelete, %config%, Yourself, rolepick
-    IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|
+    IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR
     IniDelete, %config%, Normal, val2hkmsg
     IniDelete, %config%, Towing, towmsg1
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
-IniRead, callsign, %config%, Yourself, callsign, P08
+IniRead, callsign, %config%, Yourself, callsign, P06
 IniRead, myid, %config%, Yourself, myid, 1
 IniRead, name, %config%, Yourself, name, Dread
 IniRead, title, %config%, Yourself, title, Deputy
@@ -224,6 +224,7 @@ IniRead, searchmsg, %config%, Police, searchmsg, %ds% Searches the Subject compl
 IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
 ; Help related section
 IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
+IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
 ; ============================================ HELP TEXT FORMAT ============================================
 ; Main portion of the help text that is displayed
 helptext = 
@@ -250,7 +251,7 @@ tplate - notes the plate
 tvin = notes the vin
 
 Control+. - spikes
-Control+/ - vehicle image search (uses google)
+Control+/ - vehicle image search (uses google images in browser)
 Control+- - runs plate along with saving plate on clipboard
 Control+= - cpic name along with saving name on clipboard
 
@@ -415,7 +416,7 @@ SetScrollLockState, AlwaysOff
         Gui, 2:Add, tab3,, LEO|Help|General
     }
     Gui, 2:Add, Text,, %helptext2%
-    Gui, 2:Add, Text,r2, tdutystartmsg1:
+    Gui, 2:Add, Text, w100 r2, tdutystartmsg1:
     Gui, 2:Add, Text,r2, tdutystartmsg2:
     Gui, 2:Add, Text,, tdutystartmsg3:
     Gui, 2:Add, Text,r2, tfriskmsg:
@@ -425,7 +426,7 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,, Vehicle Image Search:
     Gui, 2:Add, Text,, RunPlate:
     Gui, 2:Add, Text,, CPIC:
-    Gui, 2:Add, Edit, r2 vdutystartmsg1 w500, %dutystartmsg1%
+    Gui, 2:Add, Edit, r2 vdutystartmsg1 w500 x115 y80, %dutystartmsg1%
     dutystartmsg1_TT := "Bodycam duty start message"
     Gui, 2:Add, Edit, r2 vdutystartmsg2 w500, %dutystartmsg2%
     dutystartmsg2_TT := "Dashcam duty start message"
@@ -437,7 +438,7 @@ SetScrollLockState, AlwaysOff
     searchmsg_TT := "Message for when searching a subject completely"
     Gui, 2:Add, Edit, r4 vmedicalmsg w500, %medicalmsg%
     medicalmsg_TT := "OOC message that you would tell someone to perform their own medical process"
-    Gui, 2:Add, Hotkey, w150 x150 y470 vspikeshk, %spikeshk%
+    Gui, 2:Add, Hotkey, w150 x150 y338 vspikeshk, %spikeshk%
     spikeshk_TT := "Hotkey to be used to deploy/remove spike strip"
     Gui, 2:Add, Hotkey, w150 vvehimgsearchhk, %vehimgsearchhk%
     vehimgsearchhk_TT := "Hotkey to search for a vehicle's image on google"
@@ -450,7 +451,7 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,r2, tpaystatemsg:
     Gui, 2:Add, Edit, r3 vmicmsg w500 x100 y30, %micmsg%
     micmsg_TT := "Message used to explain how to use/configure microphone"
-    Gui, 2:Add, Edit, r2 vpaystatemsg w500, %paystatemsg%
+    Gui, 2:Add, Edit, r4 vpaystatemsg w500, %paystatemsg%
     paystatemsg_TT := "Message used to explain how to handle state debt"
     Gui, 2:Tab, General,, Exact
     Gui, 2:Add, Text, w150 y200 x20, Seatbelt Hotkey:
@@ -458,7 +459,7 @@ SetScrollLockState, AlwaysOff
     seatbelthk_TT := "Hotkey to be used to put on or take off seatbelt"
     Gui, 2:Tab
     Gui, 2:Add, Button, default w80 xm, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
-    Gui, 2:Show,, Main responses for the system - builds from original variables]
+    Gui, 2:Show,, Main responses for the system - builds from original variables
     OnMessage(0x200, "WM_MOUSEMOVE")
     Return
 
@@ -660,11 +661,23 @@ Return
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
-        Send, {F9 down}
+        Send, {t down}
         Sleep, %delay%
-        Send, {F9 up}
+        Send, {t up}
         Sleep, %delay%
-        clipboard = %clipaboard%
+        Clipboard = /fuelhud
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /gps
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Clipboard = %clipaboard%
     }
     Return
 
