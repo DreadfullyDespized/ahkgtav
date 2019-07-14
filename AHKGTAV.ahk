@@ -1949,7 +1949,7 @@ UpdateConfig:
     IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, /do Logs into the MWS computer.
     IniRead, friskmsg, %config%, Police, friskmsg, /do Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
     IniRead, searchmsg, %config%, Police, searchmsg, /do Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
-    IniRead, medicalmsg, %config%, Police, medicalmsg, /l Hello I am ^1Officer Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    IniRead, medicalmsg, %config%, Police, medicalmsg, /l Hello I am ^1%title% Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
     IniRead, towmsg1, %config%, Police, towmsg1, /r [^1A06^0] to [^3TOW^0]
     ; Towing related section
     IniRead, tadv, %config%, Towing, tadv, /ad I work for [^3skinnydick^0] and we do cool tow stuff that makes tows happy 555-99999!!
