@@ -191,6 +191,7 @@ IfExist, %config%
     IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR
     IniDelete, %config%, Normal, val2hkmsg
     IniDelete, %config%, Towing, towmsg1
+    IniDelete, %config%, Keys, cpichk
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
@@ -212,7 +213,7 @@ IniRead, as, %config%, Server, as, /ad
 IniRead, spikeshk, %config%, Keys, spikeshk, ^.
 IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
 IniRead, runplatehk, %config%, Keys, runplatehk, ^-
-IniRead, cpichk, %config%, Keys, cpichk, ^=
+IniRead, ncichk, %config%, Keys, ncichk, ^=
 IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
 ; Messages that correspond with the hotkeys
 ; Police related section
@@ -229,7 +230,7 @@ IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of you
 ; Main portion of the help text that is displayed
 helptext = 
 (
-This script is used to well. Help you with some of the repetitive tasks within GTAV RP on SoE.
+This script is used to well. Help you with some of the repetitive tasks within GTAV RP on NDG.
 With the following commands available to you.  Added the ability to change syntax as well.
 While running this script the following "side effects...features?"
 1. NumLock Key will always be on.
@@ -253,7 +254,7 @@ tvin = notes the vin
 Control+. - spikes
 Control+/ - vehicle image search (uses google images in browser)
 Control+- - runs plate along with saving plate on clipboard
-Control+= - cpic name along with saving name on clipboard
+Control+= - ncic name along with saving name on clipboard
 
 Help Commands:
 --------------------
@@ -425,7 +426,7 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,, Spikes:
     Gui, 2:Add, Text,, Vehicle Image Search:
     Gui, 2:Add, Text,, RunPlate:
-    Gui, 2:Add, Text,, CPIC:
+    Gui, 2:Add, Text,, ncic:
     Gui, 2:Add, Edit, r2 vdutystartmsg1 w500 x115 y80, %dutystartmsg1%
     dutystartmsg1_TT := "Bodycam duty start message"
     Gui, 2:Add, Edit, r2 vdutystartmsg2 w500, %dutystartmsg2%
@@ -444,8 +445,8 @@ SetScrollLockState, AlwaysOff
     vehimgsearchhk_TT := "Hotkey to search for a vehicle's image on google"
     Gui, 2:Add, Hotkey, w150 vrunplatehk, %runplatehk%
     runplatehk_TT := "Hotkey to run a plate and keep it on clipboard"
-    Gui, 2:Add, Hotkey, w150 vcpichk, %cpichk%
-    cpichk_TT := "Hotkey to cpic a name and keep name on clipboard"
+    Gui, 2:Add, Hotkey, w150 vncichk, %ncichk%
+    ncichk_TT := "Hotkey to ncic a name and keep name on clipboard"
     Gui, 2:Tab, Help,, Exact
     Gui, 2:Add, Text,r3 w100, tmicmsg:
     Gui, 2:Add, Text,r2, tpaystatemsg:
@@ -586,46 +587,46 @@ Return
     }
     Return
 
-    ; Cpic to be ran and save the name you ran, also caches the name into clipboard
+    ; ncic to be ran and save the name you ran, also caches the name into clipboard
     ; ^=:: ; Control + =
     cphk:
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        InputBox, cpicname, CpicName, Enter the name you wish to lookup. first/last.
-        if (cpicname = "") {
+        InputBox, ncicname, ncicName, Enter the name you wish to lookup. first/last.
+        if (ncicname = "") {
                 ; MsgBox, No name was entered, Try again.
         } else {
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /cpic %cpicname%
+            Clipboard = /ncic %ncicname%
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
-            cpicname := StrReplace(cpicname, "/", A_Space)
-            Clipboard = %cpicname%
+            ncicname := StrReplace(ncicname, "/", A_Space)
+            Clipboard = %ncicname%
         }
     }
     Return
 
     ; This might actually work if you want to save the text that was typed
-    ; Cpic version 2 will actually be used to pull up the users information from text entry
+    ; ncic version 2 will actually be used to pull up the users information from text entry
     ^\:: ; Control + \
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
         Send, {t down}
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
-        clipboard = /cpic
+        clipboard = /ncic
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{space}
-        Input, cpicname, V T12 L40 C, {enter}.{esc}{tab},,
-        cpicname := StrReplace(cpicname, "/", A_Space)
-        if (cpicname = "") {
+        Input, ncicname, V T12 L40 C, {enter}.{esc}{tab},,
+        ncicname := StrReplace(ncicname, "/", A_Space)
+        if (ncicname = "") {
             msgbox, No name was entered, try again.
         } else {
             Sleep, %delay%
-            clipboard = %cpicname%
+            clipboard = %ncicname%
         }
     }
     return
@@ -971,7 +972,7 @@ hotkeys:
     hotkey, %spikeshk%, sphk, On
     hotkey, %vehimgsearchhk%, vehimghk, On
     hotkey, %runplatehk%, rphk, On
-    hotkey, %cpichk%, cphk, On
+    hotkey, %ncichk%, cphk, On
     hotkey, %seatbelthk%, sbhk, On
 Return
 
@@ -979,7 +980,7 @@ fuckakey:
     hotkey, %spikeshk%, sphk, Off
     hotkey, %vehimgsearchhk%, vehimghk, Off
     hotkey, %runplatehk%, rphk, Off
-    hotkey, %cpichk%, cphk, Off
+    hotkey, %ncichk%, cphk, Off
     hotkey, %seatbelthk%, sbhk, Off
 Return
 
@@ -1004,7 +1005,7 @@ UpdateConfig:
     IniWrite, %spikeshk%, %config%, Keys, spikeshk
     IniWrite, %vehimgsearchhk%, %config%, Keys, vehimgsearchhk
     IniWrite, %runplatehk%, %config%, Keys, runplatehk
-    IniWrite, %cpichk%, %config%, Keys, cpichk
+    IniWrite, %ncichk%, %config%, Keys, ncichk
     IniWrite, %seatbelthk%, %config%, Keys, seatbelthk
     ; Messages that correspond with the hotkeys
     ; Police related section
@@ -1038,7 +1039,7 @@ UpdateConfig:
     IniRead, spikeshk, %config%, Keys, spikeshk, ^.
     IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
     IniRead, runplatehk, %config%, Keys, runplatehk, ^-
-    IniRead, cpichk, %config%, Keys, cpichk, ^=
+    IniRead, ncichk, %config%, Keys, ncichk, ^=
     IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
     ; Messages that correspond with the hotkeys
     ; Police related section
