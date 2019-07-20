@@ -425,6 +425,15 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Font,, Consolas
     if (rolepick = "LEO") {
         Gui, 2:Add, tab3,, LEO|Help|General
+    } else if (rolepick = "TOW") {
+        Gui, 2:Add, tab3,, TOW|Help|General
+        Gui, 2:Tab, 12
+    } else if (rolepick = "SAFR") {
+        Gui, 2:Add, tab3,, SAFR|Help|General
+        Gui, 2:Tab, 12
+    } else if (rolepick = "CIV") {
+        Gui, 2:Add, tab3,, CIV|Help|General
+        Gui, 2:Tab, 12
     }
     Gui, 2:Add, Text,, %helptext2%
     Gui, 2:Add, Text, w100 r2, tdutystartmsg1:
