@@ -2,9 +2,9 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKNDG - NDG Autohotkey
- * @Script Version   : 1.0.0
+ * @Script Version   : 2.0.0
  * @Homepage         : 
- * @Creation Date    : 20190713
+ * @Creation Date    : 20190720
  * @Modification Date: 
  * @Description      : New Dawn Gaming little helper for LEO based functional stuff.
  *                     Really just built around to automating repetitive RP related tasks.
@@ -52,7 +52,7 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKNDG"
-                    ,version        : "1.0.0"
+                    ,version        : "2.0.0"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
                     ,Homepage       : ""
@@ -195,7 +195,7 @@ IfExist, %config%
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
-IniRead, callsign, %config%, Yourself, callsign, P06
+IniRead, callsign, %config%, Yourself, callsign, D6
 IniRead, myid, %config%, Yourself, myid, 31
 IniRead, name, %config%, Yourself, name, Dread
 IniRead, title, %config%, Yourself, title, Deputy
@@ -214,7 +214,10 @@ IniRead, spikeshk, %config%, Keys, spikeshk, ^.
 IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
 IniRead, runplatehk, %config%, Keys, runplatehk, ^-
 IniRead, ncichk, %config%, Keys, ncichk, ^=
+IniRead, towcallhk, %config%, Keys, towcallhk, ^k
+IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
 IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
+IniRead, enginehk, %config%, Keys, enginehk, F7
 ; Messages that correspond with the hotkeys
 ; Police related section
 IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the Bodycam to the chest and then turns it on and validates that it is recording and listening.
@@ -223,6 +226,7 @@ IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, %ds% Logs into the MWS 
 IniRead, friskmsg, %config%, Police, friskmsg, %ds% Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
 IniRead, searchmsg, %config%, Police, searchmsg, %ds% Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
 IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
 ; Help related section
 IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
 IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
@@ -250,11 +254,14 @@ tmedical - medical rp message
 timpound - place impound sticker
 tplate - notes the plate
 tvin = notes the vin
+ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
 
 Control+. - spikes
 Control+/ - vehicle image search (uses google images in browser)
 Control+- - runs plate along with saving plate on clipboard
 Control+= - ncic name along with saving name on clipboard
+Control+K - call for tow over radio
+Control+J - tell tow whats going on
 
 Help Commands:
 --------------------
@@ -405,8 +412,11 @@ SetScrollLockState, AlwaysOff
     IniWrite, %as%, %config%, Server, as
     ; Police related section
     medicalmsg = %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    towmsg1 = %rs% [^1%callsign%^0] to [^3TOW^0]
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
+    IniWrite, %towmsg1%, %config%, Police, towmsg1
     IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
     ; Return
 
     ; ============================================ CUSTOM MSGS GUI ============================================
@@ -420,33 +430,42 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text, w100 r2, tdutystartmsg1:
     Gui, 2:Add, Text,r2, tdutystartmsg2:
     Gui, 2:Add, Text,, tdutystartmsg3:
+    Gui, 2:Add, Text,, towmsg1:
     Gui, 2:Add, Text,r2, tfriskmsg:
     Gui, 2:Add, Text,r2, tsearchmsg:
     Gui, 2:Add, Text,r4, tmedicalmsg:
     Gui, 2:Add, Text,, Spikes:
     Gui, 2:Add, Text,, Vehicle Image Search:
     Gui, 2:Add, Text,, RunPlate:
-    Gui, 2:Add, Text,, ncic:
+    Gui, 2:Add, Text,, NCIC:
+    Gui, 2:Add, Text,, Tow Initiate:
+    Gui, 2:Add, Text,, Tow Information:
     Gui, 2:Add, Edit, r2 vdutystartmsg1 w500 x115 y80, %dutystartmsg1%
     dutystartmsg1_TT := "Bodycam duty start message"
     Gui, 2:Add, Edit, r2 vdutystartmsg2 w500, %dutystartmsg2%
     dutystartmsg2_TT := "Dashcam duty start message"
     Gui, 2:Add, Edit, vdutystartmsg3 w500, %dutystartmsg3%
     dutystartmsg3_TT := "Log into the MWS/CAD"
+    Gui, 2:Add, Edit, r1 vtowmsg1 w500, %towmsg1%
+    towmsg1_TT := "Initial call to tow on radio"
     Gui, 2:Add, Edit, r2 vfriskmsg w500, %friskmsg%
     friskmsg_TT := "Message for when frisking a subject"
     Gui, 2:Add, Edit, r2 vsearchmsg w500, %searchmsg%
     searchmsg_TT := "Message for when searching a subject completely"
     Gui, 2:Add, Edit, r4 vmedicalmsg w500, %medicalmsg%
     medicalmsg_TT := "OOC message that you would tell someone to perform their own medical process"
-    Gui, 2:Add, Hotkey, w150 x150 y338 vspikeshk, %spikeshk%
+    Gui, 2:Add, Hotkey, w150 x150 y363 vspikeshk, %spikeshk%
     spikeshk_TT := "Hotkey to be used to deploy/remove spike strip"
     Gui, 2:Add, Hotkey, w150 vvehimgsearchhk, %vehimgsearchhk%
     vehimgsearchhk_TT := "Hotkey to search for a vehicle's image on google"
     Gui, 2:Add, Hotkey, w150 vrunplatehk, %runplatehk%
     runplatehk_TT := "Hotkey to run a plate and keep it on clipboard"
     Gui, 2:Add, Hotkey, w150 vncichk, %ncichk%
-    ncichk_TT := "Hotkey to ncic a name and keep name on clipboard"
+    ncichk_TT := "Hotkey to NCIC a name and keep name on clipboard"
+    Gui, 2:Add, Hotkey, w150 vtowcallhk, %towcallhk%
+    towcallhk_TT := "Initiates the request for a tow truck"
+    Gui, 2:Add, Hotkey, w150 vtowrespondhk, %towrespondhk%
+    towrespondhk_TT := "Lets the tow truck know where you are and what you want them to tow"
     Gui, 2:Tab, Help,, Exact
     Gui, 2:Add, Text,r3 w100, tmicmsg:
     Gui, 2:Add, Text,r2, tpaystatemsg:
@@ -591,7 +610,7 @@ Return
     ; ^=:: ; Control + =
     cphk:
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        InputBox, ncicname, ncicName, Enter the name you wish to lookup. first/last.
+        InputBox, NCICName, NCICName, Enter the ID you wish to lookup.
         if (ncicname = "") {
                 ; MsgBox, No name was entered, Try again.
         } else {
@@ -623,7 +642,7 @@ Return
         Input, ncicname, V T12 L40 C, {enter}.{esc}{tab},,
         ncicname := StrReplace(ncicname, "/", A_Space)
         if (ncicname = "") {
-            msgbox, No name was entered, try again.
+            msgbox, No ID was entered, try again.
         } else {
             Sleep, %delay%
             clipboard = %ncicname%
@@ -679,6 +698,65 @@ Return
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
+    }
+    Return
+
+    ; Changes radio channel to channel 5 and then calls for tow on that channel.
+    ; ^k:: ; Control + k
+    tchk:
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /rc 5
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = %towmsg1%
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        clipboard = %clipaboard%
+    }
+    Return
+
+    ; Sending out the tow location to towid.
+    ; ^j:: ; Control + j
+    trhk:
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+        InputBox, towloc, Tow Location, Enter Towing Location
+        if (towloc = "") {
+            MsgBox, No tow Location was entered, Try again.
+        } else {
+            InputBox, towid, Tow ID, Enter Towing ID
+            if (towid = "") {
+                Msgbox, No Tow ID was entered.  Try again.
+            } else {
+                InputBox, veh, Vehicle, Description and color
+                if (veh = "") {
+                    MsgBox No Vehicle was entered. Try again.
+                } else {
+                    clipaboard = %clipboard%
+                    Sleep, %delay%
+                    Send, {t down}
+                    Sleep, %delay%
+                    Send, {t up}
+                    Sleep, %delay%
+                    Clipboard = %rs% [^1%callsign%^0] to [^3TOW%towid%^0] I have a %veh% for you at %towloc%
+                    ClipWait
+                    Send, {Rctrl down}v{Rctrl up}{enter}
+                    Sleep, %delay%
+                    clipboard = %clipaboard%
+                }
+            }
+        }
     }
     Return
 
@@ -830,7 +908,11 @@ Return
         if (titem = "medbag" || titem = "slimjim" || titem = "tintmeter" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag") {
             clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = /car t open
+            Send, {l Down}
+            Sleep, %delay%
+            Send, {l Up}
+            Sleep, %delay%
+            Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
@@ -849,24 +931,18 @@ Return
                 ClipWait
             }
             Send, {Rctrl down}v{Rctrl up}{enter}
-            If (titem = "medbag") {
-                Sleep, %delay%
-                Send, {t down}
-                Sleep, %delay%
-                Send, {t up}
-                Sleep, %delay%
-                Clipboard = /e %titem%
-                ClipWait
-                Send, {Rctrl down}v{Rctrl up}{enter}
-            }
             Sleep, %delay%
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /car t
+            Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Send, {l Down}
+            Sleep, %delay%
+            Send, {l Up}
             Sleep, %delay%
             clipboard = %clipaboard%
         } else {
@@ -1006,7 +1082,10 @@ UpdateConfig:
     IniWrite, %vehimgsearchhk%, %config%, Keys, vehimgsearchhk
     IniWrite, %runplatehk%, %config%, Keys, runplatehk
     IniWrite, %ncichk%, %config%, Keys, ncichk
+    IniWrite, %towcallhk%, %config%, Keys, towcallhk
+    IniWrite, %towrespondhk%, %config%, Keys, towrespondhk
     IniWrite, %seatbelthk%, %config%, Keys, seatbelthk
+    IniWrite, %enginehk%, %config%, Keys, enginehk
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniWrite, %dutystartmsg1%, %config%, Police, dutystartmsg1
@@ -1015,13 +1094,14 @@ UpdateConfig:
     IniWrite, %friskmsg%, %config%, Police, friskmsg
     IniWrite, %searchmsg%, %config%, Police, searchmsg
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
+    IniWrite, %towmsg1%, %config%, Police, towmsg1
     ; Help related section
     IniWrite, %micmsg%, %config%, Help, micmsg
     IniWrite, %paystatemsg%, %config%, Help, paystatemsg
 ; ============================================ READ INI SECTION ============================================
     ; Re-reads all of the configuration information to validate
     IniRead, rolepick, %config%, Yourself, role, LEO
-    IniRead, callsign, %config%, Yourself, callsign, P06
+    IniRead, callsign, %config%, Yourself, callsign, D6
     IniRead, myid, %config%, Yourself, myid, 31
     IniRead, name, %config%, Yourself, name, Dread
     IniRead, title, %config%, Yourself, title, Deputy
@@ -1040,7 +1120,10 @@ UpdateConfig:
     IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
     IniRead, runplatehk, %config%, Keys, runplatehk, ^-
     IniRead, ncichk, %config%, Keys, ncichk, ^=
+    IniRead, towcallhk, %config%, Keys, towcallhk, ^k
+    IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
     IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
+    IniRead, enginehk, %config%, Keys, enginehk, F7
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, /do secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
@@ -1048,7 +1131,8 @@ UpdateConfig:
     IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, /do Logs into the MWS computer.
     IniRead, friskmsg, %config%, Police, friskmsg, /do Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
     IniRead, searchmsg, %config%, Police, searchmsg, /do Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
-    IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% Dread LSPD^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% Dread %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
     ; Help related section
     IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match aduio devices to the one you are using.
     IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
@@ -1060,7 +1144,7 @@ Return
 Exe_File=AHKNDG.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=1.0.0
+File_Version=2.0.0
 Internal_Name=AHKNDG
 Legal_Copyright=GNU General Public License 3.0
 Original_Filename=AHKGNDG.exe
