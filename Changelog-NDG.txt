@@ -1,0 +1,38 @@
+Versioning:
+     Major.Minor.Fix-Build
+
+ Legend:
+==================
+    + Add
+    - Remove
+    ! Fix
+    * Change
+    ^ Update
+==================
+
+AHKNDG V2
+Date: 20190720 12:27
+    Changes:
+
+    ! Department variable errors
+    + LEO TOW radio callout with correct callsign
+    + LEO TOW radio location and vehicle description with data entry
+    ! Typos
+    ! Tool-tip locations
+    * NCIC now takes ID instead of name first/last
+    + LEO Trunk handler.  Along with duty items added
+    ! NDG-Config.ini for adding any configuration
+
+    Todo:
+    + TOW related commands (requires feedback)
+    + SAFR related commands (requires feedback)
+    
+AHKNDG V1
+Date: 20190714 17:27
+    Changes:
+
+    + Initial design with known NDG workings
+
+    Todo:
+    + LEO Tow system handling
+    + LEO Trunk system handling (with locks)
