@@ -564,6 +564,7 @@ SetScrollLockState, AlwaysOff
     towcallhk_TT := "Initiates the request for a tow truck"
     Gui, 2:Add, Hotkey, w150 vtowrespondhk, %towrespondhk%
     towrespondhk_TT := "Lets the tow truck know where you are and what you want them to tow"
+    ; This section will pick the TOW
     if (rolepick = "LEO") {
         Gui, 2:Tab, 12
     } else if (rolepick = "TOW") {
@@ -599,6 +600,7 @@ SetScrollLockState, AlwaysOff
     treleasemsg1_TT := "Releasing the cables and the winch from the rear"
     Gui, 2:Add, Edit, r2 vtreleasemsg2 w500, %treleasemsg2%
     treleasemsg2_TT := "Releasing the cables and the winch from the front"
+    ; This section will pick the SAFR
     if (rolepick = "LEO") {
         Gui, 2:Tab, 13
     } else if (rolepick = "TOW") {
@@ -611,6 +613,7 @@ SetScrollLockState, AlwaysOff
         Gui, 2:Tab, 3
     }
     Gui, 2:Add, Text,r1 w100, SAFR Placeholder - ideas certainly welcome :P
+    ; This section will pick the CIV
     if (rolepick = "LEO") {
         Gui, 2:Tab, 14
     } else if (rolepick = "TOW") {
