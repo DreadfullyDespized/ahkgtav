@@ -22,6 +22,7 @@ Date: 20190720 12:27
     * NCIC now takes ID instead of name first/last
     + LEO Trunk handler.  Along with duty items added
     ! NDG-Config.ini for adding any configuration
+    ! Fixed issue with crashing on TOW/SAFR/CIV selection
 
     Todo:
     + TOW related commands (requires feedback)
