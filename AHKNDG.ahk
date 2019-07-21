@@ -1424,7 +1424,7 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
     Sleep, %delay%
     Send, {t up}
     Sleep, %delay%
-    clipboard = /seatbelt
+    clipboard = /belt
     ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
     if (seatbelt = 0) {
