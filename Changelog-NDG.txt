@@ -10,6 +10,18 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V3
+Date: 20190721 12:23
+    Changes:
+    + SAFR section
+    + TOW section
+    + CIV section
+    + Full LEO commands
+    ! Crash issues
+
+    ToDo:
+    + SAFR commands
+
 AHKNDG V2
 Date: 20190720 12:27
     Changes:
@@ -22,7 +34,9 @@ Date: 20190720 12:27
     * NCIC now takes ID instead of name first/last
     + LEO Trunk handler.  Along with duty items added
     ! NDG-Config.ini for adding any configuration
-    ! Fixed issue with crashing on TOW/SAFR/CIV selection
+    ! Issue with crashing on TOW/SAFR/CIV selection
+    ! Tow call and Tow respond for LEO
+    + Engine on/off by F9 (changeable)
 
     Todo:
     + TOW related commands (requires feedback)
