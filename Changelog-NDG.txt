@@ -11,13 +11,14 @@ Versioning:
 ==================
 
 AHKNDG V3
-Date: 20190721 12:23
+Date: 20190721 15:04
     Changes:
     + SAFR section
     + TOW section
     + CIV section
     + Full LEO commands
     ! Crash issues
+    ! Seatbelt toggle
 
     ToDo:
     + SAFR commands
