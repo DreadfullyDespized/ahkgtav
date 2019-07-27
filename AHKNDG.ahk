@@ -2,10 +2,10 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKNDG - NDG Autohotkey doohicky
- * @Script Version   : 3.0.0
+ * @Script Version   : 4.0.0
  * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
  * @Creation Date    : 20190707
- * @Modification Date: 20190721
+ * @Modification Date: 20190727
  * @Description      : Simple autohotkey script to be used with GTAV FiveM NDG.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
@@ -52,18 +52,18 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKNDG"
-                    ,version        : "3.0.0"
+                    ,version        : "4.0.0"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
                     ,Homepage       : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,crtdate        : "20190707"
-                    ,moddate        : "20190721"
+                    ,moddate        : "20190727"
                     ,conf           : "NDG-Config.ini"}
 ; }
 
-; update(3.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog2.txt", "github", 4) 
+; update(4.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog2.txt", "github", 4) 
 
 /*
 This has been disabled for the time being until I get more time to look at it and work on it.
@@ -220,7 +220,10 @@ IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
 IniRead, enginehk, %config%, Keys, enginehk, F9
 IniRead, valet1hk, %config%, Keys, valet1hk, +F11
 IniRead, valet2hk, %config%, Keys, valet2hk, F11
-IniRead, phrechk, %config%, Keys, phrechk, F6
+IniRead, phrechk, %config%, Keys, phrechk, F10
+IniRead, lighthk, %config%, Keys, lighthk, F5
+IniRead, sirenhk, %config%, Keys, sirenhk, F6
+IniRead, yelphk, %config%, Keys, yelphk, F7
 ; Messages that correspond with the hotkeys
 ; Police related section
 IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
@@ -657,55 +660,6 @@ Return
 ; ============================================ LEO Stuff ============================================
 #if (rolepick = "LEO")
 
-    ; This will play the sound file when enabling lights
-    F5:: ; E in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        SoundPlay, SSP3000_stages.wav
-        Sleep, %delay%
-        Send, {e down}
-        Sleep, %delay%
-        Send, {e up}
-        Return
-    } else {
-        Sleep, %delay%
-        Send, {e down}
-        Sleep, %delay%
-        Send, {e up}
-        Return
-    }
-    ; This will play the sound file when enabling siren
-    F6:: ; G in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        SoundPlay, SSP3000_stages.wav
-        Sleep, %delay%
-        Send, {g down}
-        Sleep, %delay%
-        Send, {g up}
-        Return
-    } else {
-        Sleep, %delay%
-        Send, {g down}
-        Sleep, %delay%
-        Send, {g up}
-        Return
-    }
-    ; This will play the sound file when enabling siren change
-    F7:: ; Y in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        SoundPlay, SSP3000_stages.wav
-        Sleep, %delay%
-        Send, {y down}
-        Sleep, %delay%
-        Send, {y up}
-        Return
-    } else {
-        Sleep, %delay%
-        Send, {y down}
-        Sleep, %delay%
-        Send, {y up}
-        Return
-    }
-
     ; This will lay the spikes or remove the spikes based on variable.
     ; ^.:: ; Control + . in-game
     sphk:
@@ -799,6 +753,24 @@ Return
             Inputbox, name, Name, Enter your name to use.
         }
         clipaboard = %clipboard%
+        Sleep, %delay%
+        Clipboard = /fuelhud
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /gps
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
         Sleep, %delay%
         Clipboard = %dutystartmsg1%
         ClipWait
@@ -1069,7 +1041,9 @@ Return
         if (titem = "medbag" || titem = "slimjim" || titem = "tintmeter" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag") {
             clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = /car t open
+            Send, l
+            Sleep, %delay%
+            Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
@@ -1103,9 +1077,11 @@ Return
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /car t
+            Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Send, l
             Sleep, %delay%
             clipboard = %clipaboard%
         } else {
@@ -1313,7 +1289,9 @@ Return
                 if (bitem = "medbag" || bitem = "cones" || bitem = "bodybag") {
                     clipaboard = %clipboard%
                     Sleep, %delay%
-                    Clipboard = /car b%bside% open
+                    Send, l
+                    SLeep, %delay%
+                    Clipboard = /door b%bside%
                     ClipWait
                     Send, {Rctrl down}v{Rctrl up}{enter}
                     Sleep, %delay%
@@ -1344,9 +1322,11 @@ Return
                     Sleep, %delay%
                     Send, {t up}
                     Sleep, %delay%
-                    Clipboard = /car b%bside%
+                    Clipboard = /door b%bside%
                     ClipWait
                     Send, {Rctrl down}v{Rctrl up}{enter}
+                    Sleep, %delay%
+                    Send, l
                     Sleep, %delay%
                     clipboard = %clipaboard%
                 } else {
@@ -1539,6 +1519,58 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
 }
 Return
 
+; This will play the sound file when enabling lights
+; F5:: ; E in-game
+lghk:
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+    SoundPlay, SSP3000_stages.wav
+    Sleep, %delay%
+    Send, {e down}
+    Sleep, %delay%
+    Send, {e up}
+    Return
+} else {
+    Sleep, %delay%
+    Send, {e down}
+    Sleep, %delay%
+    Send, {e up}
+    Return
+}
+; This will play the sound file when enabling siren
+; F6:: ; G in-game
+sihk:
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+    SoundPlay, SSP3000_stages.wav
+    Sleep, %delay%
+    Send, {g down}
+    Sleep, %delay%
+    Send, {g up}
+    Return
+} else {
+    Sleep, %delay%
+    Send, {g down}
+    Sleep, %delay%
+    Send, {g up}
+    Return
+}
+; This will play the sound file when enabling siren change
+; F7:: ; Y in-game
+yehk:
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+    SoundPlay, SSP3000_stages.wav
+    Sleep, %delay%
+    Send, {y down}
+    Sleep, %delay%
+    Send, {y up}
+    Return
+} else {
+    Sleep, %delay%
+    Send, {y down}
+    Sleep, %delay%
+    Send, {y up}
+    Return
+}
+
 
 ; ============================================ MAIN RUN FUNCTIONS ============================================
 
@@ -1592,6 +1624,9 @@ hotkeys:
     hotkey, %valet1hk%, val1hk, On
     hotkey, %valet2hk%, val2hk, On
     hotkey, %phrechk%, phrhk, On
+    hotkey, %lighthk%, lghk, On
+    hotkey, %sirenhk%, sihk, On
+    hotkey, %yelphk%, yehk, On
 Return
 
 fuckakey:
@@ -1606,6 +1641,9 @@ fuckakey:
     hotkey, %valet1hk%, val1hk, Off
     hotkey, %valet2hk%, val2hk, Off
     hotkey, %phrechk%, phrhk, Off
+    hotkey, %lighthk%, lghk, Off
+    hotkey, %sirenhk%, sihk, Off
+    hotkey, %yelphk%, yehk, Off
 Return
 
 UpdateConfig:
@@ -1638,6 +1676,9 @@ UpdateConfig:
     IniWrite, %valet1hk%, %config%, Keys, valet1hk
     IniWrite, %valet2hk%, %config%, Keys, valet2hk
     IniWrite, %phrechk%, %config%, Keys, phrechk
+    IniRead, %lighthk%, %config%, Keys, lighthk
+    IniRead, %sirenhk%, %config%, Keys, sirenhk
+    IniRead, %yelphk%, %config%, Keys, yelphk
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniWrite, %dutystartmsg1%, %config%, Police, dutystartmsg1
@@ -1692,7 +1733,10 @@ UpdateConfig:
     IniRead, enginehk, %config%, Keys, enginehk, F9
     IniRead, valet1hk, %config%, Keys, valet1hk, +F11
     IniRead, valet2hk, %config%, Keys, valet2hk, F11
-    IniRead, phrechk, %config%, Keys, phrechk, F6
+    IniRead, phrechk, %config%, Keys, phrechk, F10
+    IniRead, lighthk, %config%, Keys, lighthk, F5
+    IniRead, sirenhk, %config%, Keys, sirenhk, F6
+    IniRead, yelphk, %config%, Keys, yelphk, F7
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
@@ -1726,11 +1770,11 @@ Return
 Exe_File=AHKNDG.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=3.0.0
+File_Version=4.0.0
 Internal_Name=AHKGTAV
 Legal_Copyright=GNU General Public License 3.0
 Original_Filename=AHKNDG.exe
 Product_Name=AHKNDG
-Product_Version=3.0.0
+Product_Version=4.0.0
 * * * Compile_AHK SETTINGS END * * *
 */
