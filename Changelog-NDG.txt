@@ -10,6 +10,16 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V4
+Date: 20190727 12:28
+    Changes:
+    ! LEO and SAFR trunk handler
+    + LEO duty start fuelhud/gps
+    + hotkey assignable for Lights/Siren/Yelp SAFR and LEO
+
+    ToDo:
+    + SAFR Commands
+
 AHKNDG V3
 Date: 20190721 15:04
     Changes:
@@ -19,6 +29,7 @@ Date: 20190721 15:04
     + Full LEO commands
     ! Crash issues
     ! Seatbelt toggle
+    ! trunk command
 
     ToDo:
     + SAFR commands
