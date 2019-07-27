@@ -1411,6 +1411,13 @@ Return
 ; F1:: ; Press F1 in-game
 sbhk:
 if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+    if (seatbelt = 0) {
+        SoundPlay, GTAV-Seatbelt.mp3
+        seatbelt = 1
+    } else {
+        SoundPlay, GTAV-Seatbelt2.mp3
+        seatbelt = 0
+    }
     clipaboard = %clipboard%
     Sleep, %delay%
     Send, {t down}
@@ -1420,13 +1427,6 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
     clipboard = /belt
     ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
-    if (seatbelt = 0) {
-        SoundPlay, GTAV-Seatbelt.mp3
-        seatbelt = 1
-    } else {
-        SoundPlay, GTAV-Seatbelt2.mp3
-        seatbelt = 0
-    }
     Sleep, %delay%
     clipboard = %clipaboard%
 }
