@@ -276,6 +276,10 @@ tplate - notes the plate
 tvin = notes the vin
 ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
 
+F5 - Toggle Lights on and off
+F6 - Toggle Siren on and off
+F7 - Toggle Yelp state
+
 Control+. - SpikeStrip Toggle
 Control+/ - vehicle image search (uses google images in browser)
 Control+- - runs plate along with saving plate on clipboard
@@ -603,6 +607,9 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,, Valet App Hotkey:
     Gui, 2:Add, Text,, Valet Call Hotkey:
     Gui, 2:Add, Text,, Phone Record Hotkey:
+    Gui, 2:Add, Text,, Lights Hotkey:
+    Gui, 2:Add, Text,, Siren Hotkey:
+    Gui, 2:Add, Text,, Yelp Hotkey:
     Gui, 2:Add, Edit, r1 vgunmsg w500 x100 y30, %gunmsg%
     gunmsg_TT := "Action message to draw a firearm"
     Gui, 2:Add, Edit, r2 vvalet2hkmsg w500, %valet2hkmsg%
@@ -619,6 +626,12 @@ SetScrollLockState, AlwaysOff
     valet2hk_TT := "Hotkey to call for the valet to get your vehicle"
     Gui, 2:Add, Hotkey, w150 vphrechk, %phrechk%
     phrechk_TT := "Hotkey to start recording with your phone"
+    Gui, 2:Add, Hotkey, w150 vlighthk, %lighthk%
+    lighthk_TT := "Hotkey to turn emergency lights on or off"
+    Gui, 2:Add, Hotkey, w150 vsirenhk, %sirenhk%
+    sirenhk_TT := "Hotkey to turn your emergency siren on or off"
+    Gui, 2:Add, Hotkey, w150 vyelphk, %yelphk%
+    yelphk_TT := "Hotkey to toggle your yelp/wail emergency state"
     Gui, 2:Tab
     Gui, 2:Add, Button, default w80 xm, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
     Gui, 2:Show,, Main responses for the system - builds from original variables
