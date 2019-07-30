@@ -191,6 +191,7 @@ IfExist, %config%
     IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
     IniDelete, %config%, Normal, val2hkmsg
     IniDelete, %config%, Towing, towmsg1
+    IniDelete, %config%, Keys, seatbelthk
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
@@ -216,7 +217,6 @@ IniRead, runplatehk, %config%, Keys, runplatehk, ^-
 IniRead, ncichk, %config%, Keys, ncichk, ^=
 IniRead, towcallhk, %config%, Keys, towcallhk, ^k
 IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
-IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
 IniRead, enginehk, %config%, Keys, enginehk, F9
 IniRead, valet1hk, %config%, Keys, valet1hk, +F11
 IniRead, valet2hk, %config%, Keys, valet2hk, F11
@@ -307,7 +307,6 @@ General Commands:
 ---------------------------
 tgun - use firearm
 tscrap - rp the scrap to truck
-F1 - enables/disables seatbelt
 F9 - enables/disables engine
 Shift+F11 - valet phone check
 F11 - Pull vehicle out from valet
@@ -322,7 +321,6 @@ hit the keys together to configure the hotkey.
 )
 
 towtype = f
-seatbelt = 0
 
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
 ; Removes all of the standard options from the system tray
@@ -602,8 +600,7 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text, w150, tgunmsg:
     Gui, 2:Add, Text, r2 w150, valet2hkmsg:
     Gui, 2:Add, Text, w150, phrechkmsg:
-    Gui, 2:Add, Text, w150 y200 x20, Seatbelt Hotkey:
-    Gui, 2:Add, Text,, Engine Hotkey:
+    Gui, 2:Add, Text, w150 y200 x20, Engine Hotkey:
     Gui, 2:Add, Text,, Valet App Hotkey:
     Gui, 2:Add, Text,, Valet Call Hotkey:
     Gui, 2:Add, Text,, Phone Record Hotkey:
@@ -616,8 +613,6 @@ SetScrollLockState, AlwaysOff
     valet2hkmsg_TT := "Action to be used to pull out a vehicle from the valet"
     Gui, 2:Add, Edit, r1 vphrechkmsg w500, %phrechkmsg%
     phrechkmsg_TT := "Action message to be used when pulling out phone to record"
-    Gui, 2:Add, Hotkey, w150 x150 y195 vseatbelthk, %seatbelthk%
-    seatbelthk_TT := "Hotkey to be used to put on or take off seatbelt"
     Gui, 2:Add, Hotkey, w150 venginehk, %enginehk%
     enginehk_TT := "Hotkey to be used to force the /engine on when cruise doesn't work"
     Gui, 2:Add, Hotkey, w150 vvalet1hk, %valet1hk%
@@ -1407,31 +1402,6 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
 }
 Return
 
-; This is a quick way of buckling or unbuckling your seatbelt
-; F1:: ; Press F1 in-game
-sbhk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-    if (seatbelt = 0) {
-        SoundPlay, GTAV-Seatbelt.mp3
-        seatbelt = 1
-    } else {
-        SoundPlay, GTAV-Seatbelt2.mp3
-        seatbelt = 0
-    }
-    clipaboard = %clipboard%
-    Sleep, %delay%
-    Send, {t down}
-    Sleep, %delay%
-    Send, {t up}
-    Sleep, %delay%
-    clipboard = /belt
-    ClipWait
-    Send, {Rctrl down}v{Rctrl up}{enter}
-    Sleep, %delay%
-    clipboard = %clipaboard%
-}
-Return
-
 ; This will run the /engine command to toggle engine state
 ; F9:: ; Press F9 in-game
 enhk:
@@ -1632,7 +1602,6 @@ hotkeys:
     hotkey, %ncichk%, cphk, On
     hotkey, %towcallhk%, tchk, On
     hotkey, %towrespondhk%, trhk, On
-    hotkey, %seatbelthk%, sbhk, On
     hotkey, %enginehk%, enhk, On
     hotkey, %valet1hk%, val1hk, On
     hotkey, %valet2hk%, val2hk, On
@@ -1649,7 +1618,6 @@ fuckakey:
     hotkey, %ncichk%, cphk, Off
     hotkey, %towcallhk%, tchk, Off
     hotkey, %towrespondhk%, trhk, Off
-    hotkey, %seatbelthk%, sbhk, Off
     hotkey, %enginehk%, enhk, Off
     hotkey, %valet1hk%, val1hk, Off
     hotkey, %valet2hk%, val2hk, Off
@@ -1684,7 +1652,6 @@ UpdateConfig:
     IniWrite, %ncichk%, %config%, Keys, ncichk
     IniWrite, %towcallhk%, %config%, Keys, towcallhk
     IniWrite, %towrespondhk%, %config%, Keys, towrespondhk
-    IniWrite, %seatbelthk%, %config%, Keys, seatbelthk
     IniWrite, %enginehk%, %config%, Keys, enginehk
     IniWrite, %valet1hk%, %config%, Keys, valet1hk
     IniWrite, %valet2hk%, %config%, Keys, valet2hk
@@ -1742,7 +1709,6 @@ UpdateConfig:
     IniRead, ncichk, %config%, Keys, ncichk, ^=
     IniRead, towcallhk, %config%, Keys, towcallhk, ^k
     IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
-    IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
     IniRead, enginehk, %config%, Keys, enginehk, F9
     IniRead, valet1hk, %config%, Keys, valet1hk, +F11
     IniRead, valet2hk, %config%, Keys, valet2hk, F11
