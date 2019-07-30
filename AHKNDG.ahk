@@ -613,7 +613,7 @@ SetScrollLockState, AlwaysOff
     valet2hkmsg_TT := "Action to be used to pull out a vehicle from the valet"
     Gui, 2:Add, Edit, r1 vphrechkmsg w500, %phrechkmsg%
     phrechkmsg_TT := "Action message to be used when pulling out phone to record"
-    Gui, 2:Add, Hotkey, w150 venginehk, %enginehk%
+    Gui, 2:Add, Hotkey, w150 x140 y195 venginehk, %enginehk%
     enginehk_TT := "Hotkey to be used to force the /engine on when cruise doesn't work"
     Gui, 2:Add, Hotkey, w150 vvalet1hk, %valet1hk%
     valet1hk_TT := "Hotkey to use your phone valet app"
