@@ -192,6 +192,9 @@ IfExist, %config%
     IniDelete, %config%, Normal, val2hkmsg
     IniDelete, %config%, Towing, towmsg1
     IniDelete, %config%, Keys, seatbelthk
+    IniDelete, %config%, Keys, lighthk
+    IniDelete, %config%, Keys, sirenhk
+    IniDelete, %config%, Keys, yelphk
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
@@ -221,9 +224,6 @@ IniRead, enginehk, %config%, Keys, enginehk, F9
 IniRead, valet1hk, %config%, Keys, valet1hk, +F11
 IniRead, valet2hk, %config%, Keys, valet2hk, F11
 IniRead, phrechk, %config%, Keys, phrechk, F10
-IniRead, lighthk, %config%, Keys, lighthk, F5
-IniRead, sirenhk, %config%, Keys, sirenhk, F6
-IniRead, yelphk, %config%, Keys, yelphk, F7
 ; Messages that correspond with the hotkeys
 ; Police related section
 IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
@@ -275,10 +275,6 @@ timpound - place impound sticker
 tplate - notes the plate
 tvin = notes the vin
 ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
-
-F5 - Toggle Lights on and off
-F6 - Toggle Siren on and off
-F7 - Toggle Yelp state
 
 Control+. - SpikeStrip Toggle
 Control+/ - vehicle image search (uses google images in browser)
@@ -604,9 +600,6 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,, Valet App Hotkey:
     Gui, 2:Add, Text,, Valet Call Hotkey:
     Gui, 2:Add, Text,, Phone Record Hotkey:
-    Gui, 2:Add, Text,, Lights Hotkey:
-    Gui, 2:Add, Text,, Siren Hotkey:
-    Gui, 2:Add, Text,, Yelp Hotkey:
     Gui, 2:Add, Edit, r1 vgunmsg w500 x100 y30, %gunmsg%
     gunmsg_TT := "Action message to draw a firearm"
     Gui, 2:Add, Edit, r2 vvalet2hkmsg w500, %valet2hkmsg%
@@ -621,12 +614,6 @@ SetScrollLockState, AlwaysOff
     valet2hk_TT := "Hotkey to call for the valet to get your vehicle"
     Gui, 2:Add, Hotkey, w150 vphrechk, %phrechk%
     phrechk_TT := "Hotkey to start recording with your phone"
-    Gui, 2:Add, Hotkey, w150 vlighthk, %lighthk%
-    lighthk_TT := "Hotkey to turn emergency lights on or off"
-    Gui, 2:Add, Hotkey, w150 vsirenhk, %sirenhk%
-    sirenhk_TT := "Hotkey to turn your emergency siren on or off"
-    Gui, 2:Add, Hotkey, w150 vyelphk, %yelphk%
-    yelphk_TT := "Hotkey to toggle your yelp/wail emergency state"
     Gui, 2:Tab
     Gui, 2:Add, Button, default w80 xm, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
     Gui, 2:Show,, Main responses for the system - builds from original variables
@@ -1049,8 +1036,6 @@ Return
         if (titem = "medbag" || titem = "slimjim" || titem = "tintmeter" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag") {
             clipaboard = %clipboard%
             Sleep, %delay%
-            Send, l
-            Sleep, %delay%
             Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
@@ -1088,8 +1073,6 @@ Return
             Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Send, l
             Sleep, %delay%
             clipboard = %clipaboard%
         } else {
@@ -1296,8 +1279,6 @@ Return
             else
                 if (bitem = "medbag" || bitem = "cones" || bitem = "bodybag") {
                     clipaboard = %clipboard%
-                    Sleep, %delay%
-                    Send, l
                     SLeep, %delay%
                     Clipboard = /door b%bside%
                     ClipWait
@@ -1333,8 +1314,6 @@ Return
                     Clipboard = /door b%bside%
                     ClipWait
                     Send, {Rctrl down}v{Rctrl up}{enter}
-                    Sleep, %delay%
-                    Send, l
                     Sleep, %delay%
                     clipboard = %clipaboard%
                 } else {
@@ -1502,59 +1481,6 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
 }
 Return
 
-; This will play the sound file when enabling lights
-; F5:: ; E in-game
-lghk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-    SoundPlay, SSP3000_stages.wav
-    Sleep, %delay%
-    Send, {e down}
-    Sleep, %delay%
-    Send, {e up}
-    Return
-} else {
-    Sleep, %delay%
-    Send, {e down}
-    Sleep, %delay%
-    Send, {e up}
-    Return
-}
-; This will play the sound file when enabling siren
-; F6:: ; G in-game
-sihk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-    SoundPlay, SSP3000_stages.wav
-    Sleep, %delay%
-    Send, {g down}
-    Sleep, %delay%
-    Send, {g up}
-    Return
-} else {
-    Sleep, %delay%
-    Send, {g down}
-    Sleep, %delay%
-    Send, {g up}
-    Return
-}
-; This will play the sound file when enabling siren change
-; F7:: ; Y in-game
-yehk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-    SoundPlay, SSP3000_stages.wav
-    Sleep, %delay%
-    Send, {y down}
-    Sleep, %delay%
-    Send, {y up}
-    Return
-} else {
-    Sleep, %delay%
-    Send, {y down}
-    Sleep, %delay%
-    Send, {y up}
-    Return
-}
-
-
 ; ============================================ MAIN RUN FUNCTIONS ============================================
 
 ReadConfiguration: ; Read the saved configuration
@@ -1606,9 +1532,6 @@ hotkeys:
     hotkey, %valet1hk%, val1hk, On
     hotkey, %valet2hk%, val2hk, On
     hotkey, %phrechk%, phrhk, On
-    hotkey, %lighthk%, lghk, On
-    hotkey, %sirenhk%, sihk, On
-    hotkey, %yelphk%, yehk, On
 Return
 
 fuckakey:
@@ -1622,9 +1545,6 @@ fuckakey:
     hotkey, %valet1hk%, val1hk, Off
     hotkey, %valet2hk%, val2hk, Off
     hotkey, %phrechk%, phrhk, Off
-    hotkey, %lighthk%, lghk, Off
-    hotkey, %sirenhk%, sihk, Off
-    hotkey, %yelphk%, yehk, Off
 Return
 
 UpdateConfig:
@@ -1656,9 +1576,6 @@ UpdateConfig:
     IniWrite, %valet1hk%, %config%, Keys, valet1hk
     IniWrite, %valet2hk%, %config%, Keys, valet2hk
     IniWrite, %phrechk%, %config%, Keys, phrechk
-    IniRead, %lighthk%, %config%, Keys, lighthk
-    IniRead, %sirenhk%, %config%, Keys, sirenhk
-    IniRead, %yelphk%, %config%, Keys, yelphk
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniWrite, %dutystartmsg1%, %config%, Police, dutystartmsg1
@@ -1713,9 +1630,6 @@ UpdateConfig:
     IniRead, valet1hk, %config%, Keys, valet1hk, +F11
     IniRead, valet2hk, %config%, Keys, valet2hk, F11
     IniRead, phrechk, %config%, Keys, phrechk, F10
-    IniRead, lighthk, %config%, Keys, lighthk, F5
-    IniRead, sirenhk, %config%, Keys, sirenhk, F6
-    IniRead, yelphk, %config%, Keys, yelphk, F7
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
