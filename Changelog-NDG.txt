@@ -11,12 +11,13 @@ Versioning:
 ==================
 
 AHKNDG V4
-Date: 20190727 12:41
+Date: 20190727 16:39
     Changes:
     ! LEO and SAFR trunk handler
     + LEO duty start fuelhud/gps
     + hotkey assignable for Lights/Siren/Yelp SAFR and LEO
     * Improved the speed of the Seatbelt
+    * Removed Seatblet and Siren Pack portions
 
     ToDo:
     + SAFR Commands
