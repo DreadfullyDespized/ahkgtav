@@ -249,6 +249,113 @@ IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of you
 IniRead, gunmsg, %config%, Normal, gunmsg, %ds% pulls out his ^1pistol ^0from under his shirt
 IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, %ms% puts in his ticket into the valet and presses the button to receive his selected vehicle
 IniRead, phrechkmsg, %config%, Normal, phrechkmsg, %ds% Pulls out their phone and starts recording audio and video
+
+IfNotExist, NDG-Citation.csv
+FileAppend,
+(
+10-19 MPH Over,200,
+20-29 MPH Over,400,
+30+ MPH Over,600,
+Broken Windshield,250,
+Careless Driving,1000,
+Commercial Vehicle Fine,1000,
+Driving under the Influence,2500,30
+Excessive vehicle noise,400,
+Failure to have correct registration on vehicle,600,
+Failure to have registration displayed on vehicle,350,
+Failure to use Headlights at night,250,
+Failure to use signal when turning/changing lanes,150,
+Failure to yield right of way to traffic,400,
+Failure to yield to emergency vehicle,600,
+Hit and Run,5000,20
+Illegal passing,200,
+Illegal turn,400,
+Illegal U-Turn,400,
+Illegally parked vehicle,400,
+Impeding flow of traffic,500,
+Running a red light,400,
+Running a stop sign,300,
+Tailight or headlight out,250,
+Traveling wrong way,300,
+Unroadworthy vehicle,300,
+)
+,NDG-Citation.csv
+
+IfNotExist, NDG-Charges.csv
+FileAppend,
+(
+Arson 2nd Degree,1500,20
+Assault 2nd Degree,2500,15
+Attempted Grand Theft Auto,1000,10
+Brandishing of a Firearm,1000,10
+Destruction of Government Property,1500,15
+Destruction of Property,1000,10
+Disorderly Conduct,500,10
+Domestic Violence,1000,20
+Driving on suspended license,1000,10
+Driving without a license,1500,15
+Failure to comply with lawful order,700,15
+Failure to identify to LEO,,99999
+Failure to pay fines,1000,15
+Failure to supply documentation to LEO,700,15
+False 911 calls,1500,20
+False Report,1500,20
+Harassment,1000,10
+JayWalking,200,
+Joyriding,600,15
+Loitering,500,
+Petty Theft,1500,15
+Poaching,500,20
+Possession of a stolen identification,1500,10
+Posession of burglary tools,1000,20
+Possession of illegal substance (General),1500,20
+Possession of Marijuana,1000,
+Prostitution,800,10
+Public Indecency,500,10
+Public Intoxication,800,10
+Reckless Driving,2500,15
+Reckless Endangerment,2000,20
+Stalking,1500,15
+Street Racing,1500,20
+Trespassing,1000,10
+Trespassing on Government Property,2500,15
+Unlawful Imprisonment,1500,10
+Unlawful use of a weapon,3000,20
+Aiding and Abetting/Accessory,,
+Arson 1st Degree,3000,35
+Assault 1st Degree,4000,30
+Assault on Emergency Services,6000,40
+Assault with a deadly weapon,5500,35
+Attempted murder,5000,40
+Attempted murder of Emergency Services,7000,50
+Bribery of a Public Servant,3000,10
+Burglary,3500,30
+Conspiracy to Commit a Criminal Act,1500,15
+Criminal Possession of Government Issued Equipment,5000,25
+Criminal threat,4000,20
+Destruction of physical evidence,1000,30
+Escaping Custody,3000,20
+Falsifying Government Document,3000,20
+Fleeing and Eluding,1500,15
+Fraud,1500,10
+Grand Theft,3500,30
+Grand Theft Auto,1500,20
+Illegal possession of a Weapon/Firearm,2500,20
+Impersonation,1000,10
+Impersonation of an Emergency Services,2500,20
+Kidnapping,3000,25
+Manslaughter,5500,30
+Murder,7000,50
+Murder of a Emergency Services,12000,60
+Obstruction of Justice,2000,10
+Possession of a outlawed Weapon,3000,30
+Possession of Marijuana with intent to sell,2500,15
+Robbery/Armed Robbery,6000,30
+Terroristic Acts,30000,999
+Vehiclular Manslaughter,5500,30
+)
+,NDG-Charges.csv
+
 ; ============================================ HELP TEXT FORMAT ============================================
 ; Main portion of the help text that is displayed
 helptext = 
@@ -316,11 +423,30 @@ This is the section to do so. Click on the box and then
 hit the keys together to configure the hotkey.
 )
 
+citationtext = 
+(
+This is the portion to handle citations/tickets.
+You can not GROUP tickets, they must be issued one per infraction.
+The DB records it as one ticket per /ticket given.
+)
+
+misdemeanortext = 
+(
+This is the portion to hanlde misdemeanor charges.
+)
+
+felonytext = 
+(
+This is the portion to handle felony charges.
+)
+
 towtype = f
 
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
 ; Removes all of the standard options from the system tray
 Menu, Tray, NoStandard
+Menu, Tray, Add, &Reload Script, ^3
+Menu, Tray, Add, &Ticket Calc, ^2
 Menu, Tray, Add, &Reconfigure/Help, ^1
 Menu, Tray, Add, GTAV &Car Search, vehimghk
 Menu, Tray, Add, E&xit,Exit
@@ -630,6 +756,841 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Submit  ; Save the input from the user to each control's associated variable.
     Gosub, UpdateConfig
     Gosub, hotkeys
+Return
+
+^2::
+    Gui, 4:Destroy
+    Gui, 4:Font,, Consolas
+    Gui, 4:Add, Text,, Offender ID:
+    Gui, 4:Add, Edit, w80 voffenderid, 0
+    Gui, 4:Add, Tab3,, Citation|Misdemeanor|Felony
+    Gui, 4:Add, Edit, Readonly r4 w760 vcitationtext, %citationtext%
+    Gui, 4:Add, Text,, %cit1%
+    Gui, 4:Add, Text,, %cit2%
+    Gui, 4:Add, Text,, %cit3%
+    Gui, 4:Add, Text,, %cit4%
+    Gui, 4:Add, Text,, %cit5%
+    Gui, 4:Add, Text,, %cit6%
+    Gui, 4:Add, Text,, %cit7%
+    Gui, 4:Add, Text,, %cit8%
+    Gui, 4:Add, Text,, %cit9%
+    Gui, 4:Add, Text,, %cit10%
+    Gui, 4:Add, Text,, %cit11%
+    Gui, 4:Add, Text,, %cit12%
+    Gui, 4:Add, Text,, %cit13%
+    Gui, 4:Add, Text,, %cit14%
+    Gui, 4:Add, Text,, %cit15%
+    Gui, 4:Add, Text, x353 y142, %cit16%
+    Gui, 4:Add, Text,, %cit17%
+    Gui, 4:Add, Text,, %cit18%
+    Gui, 4:Add, Text,, %cit19%
+    Gui, 4:Add, Text,, %cit20%
+    Gui, 4:Add, Text,, %cit21%
+    Gui, 4:Add, Text,, %cit22%
+    Gui, 4:Add, Text,, %cit23%
+    Gui, 4:Add, Text,, %cit24%
+    Gui, 4:Add, Text,, %cit25%
+    Gui, 4:Add, DropDownList, x320 y142 w30 vcitation1, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation2, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation3, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation4, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation5, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation6, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation7, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation8, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation9, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation10, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation11, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation12, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation13, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation14, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation15, 0||1
+    Gui, 4:Add, DropDownList, x510 y142 w30 vcitation16, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation17, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation18, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation19, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation20, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation21, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation22, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation23, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation24, 0||1
+    Gui, 4:Add, DropDownList, w30 vcitation25, 0||1
+    Gui, 4:Tab, 2
+    Gui, 4:Add, Edit, Readonly r2 w760 vmisdemeanortext, %misdemeanortext%
+    Gui, 4:Add, Text,, %misd1%
+    Gui, 4:Add, Text,, %misd2%
+    Gui, 4:Add, Text,, %misd3%
+    Gui, 4:Add, Text,, %misd4%
+    Gui, 4:Add, Text,, %misd5%
+    Gui, 4:Add, Text,, %misd6%
+    Gui, 4:Add, Text,, %misd7%
+    Gui, 4:Add, Text,, %misd8%
+    Gui, 4:Add, Text,, %misd9%
+    Gui, 4:Add, Text,, %misd10%
+    Gui, 4:Add, Text,, %misd11%
+    Gui, 4:Add, Text,, %misd12%
+    Gui, 4:Add, Text,, %misd13%
+    Gui, 4:Add, Text,, %misd14%
+    Gui, 4:Add, Text,, %misd15%
+    Gui, 4:Add, Text,, %misd16%
+    Gui, 4:Add, Text,, %misd17%
+    Gui, 4:Add, Text,, %misd18%
+    Gui, 4:Add, Text,, %misd19%
+    Gui, 4:Add, Text,, %misd20%
+    Gui, 4:Add, Text, x300 y120, %misd21%
+    Gui, 4:Add, Text,, %misd22%
+    Gui, 4:Add, Text,, %misd23%
+    Gui, 4:Add, Text,, %misd24%
+    Gui, 4:Add, Text,, %misd25%
+    Gui, 4:Add, Text,, %misd26%
+    Gui, 4:Add, Text,, %misd27%
+    Gui, 4:Add, Text,, %misd28%
+    Gui, 4:Add, Text,, %misd29%
+    Gui, 4:Add, Text,, %misd30%
+    Gui, 4:Add, Text,, %misd31%
+    Gui, 4:Add, Text,, %misd32%
+    Gui, 4:Add, Text,, %misd33%
+    Gui, 4:Add, Text,, %misd34%
+    Gui, 4:Add, Text,, %misd35%
+    Gui, 4:Add, Text,, %misd36%
+    Gui, 4:Add, Text,, %misd37%
+    Gui, 4:Add, DropDownList, x260 y118 w30 vmisdemeanor1, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor2, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor3, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor4, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor5, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor6, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor7, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor8, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor9, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor10, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor11, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor12, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor13, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor14, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor15, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor16, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor17, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor18, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor19, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor20, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, x550 y118 w30 vmisdemeanor21, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor22, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor23, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor24, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor25, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor26, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor27, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor28, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor29, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor30, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor31, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor32, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor33, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor34, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor35, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor36, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vmisdemeanor37, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Tab, 3
+    Gui, 4:Add, Edit, Readonly r2 w760 vfelonytext, %felonytext%
+    Gui, 4:Add, Text,, %felo1%
+    Gui, 4:Add, Text,, %felo2%
+    Gui, 4:Add, Text,, %felo3%
+    Gui, 4:Add, Text,, %felo4%
+    Gui, 4:Add, Text,, %felo5%
+    Gui, 4:Add, Text,, %felo6%
+    Gui, 4:Add, Text,, %felo7%
+    Gui, 4:Add, Text,, %felo8%
+    Gui, 4:Add, Text,, %felo9%
+    Gui, 4:Add, Text,, %felo10%
+    Gui, 4:Add, Text,, %felo11%
+    Gui, 4:Add, Text,, %felo12%
+    Gui, 4:Add, Text,, %felo13%
+    Gui, 4:Add, Text,, %felo14%
+    Gui, 4:Add, Text,, %felo15%
+    Gui, 4:Add, Text,, %felo16%
+    Gui, 4:Add, Text,, %felo17%
+    Gui, 4:Add, Text, x355 y120, %felo18%
+    Gui, 4:Add, Text,, %felo19%
+    Gui, 4:Add, Text,, %felo20%
+    Gui, 4:Add, Text,, %felo21%
+    Gui, 4:Add, Text,, %felo22%
+    Gui, 4:Add, Text,, %felo23%
+    Gui, 4:Add, Text,, %felo24%
+    Gui, 4:Add, Text,, %felo25%
+    Gui, 4:Add, Text,, %felo26%
+    Gui, 4:Add, Text,, %felo27%
+    Gui, 4:Add, Text,, %felo28%
+    Gui, 4:Add, Text,, %felo29%
+    Gui, 4:Add, Text,, %felo30%
+    Gui, 4:Add, Text,, %felo31%
+    Gui, 4:Add, Text,, %felo32%
+    Gui, 4:Add, DropDownList, x323 y118 w30 vfelony1, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony2, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony3, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony4, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony5, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony6, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony7, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony8, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony9, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony10, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony11, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony12, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony13, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony14, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony15, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony16, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony17, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, x755 y118 w30 vfelony18, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony19, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony20, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony21, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony22, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony23, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony24, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony25, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony26, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony27, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony28, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony29, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony30, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony31, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Add, DropDownList, w30 vfelony32, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 4:Tab
+    Gui, 4:Add, Edit, Readonly r3 w600 vpText
+    Gui, 4:Add, Button, gcheck, Submit
+    Gui, 4:Show,, Citation | Misdemeanor | Felony - LEO Calculator
+    lastEdit := ""
+    Return
+
+    4GuiEscape:
+    4GuiClose:
+    Gui, 4:Cancel
+    Return
+
+Return
+
+^4::
+    Gui, 5:Destroy
+    Gui, 5:Font,, Consolas
+    Gui, 5:Add, Text,, Offender ID:
+    Gui, 5:Add, Edit, w80 voffenderid, 0
+    Gui, 5:Add, Tab3,, Citation|Misdemeanor|Felony
+    Gui, 5:Add, Edit, Readonly r4 w600 vcitationtext, %citationtext%
+    Loop, read, %A_ScriptDir%\NDG-Citation.csv
+	{
+	    StringSplit, val, A_LoopReadLine,`,
+        LineNumber = %A_Index%
+	    Loop,%Val0%
+            offense%LineNumber% := val1
+            fine%LineNumber% := val2
+            arrest%LineNUmber% := val3
+            if (LineNumber == 16){
+                Gui, 5:Add, Text, x353 y145, %val1%
+            } else {
+                Gui, 5:Add, Text,, %val1%
+            }
+	}
+    Gui, 5:Add, DropDownList, x320 y142 w30 vcitation1, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation2, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation3, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation4, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation5, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation6, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation7, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation8, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation9, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation10, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation11, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation12, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation13, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation14, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation15, 0||1
+    Gui, 5:Add, DropDownList, x510 y142 w30 vcitation16, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation17, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation18, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation19, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation20, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation21, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation22, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation23, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation24, 0||1
+    Gui, 5:Add, DropDownList, w30 vcitation25, 0||1
+    Gui, 5:Tab, 2
+    Gui, 5:Add, Edit, Readonly r2 w760 vmisdemeanortext, %misdemeanortext%
+    Loop, read, %A_ScriptDir%\NDG-Misdemeanor.csv
+	{
+	    StringSplit, val, A_LoopReadLine,`,
+        LineNumber = %A_Index%
+	    Loop,%Val0%
+            offense%LineNumber% := val1
+            fine%LineNumber% := val2
+            arrest%LineNUmber% := val3
+            if (LineNumber == 21){
+                Gui, 5:Add, Text, x300 y120, %val1%
+            } else {
+                Gui, 5:Add, Text,, %val1%
+            }
+	}
+    Gui, 5:Add, DropDownList, x260 y118 w30 vmisdemeanor1, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor2, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor3, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor4, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor5, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor6, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor7, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor8, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor9, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor10, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor11, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor12, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor13, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor14, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor15, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor16, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor17, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor18, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor19, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor20, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, x550 y118 w30 vmisdemeanor21, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor22, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor23, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor24, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor25, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor26, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor27, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor28, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor29, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor30, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor31, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor32, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor33, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor34, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor35, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor36, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vmisdemeanor37, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Tab, 3
+    Gui, 5:Add, Edit, Readonly r2 w760 vfelonytext, %felonytext%
+    Loop, read, %A_ScriptDir%\NDG-Felony.csv
+	{
+	    StringSplit, val, A_LoopReadLine,`,
+        LineNumber = %A_Index%
+	    Loop,%Val0%
+            offense%LineNumber% := val1
+            fine%LineNumber% := val2
+            arrest%LineNUmber% := val3
+            if (LineNumber == 21){
+                Gui, 5:Add, Text, x355 y120, %val1%
+            } else {
+                Gui, 5:Add, Text,, %val1%
+            }
+	}
+    Gui, 5:Add, DropDownList, x323 y118 w30 vfelony1, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony2, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony3, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony4, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony5, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony6, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony7, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony8, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony9, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony10, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony11, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony12, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony13, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony14, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony15, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony16, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony17, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, x755 y118 w30 vfelony18, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony19, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony20, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony21, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony22, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony23, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony24, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony25, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony26, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony27, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony28, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony29, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony30, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony31, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Add, DropDownList, w30 vfelony32, 0||1|2|3|4|5|6|7|8|9|10
+    Gui, 5:Tab
+    Gui, 5:Add, Edit, Readonly r3 w600 vpText
+    Gui, 5:Add, Button, gcheck2, Submit
+    Gui, 5:Show,, Citation | Misdemeanor | Felony - LEO Calculator
+    lastEdit := ""
+    Return
+
+    5GuiEscape:
+    5GuiClose:
+    Gui, 5:Cancel
+    Return
+Return
+
+^5::
+    Loop, read, %A_ScriptDir%\NDG-Citation.csv   ;Parse a comma separated value (CSV) file:
+	{
+	    StringSplit, val, A_LoopReadLine,`,   ; create a aray from the line
+        LineNumber = %A_Index%
+	    Loop,%Val0%
+            cit%LineNumber% := val1
+            ticket%LineNumber% := val2
+            arrest%LineNUmber% := val3
+	}
+    Loop, read, %A_ScriptDir%\NDG-Charges.csv   ;Parse a comma separated value (CSV) file:
+	{
+	    StringSplit, val, A_LoopReadLine,`,   ; create a aray from the line
+        LineNumber = %A_Index%
+        Loop,%Val0%
+            chrg%LineNumber% := val1
+            maxfine%LineNumber% := val2
+            arrest%LineNumber% := val3
+    }
+    ListVars
+Return
+
+
+check2:
+if (citation1 == 1) {
+
+} else if (citation2 == 1) {
+
+}
+PEdit = 
+(
+/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
+)
+gui,submit,nohide ;updates gui variable
+if (lastEdit == "") { ;if lastEdit contains nothing, then this is the first value
+	guicontrol,,pText,% pEdit
+	lastEdit := pEdit
+} else { ;if lastEdit DOES contain something, then this is the second value and we can compare now
+    guicontrol,,pText,% pEdit
+	lastEdit := "" ;return lastEdit variable to empty
+}
+return
+
+
+
+
+
+
+
+check:
+gui,submit,nohide ;updates gui variable
+    if (citation1 = 1) {
+        offense = %cit1%
+        ticket = 200
+        arrest =
+    } else if (citation2 = 1) { 
+        offense = %cit2%
+        ticket = 400
+        arrest =
+    } else if (citation3 = 1) {
+        offense = %cit3%
+        ticket = 600
+        arrest =
+    } else if (citation4 = 1) {
+        offense = %cit4%
+        ticket = 250
+        arrest =
+    } else if (citation5 = 1) {
+        offense = %cit5%
+        ticket = 1000
+        arrest =
+    } else if (citation7 = 1) {
+        offense = %cit7%
+        ticket = 2500
+        arrest = 30
+    } else if (citation8 = 1) {
+        offense = %cit8%
+        ticket = 400
+        arrest =
+    } else if (citation9 = 1) {
+        offense = %cit9%
+        ticket = 600
+        arrest =
+    } else if (citation10 = 1) {
+        offense = %cit10%
+        ticket = 350
+        arrest =
+    } else if (citation11 = 1) {
+        offense = %cit11%
+        ticket = 250
+        arrest =
+    } else if (citation12 = 1) {
+        offense = %cit12%
+        ticket = 150
+        arrest =
+    } else if (citation13 = 1) {
+        offense = %cit13%
+        ticket = 400
+        arrest =
+    } else if (citation14 = 1) {
+        offense = %cit14%
+        ticket = 600
+        arrest =
+    } else if (citation15 = 1) {
+        offense = %cit15%
+        ticket = 5000
+        arrest = 20
+    } else if (citation16 = 1) {
+        offense = %cit16%
+        ticket = 200
+        arrest =
+    } else if (citation17 = 1) {
+        offense = %cit17%
+        ticket = 400
+        arrest =
+    } else if (citation18 = 1) {
+        offense = %cit18%
+        ticket = 400
+        arrest =
+    } else if (citation19 = 1) {
+        offense = %cit19%
+        ticket = 400
+        arrest =
+    } else if (citation20 = 1) {
+        offense = %cit20%
+        ticket = 500
+        arrest =
+    } else if (citation21 = 1) {
+        offense = %cit21%
+        ticket = 400
+        arrest =
+    } else if (citation22 = 1) {
+        offense = %cit22%
+        ticket = 300
+        arrest =
+    } else if (citation23 = 1) {
+        offense = %cit23%
+        ticket = 250
+        arrest =
+    } else if (citation24 = 1) {
+        offense = %cit24%
+        ticket = 300
+        arrest =
+    } else if (citation25 = 1) {
+        offense = %cit25%
+        ticket = 300
+        arrest =
+    }
+    if (citation6 = 1) {
+        if (offense) {
+            offense = %offense% | %cit6%
+            ticket += 1000
+        }
+    }
+    if (misdemeanor1 = 1) {
+        offense = %misd1%
+        maxfine = 1500
+        arrest = 20
+    } else if (misdemeanor2 = 1) { 
+        offense = %misd2%
+        maxfine = 2500
+        arrest = 15
+    } else if (misdemeanor3 = 1) {
+        offense = %misd3%
+        maxfine = 1000
+        arrest = 10
+    } else if (misdemeanor4 = 1) {
+        offense = %misd4%
+        maxfine = 1000
+        arrest = 10
+    } else if (misdemeanor5 = 1) {
+        offense = %misd5%
+        maxfine = 1500
+        arrest = 15
+    } else if (misdemeanor6 = 1) {
+        offense = %misd6%
+        maxfine = 1000
+        arrest = 10
+    } else if (misdemeanor7 = 1) {
+        offense = %misd7%
+        maxfine = 500
+        arrest = 10
+    } else if (misdemeanor8 = 1) {
+        offense = %misd8%
+        maxfine = 1000
+        arrest = 20
+    } else if (misdemeanor9 = 1) {
+        offense = %misd9%
+        maxfine = 1000
+        arrest = 10
+    } else if (misdemeanor10 = 1) {
+        offense = %misd10%
+        maxfine = 1500
+        arrest = 15
+    } else if (misdemeanor11 = 1) {
+        offense = %misd11%
+        maxfine = 700
+        arrest = 15
+    } else if (misdemeanor12 = 1) {
+        offense = %misd12%
+        maxfine =
+        arrest = 99999
+    } else if (misdemeanor13 = 1) {
+        offense = %misd13%
+        maxfine = 1000
+        arrest = 15
+    } else if (misdemeanor14 = 1) {
+        offense = %misd14%
+        maxfine = 700
+        arrest = 15
+    } else if (misdemeanor15 = 1) {
+        offense = %misd15%
+        maxfine = 1500
+        arrest = 20
+    } else if (misdemeanor16 = 1) {
+        offense = %misd16%
+        maxfine = 1500
+        arrest = 20
+    } else if (misdemeanor17 = 1) {
+        offense = %misd17%
+        maxfine = 1000
+        arrest = 10
+    } else if (misdemeanor18 = 1) {
+        offense = %misd18%
+        maxfine = 200
+        arrest =
+    } else if (misdemeanor19 = 1) {
+        offense = %misd19%
+        maxfine = 600
+        arrest = 15
+    } else if (misdemeanor20 = 1) {
+        offense = %misd20%
+        maxfine = 500
+        arrest =
+    } else if (misdemeanor21 = 1) {
+        offense = %misd21%
+        maxfine = 1500
+        arrest = 15
+    } else if (misdemeanor22 = 1) {
+        offense = %misd22%
+        maxfine = 500
+        arrest = 20
+    } else if (misdemeanor23 = 1) {
+        offense = %misd23%
+        maxfine = 1500
+        arrest = 10
+    } else if (misdemeanor24 = 1) {
+        offense = %misd24%
+        maxfine = 1000
+        arrest = 20
+    } else if (misdemeanor25 = 1) { 
+        offense = %misd25%
+        maxfine = 1500
+        arrest = 20
+    } else if (misdemeanor26 = 1) {
+        offense = %misd26%
+        maxfine = 1000
+        arrest =
+    } else if (misdemeanor27 = 1) {
+        offense = %misd27%
+        maxfine = 800
+        arrest = 10
+    } else if (misdemeanor28 = 1) {
+        offense = %misd28%
+        maxfine = 500
+        arrest = 10
+    } else if (misdemeanor29 = 1) {
+        offense = %misd29%
+        maxfine = 800
+        arrest = 10
+    } else if (misdemeanor30 = 1) {
+        offense = %misd30%
+        maxfine = 2500
+        arrest = 15
+    } else if (misdemeanor31 = 1) {
+        offense = %misd31%
+        maxfine = 2000
+        arrest = 20
+    } else if (misdemeanor32 = 1) {
+        offense = %misd32%
+        maxfine = 1500
+        arrest = 15
+    } else if (misdemeanor33 = 1) {
+        offense = %misd33%
+        maxfine = 1500
+        arrest = 20
+    } else if (misdemeanor34 = 1) {
+        offense = %misd34%
+        maxfine = 1000
+        arrest = 10
+    } else if (misdemeanor35 = 1) {
+        offense = %misd35%
+        maxfine = 2500
+        arrest = 15
+    } else if (misdemeanor36 = 1) {
+        offense = %misd36%
+        maxfine = 1500
+        arrest = 10
+    } else if (misdemeanor37 = 1) {
+        offense = %misd37%
+        maxfine = 3000
+        arrest = 20
+    } else if (felony1 = 1) {
+        offense = %felo1%
+        maxfine =
+        arrest =
+    } else if (felony2 = 1) {
+        offense = %felo2%
+        maxfine = 3000
+        arrest = 35
+    } else if (felony3 = 1) {
+        offense = %felo3%
+        maxfine = 4000
+        arrest = 30
+    } else if (felony4 = 1) {
+        offense = %felo4%
+        maxfine = 6000
+        arrest = 40
+    } else if (felony5 = 1) {
+        offense = %felo5%
+        maxfine = 5500
+        arrest = 35
+    } else if (felony6 = 1) {
+        offense = %felo6%
+        maxfine = 5000
+        arrest = 40
+    } else if (felony7 = 1) {
+        offense = %felo7%
+        maxfine = 7000
+        arrest = 50
+    } else if (felony8 = 1) {
+        offense = %felo8%
+        maxfine = 3000
+        arrest = 10
+    } else if (felony9 = 1) {
+        offense = %felo9%
+        maxfine = 3500
+        arrest = 30
+    } else if (felony10 = 1) {
+        offense = %felo10%
+        maxfine = 1500
+        arrest = 15
+    } else if (felony11 = 1) { 
+        offense = %felo11%
+        maxfine = 5000
+        arrest = 25
+    } else if (felony12 = 1) {
+        offense = %felo12%
+        maxfine = 4000
+        arrest = 20
+    } else if (felony13 = 1) {
+        offense = %felo13%
+        maxfine = 1000
+        arrest = 30
+    } else if (felony14 = 1) {
+        offense = %felo14%
+        maxfine = 3000
+        arrest = 20
+    } else if (felony15 = 1) {
+        offense = %felo15%
+        maxfine = 3000
+        arrest = 20
+    } else if (felony16 = 1) {
+        offense = %felo16%
+        maxfine = 1500
+        arrest = 15
+    } else if (felony17 = 1) {
+        offense = %felo17%
+        maxfine = 1500
+        arrest = 10
+    } else if (felony18 = 1) {
+        offense = %felo18%
+        maxfine = 3500
+        arrest = 30
+    } else if (felony19 = 1) {
+        offense = %felo19%
+        maxfine = 1500
+        arrest = 20
+    } else if (felony20 = 1) {
+        offense = %felo20%
+        maxfine = 2500
+        arrest = 20
+    } else if (felony21 = 1) {
+        offense = %felo21%
+        maxfine = 1000
+        arrest = 10
+    } else if (felony22 = 1) {
+        offense = %felo22%
+        maxfine = 2500
+        arrest = 20
+    } else if (felony23 = 1) {
+        offense = %felo23%
+        maxfine = 3000
+        arrest = 25
+    } else if (felony24 = 1) {
+        offense = %felo24%
+        maxfine = 5500
+        arrest = 30
+    } else if (felony25 = 1) {
+        offense = %felo25%
+        maxfine = 7000
+        arrest = 50
+    } else if (felony26 = 1) {
+        offense = %felo26%
+        maxfine = 12000
+        arrest = 60
+    } else if (felony27 = 1) {
+        offense = %felo27%
+        maxfine = 2000
+        arrest = 10
+    } else if (felony28 = 1) {
+        offense = %felo28%
+        maxfine = 3000
+        arrest = 30
+    } else if (felony29 = 1) {
+        offense = %felo29%
+        maxfine = 2500
+        arrest = 15
+    } else if (felony30 = 1) {
+        offense = %felo30%
+        maxfine = 6000
+        arrest = 30
+    } else if (felony31 = 1) {
+        offense = %felo31%
+        maxfine = 30000
+        arrest = 999
+    } else if (felony32 = 1) {
+        offense = %felo32%
+        maxfine = 5500
+        arrest = 30
+    }
+    if (arrest and maxfine) {
+        pEdit = 
+        (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/bill %offenderid% %maxfine% | %offense% | (%name% - %department%)
+        )
+    } else if (ticket and arrest) {
+        pEdit =
+        (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/ticket %offenderid% %ticket% | %offense% | (%name% - %department%)
+        )
+    } else if (ticket) {
+        pEdit =
+        (
+/ticket %offenderid% %ticket% | %offense% | (%name% - %department%)
+        )
+    }
+if (lastEdit == "") { ;if lastEdit contains nothing, then this is the first value
+	guicontrol,,pText,% pEdit
+	lastEdit := pEdit
+} else { ;if lastEdit DOES contain something, then this is the second value and we can compare now
+    guicontrol,,pText,% pEdit
+	lastEdit := "" ;return lastEdit variable to empty
+}
+return
+
+^3::
+    Reload
 Return
 
 ; Empty Recycle Bin
