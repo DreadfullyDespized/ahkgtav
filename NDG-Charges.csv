@@ -1,0 +1,69 @@
+﻿Arson 2nd Degree,1500,20
+Assault 2nd Degree,2500,15
+Attempted Grand Theft Auto,1000,10
+Brandishing of a Firearm,1000,10
+Destruction of Government Property,1500,15
+Destruction of Property,1000,10
+Disorderly Conduct,500,10
+Domestic Violence,1000,20
+Driving on suspended license,1000,10
+Driving without a license,1500,15
+Failure to comply with lawful order,700,15
+Failure to identify to LEO,,99999
+Failure to pay fines,1000,15
+Failure to supply documentation to LEO,700,15
+False 911 calls,1500,20
+False Report,1500,20
+Harassment,1000,10
+JayWalking,200,
+Joyriding,600,15
+Loitering,500,
+Petty Theft,1500,15
+Poaching,500,20
+Possession of a stolen identification,1500,10
+Posession of burglary tools,1000,20
+Possession of illegal substance (General),1500,20
+Possession of Marijuana,1000,
+Prostitution,800,10
+Public Indecency,500,10
+Public Intoxication,800,10
+Reckless Driving,2500,15
+Reckless Endangerment,2000,20
+Stalking,1500,15
+Street Racing,1500,20
+Trespassing,1000,10
+Trespassing on Government Property,2500,15
+Unlawful Imprisonment,1500,10
+Unlawful use of a weapon,3000,20
+Aiding and Abetting/Accessory,,
+Arson 1st Degree,3000,35
+Assault 1st Degree,4000,30
+Assault on Emergency Services,6000,40
+Assault with a deadly weapon,5500,35
+Attempted murder,5000,40
+Attempted murder of Emergency Services,7000,50
+Bribery of a Public Servant,3000,10
+Burglary,3500,30
+Conspiracy to Commit a Criminal Act,1500,15
+Criminal Possession of Government Issued Equipment,5000,25
+Criminal threat,4000,20
+Destruction of physical evidence,1000,30
+Escaping Custody,3000,20
+Falsifying Government Document,3000,20
+Fleeing and Eluding,1500,15
+Fraud,1500,10
+Grand Theft,3500,30
+Grand Theft Auto,1500,20
+Illegal possession of a Weapon/Firearm,2500,20
+Impersonation,1000,10
+Impersonation of an Emergency Services,2500,20
+Kidnapping,3000,25
+Manslaughter,5500,30
+Murder,7000,50
+Murder of a Emergency Services,12000,60
+Obstruction of Justice,2000,10
+Possession of a outlawed Weapon,3000,30
+Possession of Marijuana with intent to sell,2500,15
+Robbery/Armed Robbery,6000,30
+Terroristic Acts,30000,999
+Vehiclular Manslaughter,5500,30
