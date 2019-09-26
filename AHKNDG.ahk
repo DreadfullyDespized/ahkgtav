@@ -1156,9 +1156,11 @@ Return
 
 check2:
 if (citation1 == 1) {
-
+    offense := offense1
+    fine := fine1
 } else if (citation2 == 1) {
-
+    offense := offense2
+    fine := fine2
 }
 PEdit = 
 (
