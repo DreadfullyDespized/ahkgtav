@@ -543,9 +543,9 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Edit, w80 vtowcompany, %towcompany%
     towcompany_TT := "Towing company you work for. Name for /clockin command"
     Gui, 1:Add, Edit, w80 vname, %name%
-    name_TT := "Last Name of your character"
+    name_TT := "Name format Fist Initial.Last Name - D.Mallard for instance"
     Gui, 1:Add, Edit, w80 vtitle, %title%
-    title_TT := "Title of your character"
+    title_TT := "Title or Rank of your character"
     Gui, 1:Add, Edit, w80 vdepartment, %department%
     department_TT := "Department that your character works for"
     Gui, 1:Add, Edit, w80 vdelay, %delay%
@@ -555,7 +555,7 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Edit, w80 vms, %ms%
     Gui, 1:Add, Edit, w80 vas, %as%
     Gui, 1:Add, Edit, x290 y30 w80 vphone, %phone%
-    phone_TT := "Last 5 of your current characters phone number"
+    phone_TT := "Your Phone number, after 555-"
     Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Default, works in-game and notepad.
     Gui, 1:Add, Button, x280 y490 w80 gSave1, Save
     Gui, 1:Show,, Making the world a better place
@@ -825,16 +825,36 @@ Return
 	}
     Gui, 5:Tab
     Gui, 5:Add, Edit, Readonly r5 w703 vpText
-    Gui, 5:Add, Button, gcheck2, Clear Records
+    pText_TT := "Use this section to copy the arrest/bill/ticket from, to enter into the game."
+    Gui, 5:Add, Button, gcheck2 vCleanyPoo, CleanyPoo
+    CleanyPoo_TT := "Cleans out the record and updates the Charge Log file."
+    Gui, 5:Add, Button, x80 y763 gwarrant vwarrant, ToWarrant
+    warrant_TT := "Converts the charges to a Warrant format."
     Gui, 5:Show,, Citation | Misdemeanor | Felony - LEO Calculator
+    OnMessage(0x200, "WM_MOUSEMOVE")
     lastEdit := ""
-    ; ListVars
     Return
 
     5GuiEscape:
     5GuiClose:
     Gui, 5:Cancel
     Return
+Return
+
+warrant:
+gui,submit,nohide
+FormatTime, TimeString,, MM.dd.yy
+PEdit = 
+(
+/warrant %offfname%/%offlname% | %TimeString% - %offense% | (%name% - %department%)
+)
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
 Return
 
 citsub:
@@ -848,7 +868,6 @@ if (n == 6 and InStr(PEdit,"Commercial Vehicle Fine")) {
     offenseadd = % c_offense_%n%
     offense =  %offense% | %offenseadd%
     fine += % c_fine_%n%
-    arrest = % c_arrest_%n%
     if (arrest) {
         PEdit = 
         (
@@ -890,8 +909,6 @@ return
 misdsub:
 gui,submit,nohide
 RegExMatch(A_GuiControl, "\d+$", n)
-; Need a way to identify felony/misdemeanor?
-; Need to be able to add misdemeanor and felony together.
 if (InStr(PEdit,"/ticket")) {
 msgbox, You must Clear the Ticket before issuing Misdemanor chargers.
 } else if (offense) {
@@ -926,8 +943,6 @@ return
 felosub:
 gui,submit,nohide
 RegExMatch(A_GuiControl, "\d+$", n)
-; Need a way to identify felony/misdemeanor?
-; Need to be able to add misdemeanor and felony together.
 if (InStr(PEdit,"/ticket")) {
 msgbox, You must Clear the Ticket before issuing Felony chargers.
 } else if (offense) {
@@ -961,7 +976,14 @@ return
 
 check2:
 gui,submit,nohide ;updates gui variable
-lastEdit :=
+FormatTime, TimeString,, yyyyMMdd hh:mm:ss
+FileAppend,
+(
+%TimeString%
+%PEdit%
+`n
+), Charge_log.txt
+lastEdit := A_ScriptDir "\Charge_log.txt Updated"
 offense :=
 fine :=
 arrest :=
