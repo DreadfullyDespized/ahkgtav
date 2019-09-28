@@ -846,7 +846,7 @@ gui,submit,nohide
 FormatTime, TimeString,, MM.dd.yy
 PEdit = 
 (
-/warrant %offfname%/%offlname% | %TimeString% - %offense% | (%name% - %department%)
+/warrant %offenderid% %offense% | (%name% - %department% - %TimeString%)
 )
 if (lastEdit == ""){
     guicontrol,,pText,% PEdit
