@@ -10,6 +10,20 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V5
+Date: 20191001 01:13
+    Changes:
+    + Ticket Calculator (Control+2)
+    + Code Reloader (Control+3)
+    + Caution Code into ticket calc
+    + Warrant/misdemeanor/ticket/felony into ticket calc
+    + History of all submitted Ticket calc actions via txt log
+    + Clear button for when testing out the ticket calc
+    ^ Validated all tickets/misdemeanors/felonies against current laws
+
+    ToDo:
+    + SAFR Commands
+
 AHKNDG V4
 Date: 20190727 16:39
     Changes:
