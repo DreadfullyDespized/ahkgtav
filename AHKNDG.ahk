@@ -99,8 +99,8 @@ update(lversion, logurl="", rfile="github", vline=13) {
             deposit := A_ScriptDir "\V" Version "-AHKNDG.ahk"
             UrlDownloadToFile, %rfile%, %deposit%
             Msgbox, 64, % "Download Complete"
-                      , % "To install the new version simply replace the old file with the one`n"
-                      .   "that was downloaded.`n`n The application will exit now."
+                      , % "New version is now running and the old version will now close'n"
+                        . "Enjoy the latest version!"
             Run, %deposit%
             ExitApp
 
