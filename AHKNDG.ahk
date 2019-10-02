@@ -63,8 +63,7 @@ global script := {  based           : scriptobj
                     ,conf           : "NDG-Config.ini"}
 ; }
 
-; update(4.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog2.txt", "github", 4) 
-
+; update(5.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/NDG-Changelog.txt", "github", 5)
 /*
 This has been disabled for the time being until I get more time to look at it and work on it.
 
