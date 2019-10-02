@@ -96,7 +96,7 @@ update(lversion, logurl="", rfile="github", vline=13) {
                 return debug ? "* Update message timed out" : 1
             IfMsgbox, No
                 return debug ? "* Update aborted by user" : 2
-            deposit := A_ScriptDir "\V" Version "-AHKNDG.ahk"
+            deposit := A_ScriptDir "\AHKNDG.ahk"
             UrlDownloadToFile, %rfile%, %deposit%
             Msgbox, 64, % "Download Complete"
                       , % "New version is now running and the old version will now close'n"

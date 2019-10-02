@@ -11,10 +11,11 @@ Versioning:
 ==================
 
 AHKNDG V5
-Date: 20191001 01:13
+Date: 20191002 18:31
     Changes:
-    + Ticket Calculator (Control+2)
-    + Code Reloader (Control+3)
+    + Ticket Calculator (Control+2) - Also in tooltip right click menu
+    + Code Reloader (Control+3) - Also in tooltip right click menu
+    + Updater (Control+4) - Also in tooltip right click menu
     + Caution Code into ticket calc
     + Warrant/misdemeanor/ticket/felony into ticket calc
     + History of all submitted Ticket calc actions via txt log
