@@ -44,4 +44,6 @@ autom4te.cache
 *.mp3
 Charge_log.txt
 GTAV-Config.ini
+NDG-Config.ini
+NDG-Config2.ini
 *.csv
