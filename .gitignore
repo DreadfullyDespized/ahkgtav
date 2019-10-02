@@ -42,10 +42,6 @@ m4/lt~obsolete.m4
 autom4te.cache
 *.wav
 *.mp3
-
-NDG-Charges.csv
-NDG-Citation.csv
-Color.csv
-Fruit.csv
 Charge_log.txt
 GTAV-Config.ini
+*.csv
