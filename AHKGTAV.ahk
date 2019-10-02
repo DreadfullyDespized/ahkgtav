@@ -777,6 +777,15 @@ Return
     Gui, 5:Add, Text, x190 y10, CautionCode:
     Gui, 5:Add, Edit, x85 y5 w60 voffenderid, 0
     Gui, 5:Add, DropDownList, x265 y5 w50 vcautioncode, |G|PH|V|ST|E|M
+        cautioncode_TT :=
+    (
+"G = Gang Affiliated
+PH = Police Hater
+V = Violent
+ST = Suicidal Tendancies - Approved by SAFR Only
+E = Escape Risk
+M = Mental Instability - Approved by SAFR Only"
+    )
     Gui, 5:Add, Button, x320 y4 gcautioncode vcaucode, Set
     caucode_TT := "Setting {CautionCode} once will add it, setting the same caution code will removeit, they are toggled."
     Gui, 5:Add, Tab3, x10, Citation|Misdemeanor|Felony
