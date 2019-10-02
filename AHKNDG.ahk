@@ -2,7 +2,7 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKNDG - NDG Autohotkey doohicky
- * @Script Version   : 5.0.0
+ * @Script Version   : 5
  * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
  * @Creation Date    : 20190707
  * @Modification Date: 20191002
@@ -52,71 +52,48 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKNDG"
-                    ,version        : "5.0.0"
+                    ,version        : "5"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
                     ,Homepage       : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
-                    ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
-                    ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,crtdate        : "20190707"
                     ,moddate        : "20191002"
                     ,conf           : "NDG-Config.ini"}
 ; }
 
-; update(4.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog2.txt", "github", 4) 
-
-/*
-This has been disabled for the time being until I get more time to look at it and work on it.
-
-if the version is in line 1 of the log file and your compiled script is in that url, lVersion is a variable containing a number that will be compared to the one in the log file.
-
-note that my function is designed to open the file downloaded by default
-so if the downloaded file is an archive it will be opened
-if it is a script it will be run so as if it is an EXE file...
-the best would be if the file being downloaded is an installer (or installer script) that will copy the necessary files/folders to the user automatically.
-*/
-
 ; ============================================ SCRIPT AUTO UPDATER ============================================
-update(lversion, logurl="", rfile="github", vline=13){
-    global s_author=script.author, s_name=script.name
+update(lversion, logurl="", rfile="github", vline=13) {
     Msgbox, 0x10
           , % "Error"
           , % "Author: " . script.author . "`n"
             . "Name: " . script.name . "`n"
             . "Version: " . script.version . "`n"
             . "Email: " . script.email
-    
-    `(rfile = "github") ? logurl := "https://www.github.com/" s_author "/" s_name "/raw/master/Changelog.txt"
+
+    `(rfile = "github") ? logurl := "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog-NDG.txt"
 
     RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
     
     if connected := !ErrorLevel
     {
-        msgbox, Connected
+        ; msgbox, Connected
         ; This one actually worked and created the changelog file.
-        UrlDownloadToFile, %logurl%, %a_temp%\Changelog.txt ; C:\Users\username\AppData\Local\Temp\logurl
+        UrlDownloadToFile, %logurl%, %a_temp%\Changelog-NDG.txt ; C:\Users\username\AppData\Local\Temp\logurl
         ; UrlDownloadToFile is being blocked at work
         if ErrorLevel
             msgbox, The file failed to download
-        FileReadLine, logurl, %a_temp%\logurl, %vline%
-        RegexMatch(logurl, "v(*)", Version)
-        if (rfile = "github"){
-            ; So far it is getting to this point at home
-            msgbox, 0x10
-                  , % "It got passsed the regex"
-                  , % "Version: " . Version . "`n" ; Not getting anything from this one.
-                  . "logurl: " . logurl . "`n"
-                  . "Version1: " . Version1 . "`n" ; Not getting anything from this one.
-                  . "lversion: " . lversion ; Not getting anything from this one.
+        FileReadLine, line, %a_temp%\Changelog-NDG.txt, %vline%
+        RegexMatch(line, "\d", Version)
+        if (rfile = "github") {
             if (a_iscompiled)
                 rfile := "https://github.com/downloads/" s_author "/" s_name "/" s_name "-" Version "-Compiled.zip"
             else 
                 rfile := "https://github.com/" s_author "/" s_name "/zipball/" Version
         }
-        if (Version1 > lversion){
+        if (Version > lversion){
             Msgbox, 68, % "New Update Available"
                       , % "There is a new update available for this application.`n"
-                        . "Do you wish to upgrade to " Version "?"
+                        . "Do you wish to upgrade to V" Version "?"
                       , 10 ; 10s timeout
             IfMsgbox, Timeout
                 return debug ? "* Update message timed out" : 1
@@ -457,6 +434,7 @@ towtype = f
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
 ; Removes all of the standard options from the system tray
 Menu, Tray, NoStandard
+Menu, Tray, Add, &Update Checker, ^4
 Menu, Tray, Add, &Reload Script, ^3
 Menu, Tray, Add, &Ticket Calc, ^2
 Menu, Tray, Add, &Reconfigure/Help, ^1
@@ -467,6 +445,10 @@ Menu, Tray, Add, E&xit,Exit
 
 Exit:
 ExitApp
+Return
+
+^4::
+update(4)
 Return
 
 vehimghk:
@@ -2083,11 +2065,11 @@ Return
 Exe_File=AHKNDG.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=5.0.0
+File_Version=5
 Internal_Name=AHKGTAV
 Legal_Copyright=GNU General Public License 3.0
 Original_Filename=AHKNDG.exe
 Product_Name=AHKNDG
-Product_Version=5.0.0
+Product_Version=5
 * * * Compile_AHK SETTINGS END * * *
 */
