@@ -63,11 +63,13 @@ global script := {  based           : scriptobj
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
 update(lversion, logurl="", rfile="github", vline=13) {
-    Msgbox, 0x10
-          , % "Error"
+    Msgbox,
+          , % "Info"
           , % "Author: " . script.author . "`n"
             . "Name: " . script.name . "`n"
             . "Version: " . script.version . "`n"
+            . "ModDate: " . script.moddate . "`n"
+            . "Config: " . script.conf . "`n"
             . "Email: " . script.email
 
     `(rfile = "github") ? logurl := "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog-NDG.txt"
