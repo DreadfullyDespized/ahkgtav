@@ -1,12 +1,12 @@
 /**
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
- * @Script Name      : AHKGTAV - SOE Autohotkey doohicky
- * @Script Version   : 12.0.0
- * @Homepage         : https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/
- * @Creation Date    : 20180718
- * @Modification Date: 20190605
- * @Description      : Simple autohotkey script to be used with GTAV FiveM SoE.
+ * @Script Name      : AHKNDG - NDG Autohotkey doohicky
+ * @Script Version   : 5.0.0
+ * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
+ * @Creation Date    : 20190707
+ * @Modification Date: 20191002
+ * @Description      : Simple autohotkey script to be used with GTAV FiveM NDG.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
  * @License          : Copyright ©2019-2020 DreadfullyDespized <GPLv3>
@@ -51,19 +51,19 @@ Menu, Tray, Icon, shell32.dll, 194
 
 ; Basic Script Info{
 global script := {  based           : scriptobj
-                    ,name           : "AHKGTAV"
-                    ,version        : "12.0.0"
+                    ,name           : "AHKNDG"
+                    ,version        : "5.0.0"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
-                    ,Homepage       : "https://evolpcgaming.com/forums/topic/15014-a-little-something-i-use-and-work-on/"
+                    ,Homepage       : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
-                    ,crtdate        : "20180718"
-                    ,moddate        : "20190605"
-                    ,conf           : "GTAV-Config.ini"}
+                    ,crtdate        : "20190707"
+                    ,moddate        : "20191002"
+                    ,conf           : "NDG-Config.ini"}
 ; }
 
-; update(12.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog.txt", "github", 13) 
+; update(4.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog2.txt", "github", 4) 
 
 /*
 This has been disabled for the time being until I get more time to look at it and work on it.
@@ -181,7 +181,7 @@ update(lversion, logurl="", rfile="github", vline=13){
 ; Unfortunately.  The emojis don't actually save from the ahk to the data entry.
 ; Though if you enter them in the data entry.  They save within the ini.
 ; Configure these variables as you wish to be presented
-config = GTAV-Config.ini
+config = NDG-Config.ini
 ; ============================================ INI READING ============================================
 ; Section to read in the configuration file if it exists
 IfExist, %config%
@@ -191,53 +191,47 @@ IfExist, %config%
     IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
     IniDelete, %config%, Normal, val2hkmsg
     IniDelete, %config%, Towing, towmsg1
+    IniDelete, %config%, Keys, seatbelthk
+    IniDelete, %config%, Keys, lighthk
+    IniDelete, %config%, Keys, sirenhk
+    IniDelete, %config%, Keys, yelphk
 }
 ; Back to the reading of the configuration
 IniRead, rolepick, %config%, Yourself, role, LEO
-IniRead, callsign, %config%, Yourself, callsign, A06
-IniRead, myid, %config%, Yourself, myid, 1
-IniRead, towcompany, %config%, Yourself, towcompany, skinnydick
+IniRead, callsign, %config%, Yourself, callsign, D6
+IniRead, myid, %config%, Yourself, myid, 30
+IniRead, towcompany, %config%, Yourself, towcompany, DonkeyDick
 IniRead, name, %config%, Yourself, name, Dread
-IniRead, title, %config%, Yourself, title, Officer
-IniRead, department, %config%, Yourself, department, LSPD
-IniRead, phone, %config%, Yourself, phone, 38915
+IniRead, title, %config%, Yourself, title, Deputy
+IniRead, department, %config%, Yourself, department, LSSD
+IniRead, phone, %config%, Yourself, phone, 00030
 ; Client communication and test mode
-IniRead, delay, %config%, Yourself, delay, 150
+IniRead, delay, %config%, Yourself, delay, 80
 IniRead, testmode, %config%, Yourself, testmode, 0
 ; Server related section
 IniRead, rs, %config%, Server, rs, /r
-IniRead, ca, %config%, Server, ca, /answer
-IniRead, cs, %config%, Server, cs, /c
 IniRead, ds, %config%, Server, ds, /do
 IniRead, ms, %config%, Server, ms, /me
 IniRead, as, %config%, Server, as, /ad
-IniRead, los, %config%, Server, los, /l
 ; The hotkey related section
 IniRead, spikeshk, %config%, Keys, spikeshk, ^.
 IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
 IniRead, runplatehk, %config%, Keys, runplatehk, ^-
-IniRead, cpichk, %config%, Keys, cpichk, ^=
-IniRead, 911respondhk, %config%, Keys, 911respondhk, ^9
+IniRead, ncichk, %config%, Keys, ncichk, ^=
 IniRead, towcallhk, %config%, Keys, towcallhk, ^k
 IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
-IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
-IniRead, enginehk, %config%, Keys, enginehk, F7
+IniRead, enginehk, %config%, Keys, enginehk, F9
 IniRead, valet1hk, %config%, Keys, valet1hk, +F11
 IniRead, valet2hk, %config%, Keys, valet2hk, F11
-IniRead, phrechk, %config%, Keys, phrechk, F6
-IniRead, robhk, %config%, Keys, robhk, ^r
+IniRead, phrechk, %config%, Keys, phrechk, F10
 ; Messages that correspond with the hotkeys
 ; Police related section
-IniRead, cuffmsg1, %config%, Police, cuffmsg1, %ds% pull out his hand cuffs to cuff the Subject
-IniRead, cuffmsg2, %config%, Police, cuffmsg2, %ds% pulls out his keys to release the Subject from the cuffs
-IniRead, 911msg, %config%, Police, 911msg, %cs% What is the nature of your emergency and the location?
-IniRead, 311msg, %config%, Police, 311msg, %cs% What may I be able to assist you with today?
 IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
 IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, %ds% Validates that the Dashcam is functional in both audio and video.
 IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, %ds% Logs into the MWS computer.
 IniRead, friskmsg, %config%, Police, friskmsg, %ds% Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
 IniRead, searchmsg, %config%, Police, searchmsg, %ds% Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
-IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
 IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
 ; Towing related section
 IniRead, tadv, %config%, Towing, tadv, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
@@ -249,13 +243,125 @@ IniRead, tsecure2, %config%, Towing, tsecure2, %ds% secures the front of the veh
 IniRead, treleasemsg1, %config%, Towing, treleasemsg1, %ds% releases the extra tow cables from the rear and pulls the winch release lever
 IniRead, treleasemsg2, %config%, Towing, treleasemsg2, %ds% releases the extra tow cables from the front and pulls the winch release lever
 ; Help related section
-IniRead, micmsg, %config%, Help, micmsg, %los% How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
-IniRead, paystatemsg, %config%, Help, paystatemsg, %los% State Debt is from medical/legal bills.  If you have any it takes 50`% of your wages.  To be able to see your current state debt type "/paystate" to pay off state debt "/paystate amount".
+IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
+IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
 ; Normal related section
 IniRead, gunmsg, %config%, Normal, gunmsg, %ds% pulls out his ^1pistol ^0from under his shirt
 IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, %ms% puts in his ticket into the valet and presses the button to receive his selected vehicle
 IniRead, phrechkmsg, %config%, Normal, phrechkmsg, %ds% Pulls out their phone and starts recording audio and video
-IniRead, robhkmsg, %config%, Normal, robhkmsg, %ms% takes the persons phone`, weapons`, and any cash on them
+
+IfNotExist, NDG-Citation.csv
+FileAppend,
+(
+10-19 MPH Over,200,
+20-29 MPH Over,400,
+30+ MPH Over,600,
+Broken Windshield,250,
+Careless Driving,1000,
+Commercial Vehicle Fine,1000,
+Driving under the Influence,2500,30
+Excessive vehicle noise,400,
+Failure to have correct registration on vehicle,600,
+Failure to have registration displayed on vehicle,350,
+Failure to use Headlights at night,250,
+Failure to use signal when turning/changing lanes,150,
+Failure to yield right of way to traffic,400,
+Failure to yield to emergency vehicle,600,
+Hit and Run,5000,20
+Illegal passing,200,
+Illegal turn,400,
+Illegal U-Turn,400,
+Illegally parked vehicle,400,
+Impeding flow of traffic,500,
+Running a red light,400,
+Running a stop sign,300,
+Tailight or headlight out,250,
+Traveling wrong way,300,
+Unroadworthy vehicle,300,
+)
+,NDG-Citation.csv
+
+IfNotExist, NDG-Misdemeanor.csv
+FileAppend,
+(
+Arson 2nd Degree,1500,20
+Assault 2nd Degree,2500,15
+Attempted Grand Theft Auto,1000,10
+Brandishing of a Firearm,1000,10
+Destruction of Government Property,1500,15
+Destruction of Property,1000,10
+Disorderly Conduct,500,10
+Domestic Violence,1000,20
+Driving on suspended license,1000,10
+Driving without a license,1500,15
+Failure to comply with lawful order,700,15
+Failure to identify to LEO,,99999
+Failure to pay fines,1000,15
+Failure to supply documentation to LEO,700,15
+False 911 calls,1500,20
+False Report,1500,20
+Harassment,1000,10
+JayWalking,200,
+Joyriding,600,15
+Loitering,500,
+Petty Theft,1500,15
+Poaching,500,20
+Possession of a stolen identification,1500,10
+Posession of burglary tools,1000,20
+Possession of illegal substance (General),1500,20
+Possession of Marijuana,1000,
+Prostitution,800,10
+Public Indecency,500,10
+Public Intoxication,800,10
+Reckless Driving,2500,15
+Reckless Endangerment,2000,20
+Stalking,1500,15
+Street Racing,1500,20
+Trespassing,1000,10
+Trespassing on Government Property,2500,15
+Unlawful Imprisonment,1500,10
+Unlawful use of a weapon,3000,20
+)
+,NDG-Misdemeanor.csv
+
+IfNotExist, NDG-Felony.csv
+FileAppend,
+(
+Aiding and Abetting/Accessory,,
+Arson 1st Degree,3000,35
+Assault 1st Degree,4000,30
+Assault on Emergency Services,6000,40
+Assault with a deadly weapon,5500,35
+Attempted murder,5000,40
+Attempted murder of Emergency Services,7000,50
+Bribery of a Public Servant,3000,10
+Burglary,3500,30
+Conspiracy to Commit a Criminal Act,1500,15
+Criminal Possession of Government Issued Equipment,5000,25
+Criminal threat,4000,20
+Destruction of physical evidence,1000,30
+Escaping Custody,3000,20
+Falsifying Government Document,3000,20
+Fleeing and Eluding,1500,15
+Fraud,1500,10
+Grand Theft,3500,30
+Grand Theft Auto,1500,20
+Illegal possession of a Weapon/Firearm,2500,20
+Impersonation,1000,10
+Impersonation of an Emergency Services,2500,20
+Kidnapping,3000,25
+Manslaughter,5500,30
+Murder,7000,50
+Murder of a Emergency Services,12000,60
+Obstruction of Justice,2000,10
+Possession of a outlawed Weapon,3000,30
+Possession of Marijuana with intent to sell,2500,15
+Robbery/Armed Robbery,6000,30
+Terroristic Acts,30000,999
+Vehiclular Manslaughter,5500,30
+)
+,NDG-Felony.csv
+
 ; ============================================ HELP TEXT FORMAT ============================================
 ; Main portion of the help text that is displayed
 helptext = 
@@ -274,10 +380,6 @@ ms Delay: Take your ping to the server and double it.  To fill this in with.
 Police Commands:
 --------------------
 tdutystart - go on duty (launches mws)
-tcuff - cuff
-tuncuff - uncuff
-t911 - answer 911
-t311 - answer 311
 tfrisk - frisks subject
 tsearch - searches subject
 tmedical - medical rp message
@@ -287,11 +389,11 @@ tplate - notes the plate
 tvin = notes the vin
 ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
 
-Control+. - spikes/rspikes
+Control+2 - NDG Ticket|Misdemeanor|Felony Calculator
+Control+. - SpikeStrip Toggle
 Control+/ - vehicle image search (uses google images in browser)
 Control+- - runs plate along with saving plate on clipboard
-Control+= - cpic name along with saving name on clipboard
-Control+9 - 911 units on the way
+Control+= - ncic name along with saving name on clipboard
 Control+K - call for tow over radio
 Control+J - tell tow whats going on
 
@@ -315,12 +417,10 @@ General Commands:
 ---------------------------
 tgun - use firearm
 tscrap - rp the scrap to truck
-F1 - enables/disables seatbelt
-F7 - /engine on
+F9 - enables/disables engine
 Shift+F11 - valet phone check
 F11 - Pull vehicle out from valet
 F6 - Pull out phone to record
-Control+R - Rob Bystander
 )
 
 helptext2 = 
@@ -330,13 +430,35 @@ This is the section to do so. Click on the box and then
 hit the keys together to configure the hotkey.
 )
 
-spikes = 0
+citationtext = 
+(
+This is the portion to handle citations/tickets.
+You can not GROUP tickets, they must be issued one per infraction.
+The DB records it as one ticket per /ticket given.
+All indicated arrest/ticket amounts are the MAX not the suggested.
+)
+
+misdemeanortext = 
+(
+This is the portion to handle misdemeanor charges.
+For x2 or more charges.  This should be annotated on report. not Arson 2nd Degree x2 in the /arrest or /bill
+All indicated arrest/bill amounts are the MAX not the suggested.
+)
+
+felonytext = 
+(
+This is the portion to handle felony charges.
+For x2 or more charges.  This should be annotated on report. not Arson 1st Degree x2 in the /arrest or /bill
+All indicated arrest/bill amounts are the MAX not the suggested.
+)
+
 towtype = f
-seatbelt = 0
 
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
 ; Removes all of the standard options from the system tray
 Menu, Tray, NoStandard
+Menu, Tray, Add, &Reload Script, ^3
+Menu, Tray, Add, &Ticket Calc, ^2
 Menu, Tray, Add, &Reconfigure/Help, ^1
 Menu, Tray, Add, GTAV &Car Search, vehimghk
 Menu, Tray, Add, E&xit,Exit
@@ -408,12 +530,9 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Text,, ms Delay:
     Gui, 1:Add, Text,, The following should only be modified if playing on a different server.
     Gui, 1:Add, Text,, Radio:
-    Gui, 1:Add, Text,, CallAnswer:
-    Gui, 1:Add, Text,, CallReply:
     Gui, 1:Add, Text,, Third Party Action:
     Gui, 1:Add, Text,, First Party Action:
     Gui, 1:Add, Text,, Advertisement:
-    Gui, 1:Add, Text,, Local OOC:
     Gui, 1:Add, Text, x210 y34, Phone Number:
     Gui, 1:Add, DropDownList, x100 y30 w80 vrolepick, |LEO|TOW|CIV|SAFR|GEORGE
     rolepick_TT := "Select the character role that you will be playing as"
@@ -424,22 +543,19 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Edit, w80 vtowcompany, %towcompany%
     towcompany_TT := "Towing company you work for. Name for /clockin command"
     Gui, 1:Add, Edit, w80 vname, %name%
-    name_TT := "Last Name of your character"
+    name_TT := "Name format Fist Initial.Last Name - D.Mallard for instance"
     Gui, 1:Add, Edit, w80 vtitle, %title%
-    title_TT := "Title of your character"
+    title_TT := "Title or Rank of your character"
     Gui, 1:Add, Edit, w80 vdepartment, %department%
     department_TT := "Department that your character works for"
     Gui, 1:Add, Edit, w80 vdelay, %delay%
     delay_TT := "milisecond delay.  Take your ping to the server x2"
     Gui, 1:Add, Edit, x150 y272 w80 vrs, %rs%
-    Gui, 1:Add, Edit, w80 vca, %ca%
-    Gui, 1:Add, Edit, w80 vcs, %cs%
     Gui, 1:Add, Edit, w80 vds, %ds%
     Gui, 1:Add, Edit, w80 vms, %ms%
     Gui, 1:Add, Edit, w80 vas, %as%
-    Gui, 1:Add, Edit, w80 vlos, %los%
     Gui, 1:Add, Edit, x290 y30 w80 vphone, %phone%
-    phone_TT := "Last 5 of your current characters phone number"
+    phone_TT := "Your Phone number, after 555-"
     Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Default, works in-game and notepad.
     Gui, 1:Add, Button, x280 y490 w80 gSave1, Save
     Gui, 1:Show,, Making the world a better place
@@ -469,18 +585,15 @@ SetScrollLockState, AlwaysOff
     IniWrite, %testmode%, %config%, Yourself, testmode
     ; Server related section
     IniWrite, %rs%, %config%, Server, rs
-    IniWrite, %ca%, %config%, Server, ca
-    IniWrite, %cs%, %config%, Server, cs
     IniWrite, %ds%, %config%, Server, ds
     IniWrite, %ms%, %config%, Server, ms
     IniWrite, %as%, %config%, Server, as
-    IniWrite, %los%, %config%, Server, los
     ; Police related section
-    medicalmsg = %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    medicalmsg = Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
     towmsg1 = %rs% [^1%callsign%^0] to [^3TOW^0]
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
     IniWrite, %towmsg1%, %config%, Police, towmsg1
-    IniRead, medicalmsg, %config%, Police, medicalmsg, %los% Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
     IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
     ; Towing related section
     tadv = %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
@@ -510,11 +623,7 @@ SetScrollLockState, AlwaysOff
         Gui, 2:Add, Tab3,, LEO|TOW|CIV|SAFR|Help|General
     }
     Gui, 2:Add, Text,, %helptext2%
-    Gui, 2:Add, Text, w100, tcuffmsg1:
-    Gui, 2:Add, Text,, tcuffmsg2:
-    Gui, 2:Add, Text,, t911msg:
-    Gui, 2:Add, Text,, t311msg:
-    Gui, 2:Add, Text,r2, tdutystartmsg1:
+    Gui, 2:Add, Text,r2 w100, tdutystartmsg1:
     Gui, 2:Add, Text,r2, tdutystartmsg2:
     Gui, 2:Add, Text,, tdutystartmsg3:
     Gui, 2:Add, Text,, towmsg1:
@@ -524,19 +633,10 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,, Spikes:
     Gui, 2:Add, Text,, Vehicle Image Search:
     Gui, 2:Add, Text,, RunPlate:
-    Gui, 2:Add, Text,, CPIC:
-    Gui, 2:Add, Text,x350 y475, 911 Responding:
-    Gui, 2:Add, Text,, Tow Initiate:
+    Gui, 2:Add, Text,, NCIC:
+    Gui, 2:Add, Text,x350 y365, Tow Initiate:
     Gui, 2:Add, Text,, Tow Information:
-    Gui, 2:Add, Edit, r1 vcuffmsg1 w500 x115 y80, %cuffmsg1% ; The ym option starts a new column of controls.
-    cuffmsg1_TT := "Displayed message for putting someone in cuffs"
-    Gui, 2:Add, Edit, r1 vcuffmsg2 w500, %cuffmsg2%
-    cuffmsg2_TT := "Displayed message for taking someone out of cuffs"
-    Gui, 2:Add, Edit, r1 v911msg w500, %911msg%
-    911msg_TT := "Initial response message when answering 911"
-    Gui, 2:Add, Edit, r1 v311msg w500, %311msg%
-    311msg_TT := "Initial response message when answering 311"
-    Gui, 2:Add, Edit, r2 vdutystartmsg1 w500, %dutystartmsg1%
+    Gui, 2:Add, Edit, r2 vdutystartmsg1 w500 x115 y80, %dutystartmsg1%
     dutystartmsg1_TT := "Bodycam duty start message"
     Gui, 2:Add, Edit, r2 vdutystartmsg2 w500, %dutystartmsg2%
     dutystartmsg2_TT := "Dashcam duty start message"
@@ -550,17 +650,15 @@ SetScrollLockState, AlwaysOff
     searchmsg_TT := "Message for when searching a subject completely"
     Gui, 2:Add, Edit, r4 vmedicalmsg w500, %medicalmsg%
     medicalmsg_TT := "OOC message that you would tell someone to perform their own medical process"
-    Gui, 2:Add, Hotkey, w150 x150 y470 vspikeshk, %spikeshk%
+    Gui, 2:Add, Hotkey, w150 x150 y365 vspikeshk, %spikeshk%
     spikeshk_TT := "Hotkey to be used to deploy/remove spike strip"
     Gui, 2:Add, Hotkey, w150 vvehimgsearchhk, %vehimgsearchhk%
     vehimgsearchhk_TT := "Hotkey to search for a vehicle's image on google"
     Gui, 2:Add, Hotkey, w150 vrunplatehk, %runplatehk%
     runplatehk_TT := "Hotkey to run a plate and keep it on clipboard"
-    Gui, 2:Add, Hotkey, w150 vcpichk, %cpichk%
-    cpichk_TT := "Hotkey to cpic a name and keep name on clipboard"
-    Gui, 2:Add, Hotkey, w150 x450 y470 v911respondhk, %911respondhk%
-    911respondhk_TT := "Hotkey to tell the 911/311 that units are on the way"
-    Gui, 2:Add, Hotkey, w150 vtowcallhk, %towcallhk%
+    Gui, 2:Add, Hotkey, w150 vncichk, %ncichk%
+    ncichk_TT := "Hotkey to ncic a name and keep name on clipboard"
+    Gui, 2:Add, Hotkey, w150 x450 y365 vtowcallhk, %towcallhk%
     towcallhk_TT := "Initiates the request for a tow truck"
     Gui, 2:Add, Hotkey, w150 vtowrespondhk, %towrespondhk%
     towrespondhk_TT := "Lets the tow truck know where you are and what you want them to tow"
@@ -625,12 +723,6 @@ SetScrollLockState, AlwaysOff
     } else {
         Gui, 2:Tab, 4
     }
-    Gui, 2:Add, Text, w150, robhkmsg:
-    Gui, 2:Add, Text,, Robbery Hotkey:
-    Gui, 2:Add, Edit, r1 vrobhkmsg w500 x80 y30, %robhkmsg%
-    robhkmsg_TT := "Action to be used to rob someone"
-    Gui, 2:Add, Hotkey, w150 x120 y56 vrobhk, %robhk%
-    robhk_TT := "Hotkey to be used to rob someone"
     Gui, 2:Tab, Help,, Exact
     Gui, 2:Add, Text,r3 w100, tmicmsg:
     Gui, 2:Add, Text,r2, tpaystatemsg:
@@ -642,8 +734,7 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text, w150, tgunmsg:
     Gui, 2:Add, Text, r2 w150, valet2hkmsg:
     Gui, 2:Add, Text, w150, phrechkmsg:
-    Gui, 2:Add, Text, w150 y200 x20, Seatbelt Hotkey:
-    Gui, 2:Add, Text,, Engine On Hotkey:
+    Gui, 2:Add, Text, w150 y200 x20, Engine Hotkey:
     Gui, 2:Add, Text,, Valet App Hotkey:
     Gui, 2:Add, Text,, Valet Call Hotkey:
     Gui, 2:Add, Text,, Phone Record Hotkey:
@@ -653,9 +744,7 @@ SetScrollLockState, AlwaysOff
     valet2hkmsg_TT := "Action to be used to pull out a vehicle from the valet"
     Gui, 2:Add, Edit, r1 vphrechkmsg w500, %phrechkmsg%
     phrechkmsg_TT := "Action message to be used when pulling out phone to record"
-    Gui, 2:Add, Hotkey, w150 x150 y195 vseatbelthk, %seatbelthk%
-    seatbelthk_TT := "Hotkey to be used to put on or take off seatbelt"
-    Gui, 2:Add, Hotkey, w150 venginehk, %enginehk%
+    Gui, 2:Add, Hotkey, w150 x140 y195 venginehk, %enginehk%
     enginehk_TT := "Hotkey to be used to force the /engine on when cruise doesn't work"
     Gui, 2:Add, Hotkey, w150 vvalet1hk, %valet1hk%
     valet1hk_TT := "Hotkey to use your phone valet app"
@@ -681,6 +770,278 @@ SetScrollLockState, AlwaysOff
     Gosub, hotkeys
 Return
 
+^2::
+    Gui, 5:Destroy
+    Gui, 5:Font,, Consolas
+    Gui, 5:Add, Text, y10, Offender ID:
+    Gui, 5:Add, Text, x190 y10, CautionCode:
+    Gui, 5:Add, Edit, x85 y5 w60 voffenderid, 0
+    Gui, 5:Add, DropDownList, x265 y5 w50 vcautioncode, |G|PH|V|ST|E|M
+    Gui, 5:Add, Button, x320 y4 gcautioncode vcaucode, Set
+    Gui, 5:Add, Tab3, x10, Citation|Misdemeanor|Felony
+    Gui, 5:Add, Edit, Readonly r4 w680 vcitationtext, %citationtext%
+    Loop, read, %A_ScriptDir%\NDG-Citation.csv
+	{
+	    StringSplit, val, A_LoopReadLine,`,
+        c_LineNumber = %A_Index%
+	    Loop,%Val0%
+            c_offense_%c_LineNumber% := val1
+            c_fine_%c_LineNumber% := val2
+            c_arrest_%c_LineNumber% := val3
+            if (c_LineNumber == 20) {
+                Gui, 5:Add, Button, x353 y124 gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
+            } else {
+                Gui, 5:Add, Button, gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
+            }
+	}
+    Gui, 5:Tab, 2
+    Gui, 5:Add, Edit, Readonly r3 w680 vmisdemeanortext, %misdemeanortext%
+        Loop, read, %A_ScriptDir%\NDG-Misdemeanor.csv
+	{
+	    StringSplit, val, A_LoopReadLine,`,
+        c_LineNumber = %A_Index%
+	    Loop,%Val0%
+            m_offense_%c_LineNumber% := val1
+            m_fine_%c_LineNumber% := val2
+            m_arrest_%c_LineNumber% := val3
+            if (c_LineNumber == 20) {
+                Gui, 5:Add, Button, x353 y112 gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
+            } else {
+                Gui, 5:Add, Button, gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
+            }
+	}
+    Gui, 5:Tab, 3
+    Gui, 5:Add, Edit, Readonly r3 w680 vfelonytext, %felonytext%
+            Loop, read, %A_ScriptDir%\NDG-Felony.csv
+	{
+	    StringSplit, val, A_LoopReadLine,`,
+        c_LineNumber = %A_Index%
+	    Loop,%Val0%
+            f_offense_%c_LineNumber% := val1
+            f_fine_%c_LineNumber% := val2
+            f_arrest_%c_LineNumber% := val3
+            if (c_LineNumber == 20) {
+                Gui, 5:Add, Button, x353 y112 gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
+            } else {
+                Gui, 5:Add, Button, gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
+            }
+	}
+    Gui, 5:Tab
+    Gui, 5:Add, Edit, Readonly r5 w703 vpText
+    pText_TT := "Use this section to copy the arrest/bill/ticket from, to enter into the game."
+    Gui, 5:Add, Button, gcheck2 vsubmit, Submit
+    Submit_TT := "Cleans out the record and updates the Charge Log file."
+    Gui, 5:Add, Button, x60 y767 gwarrant vwarrant, ToWarrant
+    warrant_TT := "Converts the charges to a Warrant format."
+    Gui, 5:Add, Button, x150 y767 gcwarrant vcwarrant, ClearWarrant
+    cwarrant_TT := "Provides command to wipe all warrants on a offender id."
+    Gui, 5:Add, Button, x670 y767 gclear vclear, Clear
+    Clear_TT := "Clears out all entries without saving them."
+    Gui, 5:Show,, Citation | Misdemeanor | Felony | CautionCode - LEO Calculator
+    OnMessage(0x200, "WM_MOUSEMOVE")
+    lastEdit := ""
+    Return
+
+    5GuiEscape:
+    5GuiClose:
+    Gui, 5:Cancel
+    Return
+Return
+
+cautioncode:
+gui,submit,nohide
+PEdit = 
+(
+/cautioncode %offenderid% %cautioncode%
+)
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
+Return
+
+cwarrant:
+gui,submit,nohide
+PEdit = 
+(
+/warrant %offenderid% clear
+)
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
+Return
+
+warrant:
+gui,submit,nohide
+FormatTime, TimeString,, MM.dd.yy
+PEdit = 
+(
+/warrant %offenderid% %offense% | (%name% - %department% - %TimeString%)
+)
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
+Return
+
+citsub:
+gui,submit,nohide
+RegExMatch(A_GuiControl, "\d+$", n)
+if (n == 6 and InStr(PEdit,"Commercial Vehicle Fine")) {
+    msgbox, Commercial Vehicle fine can not be by itself.
+} else if (InStr(PEdit,"/bill")) {
+    msgbox, Please Clean out the Misedeamnor or Felony before issuing a ticket.
+} else if (n == 6) {
+    offenseadd = % c_offense_%n%
+    offense =  %offense% | %offenseadd%
+    fine += % c_fine_%n%
+    if (arrest) {
+        PEdit = 
+        (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
+        )
+    } else {
+        PEdit = 
+        (
+/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
+        )
+    }
+} else {
+    offense = % c_offense_%n%
+    fine = % c_fine_%n%
+    arrest = % c_arrest_%n%
+    if (arrest) {
+        PEdit = 
+        (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
+        )
+    } else {
+        PEdit = 
+        (
+/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
+        )
+    }
+}
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
+return
+
+misdsub:
+gui,submit,nohide
+RegExMatch(A_GuiControl, "\d+$", n)
+if (InStr(PEdit,"/ticket")) {
+msgbox, You must Clear the Ticket before issuing Misdemanor chargers.
+} else if (offense) {
+    offenseadd = % m_offense_%n%
+    offense = %offense% | %offenseadd%
+    fine += % m_fine_%n%
+    arrest += % m_arrest_%n%
+    PEdit = 
+    (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/bill %offenderid% %fine% | %offense% | (%name% - %department%)
+    )
+} else {
+    offense = % m_offense_%n%
+    fine = % m_fine_%n%
+    arrest = % m_arrest_%n%
+    PEdit = 
+    (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/bill %offenderid% %fine% | %offense% | (%name% - %department%)
+    )
+}
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
+return
+
+felosub:
+gui,submit,nohide
+RegExMatch(A_GuiControl, "\d+$", n)
+if (InStr(PEdit,"/ticket")) {
+msgbox, You must Clear the Ticket before issuing Felony chargers.
+} else if (offense) {
+    offenseadd = % f_offense_%n%
+    offense = %offense% | %offenseadd%
+    fine += % f_fine_%n%
+    arrest += % f_arrest_%n%
+    PEdit = 
+    (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/bill %offenderid% %fine% | %offense% | (%name% - %department%)
+    )
+} else {
+    offense = % f_offense_%n%
+    fine = % f_fine_%n%
+    arrest = % f_arrest_%n%
+    PEdit = 
+    (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/bill %offenderid% %fine% | %offense% | (%name% - %department%)
+    )
+}
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
+return
+
+check2:
+gui,submit,nohide ;updates gui variable
+FormatTime, TimeString,, yyyyMMdd hh:mm:ss
+FileAppend,
+(
+%TimeString%
+%PEdit%
+`n
+), Charge_log.txt
+lastEdit := A_ScriptDir "\Charge_log.txt Updated"
+offense :=
+fine :=
+arrest :=
+PEdit :=
+guicontrol,,pText,% lastEdit
+return
+
+clear:
+gui,submit,nohide ;updates gui variable
+lastEdit := "Cleared Records"
+offense :=
+fine :=
+arrest :=
+PEdit :=
+guicontrol,,pText,% lastEdit
+return
+
+^3::
+    Reload
+Return
+
 ; Empty Recycle Bin
 #Del::FileRecycleEmpty ; Windows + Del
 Return
@@ -698,185 +1059,25 @@ Return
 
 ; ====================== GTAV Stuff =========================
 
-; not used on SoE - F1 F4 F5 F6 F7 F10 F11
+; not used on NDG - F4 F9 F10 F11
 ; Pressing T to open chat and then typing unrack/rack
 
 ; ============================================ LEO Stuff ============================================
 #if (rolepick = "LEO")
 
-    ; This will play the sound file when enabling lights
-    F5:: ; E in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        SoundPlay, SSP3000_stages.wav
-        Sleep, %delay%
-        Send, {e down}
-        Sleep, %delay%
-        Send, {e up}
-        Return
-    } else {
-        Sleep, %delay%
-        Send, {e down}
-        Sleep, %delay%
-        Send, {e up}
-        Return
-    }
-    ; This will play the sound file when enabling siren
-    F6:: ; G in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        SoundPlay, SSP3000_stages.wav
-        Sleep, %delay%
-        Send, {g down}
-        Sleep, %delay%
-        Send, {g up}
-        Return
-    } else {
-        Sleep, %delay%
-        Send, {g down}
-        Sleep, %delay%
-        Send, {g up}
-        Return
-    }
-    ; This will play the sound file when enabling siren change
-    F7:: ; Y in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        SoundPlay, SSP3000_stages.wav
-        Sleep, %delay%
-        Send, {y down}
-        Sleep, %delay%
-        Send, {y up}
-        Return
-    } else {
-        Sleep, %delay%
-        Send, {y down}
-        Sleep, %delay%
-        Send, {y up}
-        Return
-    }
-
     ; This will lay the spikes or remove the spikes based on variable.
     ; ^.:: ; Control + . in-game
     sphk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Send, {t down}
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
-        if (spikes = 0) {
-            Clipboard = /spikes
-            ClipWait
-            spikes = 1
-        } else {
-            Clipboard = /rspikes
-            ClipWait
-            spikes = 0
-        }
+        Clipboard = /spikes
+        ClipWait
         Send, {RCtrl down}v{RCtrl up}{enter}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    }
-    Return
-
-    ; This will cuff someone
-    :*:tcuff:: ; Type tcuff in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = %cuffmsg1%
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /cuff
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    }
-    Return
-
-    ; This will uncuff someone
-    :*:tuncuff:: ; Type tuncuff in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = %cuffmsg2%
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /uncuff
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    }
-    Return
-
-    ; Initiate a 911 call answer.
-    :*:t911:: ; Type t911 in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = %ca%
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Sleep, %delay%
-        Clipboard = %911msg%
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    }
-    Return
-
-    ; Initiate a 311 call answer.
-    :*:t311:: ; Type t311 in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = %ca%
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Sleep, %delay%
-        Clipboard = %311msg%
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    }
-    Return
-
-    ; Notifies caller help is on the way.
-    ; ^9:: ; Control + 9
-    91rhk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = %cs% Units will be on the way to your location.
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         clipboard = %clipaboard%
     }
@@ -885,7 +1086,7 @@ Return
     ; Runplate to be ran and save the plate you ran, also caches the name into clipboard
     ; ^-:: ; Control + -
     rphk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         InputBox, vehplate, VehPlate, Enter the plate you wish to lookup.
         if (vehplate = "") {
                 ; MsgBox, No plate was entered, Try again.
@@ -903,53 +1104,53 @@ Return
     }
     Return
 
-    ; Cpic to be ran and save the name you ran, also caches the name into clipboard
+    ; ncic to be ran and save the name you ran, also caches the name into clipboard
     ; ^=:: ; Control + =
     cphk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        InputBox, cpicname, CpicName, Enter the name you wish to lookup. first/last.
-        if (cpicname = "") {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        InputBox, ncicname, NCICName, Enter the ID you wish to lookup.
+        if (ncicname = "") {
                 ; MsgBox, No name was entered, Try again.
         } else {
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /cpic %cpicname%
+            Clipboard = /ncic %ncicname%
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
-            cpicname := StrReplace(cpicname, "/", A_Space)
-            Clipboard = %cpicname%
+            ncicname := StrReplace(ncicname, "/", A_Space)
+            Clipboard = %ncicname%
         }
     }
     Return
 
     ; This might actually work if you want to save the text that was typed
-    ; Cpic version 2 will actually be used to pull up the users information from text entry
+    ; ncic version 2 will actually be used to pull up the users information from text entry
     ^\:: ; Control + \
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         Send, {t down}
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
-        clipboard = /cpic
+        clipboard = /ncic
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{space}
-        Input, cpicname, V T12 L40 C, {enter}.{esc}{tab},,
-        cpicname := StrReplace(cpicname, "/", A_Space)
-        if (cpicname = "") {
+        Input, ncicname, V T12 L40 C, {enter}.{esc}{tab},,
+        ncicname := StrReplace(ncicname, "/", A_Space)
+        if (ncicname = "") {
             msgbox, No name was entered, try again.
         } else {
             Sleep, %delay%
-            clipboard = %cpicname%
+            clipboard = %ncicname%
         }
     }
     return
 
     ; This will be used to set your callsign for the environment.
     :*:tdutystart:: ; Type tdutystart in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         if (!callsign) {
             InputBox, callsign, CallSign, Enter your callsign to use.
         }
@@ -957,6 +1158,24 @@ Return
             Inputbox, name, Name, Enter your name to use.
         }
         clipaboard = %clipboard%
+        Sleep, %delay%
+        Clipboard = /fuelhud
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /gps
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
         Sleep, %delay%
         Clipboard = %dutystartmsg1%
         ClipWait
@@ -989,7 +1208,7 @@ Return
     ; Changes radio channel to channel 5 and then calls for tow on that channel.
     ; ^k:: ; Control + k
     tchk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Send, {t down}
@@ -1015,7 +1234,7 @@ Return
     ; Sending out the tow location to towid.
     ; ^j:: ; Control + j
     trhk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         InputBox, towloc, Tow Location, Enter Towing Location
         if (towloc = "") {
             MsgBox, No tow Location was entered, Try again.
@@ -1047,7 +1266,7 @@ Return
 
     ; Frisks the Subject for weapons.
     :*:tfrisk:: ; Type tfrisk in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %friskmsg%
@@ -1068,7 +1287,7 @@ Return
 
     ; Fully searches the Subject.
     :*:tsearch:: ; Type tsearch in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %searchmsg%
@@ -1089,7 +1308,7 @@ Return
 
     ; Touches the vehicle on approach
     :*:ttv:: ; Type ttv in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /touchveh
@@ -1102,7 +1321,7 @@ Return
 
     ; Tells subject on how to do the medical RP for themselves.
     :*:tmedical:: ; Type tmedical in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %medicalmsg%
@@ -1113,54 +1332,9 @@ Return
     }
     Return
 
-    ; Used to hadndle putting someone in a bodybag (locals).
-    ; :*:tbodybag:: ; Type tbodybag in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = /emote kneel
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = %ds% places bodybag down near the body
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /place bodybag
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = %ds% slowly slides the body into the bodybag
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = %ds% The Coroner comes by and picks up the body bag
-        ClipWait
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    }
-    Return
-
     ; Test running through timing.
     :*:ttest:: ; Type ttest in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
@@ -1181,7 +1355,7 @@ Return
 
     ; Pulls out the notepad to write out the plate of the vehicle
     :*:tplate:: ; Type tplate in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
@@ -1206,7 +1380,7 @@ Return
 
     ; Pulls out notepad to write out the vin of the vehicle.
     :*:tvin:: ;Type tvin in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
@@ -1235,7 +1409,7 @@ Return
 
     ; Pulls out notepad to write out and plate impound sticker on vehicle
     :*:timpound:: ; Type timpound in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
@@ -1264,7 +1438,7 @@ Return
 
     ; Items that can be pulled out from the trunk of a vehicle.
     :*:ttrunk:: ; Type ttrunk in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         InputBox, titem, Trunk Item, What do you want from your trunk?
         if ErrorLevel
             Return
@@ -1272,7 +1446,7 @@ Return
         if (titem = "medbag" || titem = "slimjim" || titem = "tintmeter" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag") {
             clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = /car t open
+            Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
@@ -1306,7 +1480,7 @@ Return
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /car t
+            Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
@@ -1321,7 +1495,7 @@ Return
 #If (rolepick = "CIV")
     ; Proper way to pull out a firearm.
     :*:tgun:: ; Type tgun in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %gunmsg%
@@ -1338,7 +1512,7 @@ Return
     ; ============================================ TOW Stuff ============================================
 #If (rolepick = "TOW")
     :*:tstart:: ; Type tstart in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /rc %trc%
@@ -1358,7 +1532,7 @@ Return
     Return
 
     :*:tadv:: ; Type tadv in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %tadv%
@@ -1371,7 +1545,7 @@ Return
 
 
     :*:tsend:: ; Type tsend in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %tsend%
@@ -1384,7 +1558,7 @@ Return
 
     ; Responds to anyone that may be calling for tow.
     :*:tonway:: ; Type tonway in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         InputBox, caller, Tow Location, Enter Caller information
         if (caller = "") {
             MsgBox, No Caller information was entered, Try again.
@@ -1407,7 +1581,7 @@ Return
 
     ; To start the tow of a front or rear facing vehicle.
     :*:ttow:: ; Type ttow in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         InputBox, towtype, Facing Direction, Type f for front b for back.
         if (towtype = "f" || towtype = "b") {
             clipaboard = %clipboard%
@@ -1441,7 +1615,7 @@ Return
 
     ; To secure the vehicle to the tow truck.
     :*:tsecure:: ; Type tsecure in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /emote kneel
@@ -1466,7 +1640,7 @@ Return
 
     ; To release the vehicle from the tow truck.
     :*:trelease:: ; Type trelease in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         if (towtype = "f") {
@@ -1491,7 +1665,7 @@ Return
 
     ; To pull out Kitty Litter from tow truck for use.
     :*:tkitty:: ; Type tkitty in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %ds% opens the toolbox and removes kitty litter from it
@@ -1505,7 +1679,7 @@ Return
 #If (rolepick = "SAFR")
     ; Items that can be pulled out from the trunk of a vehicle.
     :*:ttrunk:: ; Type ttrunk in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         vehicle = bus
         Inputbox, bside, Choose your side!, Which side of the %vehicle% are you on? Use l or r for left or right.
         if  (bside = "l" || bside = "r") {
@@ -1515,8 +1689,8 @@ Return
             else
                 if (bitem = "medbag" || bitem = "cones" || bitem = "bodybag") {
                     clipaboard = %clipboard%
-                    Sleep, %delay%
-                    Clipboard = /car b%bside% open
+                    SLeep, %delay%
+                    Clipboard = /door b%bside%
                     ClipWait
                     Send, {Rctrl down}v{Rctrl up}{enter}
                     Sleep, %delay%
@@ -1547,7 +1721,7 @@ Return
                     Sleep, %delay%
                     Send, {t up}
                     Sleep, %delay%
-                    Clipboard = /car b%bside%
+                    Clipboard = /door b%bside%
                     ClipWait
                     Send, {Rctrl down}v{Rctrl up}{enter}
                     Sleep, %delay%
@@ -1566,7 +1740,7 @@ Return
 #If (rolepick = "GEORGE")
     ; Mainly used for George's scrap collecting.
     :*:tscrap:: ; Type tscrap in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         InputBox, scrapside, Facing Direction, Type l or r side.
         if (scrapside="l" || scrapside="r") {
             clipaboard = %clipboard%
@@ -1593,7 +1767,7 @@ Return
 #IF
 ; This provides the help text for micropohone fixing
 :*:tmic:: ; Type tmic in-game
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
     clipaboard = %clipboard%
     Sleep, %delay%
     Clipboard = %micmsg%
@@ -1606,7 +1780,7 @@ Return
 
 ; This provides help text for the paying of state debt
 :*:tpaystate:: ; Type tpaystate in-game
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
     clipaboard = %clipboard%
     Sleep, %delay%
     Clipboard = %paystatemsg%
@@ -1617,42 +1791,17 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
 }
 Return
 
-; This is a quick way of buckling or unbuckling your seatbelt
-; F1:: ; Press F1 in-game
-sbhk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-    clipaboard = %clipboard%
-    Sleep, %delay%
-    Send, {t down}
-    Sleep, %delay%
-    Send, {t up}
-    Sleep, %delay%
-    clipboard = /seatbelt
-    ClipWait
-    Send, {Rctrl down}v{Rctrl up}{enter}
-    if (seatbelt = 0) {
-        SoundPlay, GTAV-Seatbelt.mp3
-        seatbelt = 1
-    } else {
-        SoundPlay, GTAV-Seatbelt2.mp3
-        seatbelt = 0
-    }
-    Sleep, %delay%
-    clipboard = %clipaboard%
-}
-Return
-
-; This will run the /engine on command to fix cruise control
-; F7:: ; Press F7 in-game
+; This will run the /engine command to toggle engine state
+; F9:: ; Press F9 in-game
 enhk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
     clipaboard = %clipboard%
     Sleep, %delay%
     Send, {t down}
     Sleep, %delay%
     Send, {t up}
     Sleep, %delay%
-    clipboard = /engine on
+    clipboard = /engine
     ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
     Sleep, %delay%
@@ -1663,7 +1812,7 @@ Return
 ; This is the ability to check your valet on the phone
 ; +F11:: ; Press Shift+F11 in-game
 val1hk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
     clipaboard = %clipboard%
     Sleep, %delay%
     Send, {t down}
@@ -1689,7 +1838,7 @@ Return
 ; This is the ability to do an emote/do with pulling out a vehicle
 ; F11:: ; Press F11 in-game
 val2hk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
     clipaboard = %clipboard%
     Sleep, %delay%
     Send, {t down}
@@ -1719,7 +1868,7 @@ Return
 ; This will be used to start the video recording in character civilian
 ; F6:: ; Press F6 in-game
 phrhk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
+if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
     clipaboard = %clipboard%
     Sleep, %delay%
     Send, {t down}
@@ -1741,33 +1890,6 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
     clipboard = %clipaboard%
 }
 Return
-
-; This will be used to rob someone and strip them of everything
-; ^r:: ; Press Control+R in-game
-rbhk:
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || (testmode = 1)) {
-    clipaboard = %clipboard%
-    Sleep, %delay%
-    Send, {t down}
-    Sleep, %delay%
-    Send, {t up}
-    Sleep, %delay%
-    clipboard = %robhkmsg%
-    ClipWait
-    Send, {Rctrl down}v{Rctrl up}{enter}
-    Sleep, %delay%
-    Send, {t down}
-    Sleep, %delay%
-    Send, {t up}
-    Sleep, %delay%
-    clipboard = /stealcash
-    ClipWait
-    Send, {Rctrl down}v{Rctrl up}{enter}
-    Sleep, %delay%
-    clipboard = %clipaboard%
-}
-Return
-
 
 ; ============================================ MAIN RUN FUNCTIONS ============================================
 
@@ -1813,32 +1935,26 @@ hotkeys:
     hotkey, %spikeshk%, sphk, On
     hotkey, %vehimgsearchhk%, vehimghk, On
     hotkey, %runplatehk%, rphk, On
-    hotkey, %cpichk%, cphk, On
-    hotkey, %911respondhk%, 91rhk, On
+    hotkey, %ncichk%, cphk, On
     hotkey, %towcallhk%, tchk, On
     hotkey, %towrespondhk%, trhk, On
-    hotkey, %seatbelthk%, sbhk, On
     hotkey, %enginehk%, enhk, On
     hotkey, %valet1hk%, val1hk, On
     hotkey, %valet2hk%, val2hk, On
     hotkey, %phrechk%, phrhk, On
-    hotkey, %robhk%, rbhk, On
 Return
 
 fuckakey:
     hotkey, %spikeshk%, sphk, Off
     hotkey, %vehimgsearchhk%, vehimghk, Off
     hotkey, %runplatehk%, rphk, Off
-    hotkey, %cpichk%, cphk, Off
-    hotkey, %911respondhk%, 91rhk, Off
+    hotkey, %ncichk%, cphk, Off
     hotkey, %towcallhk%, tchk, Off
     hotkey, %towrespondhk%, trhk, Off
-    hotkey, %seatbelthk%, sbhk, Off
     hotkey, %enginehk%, enhk, Off
     hotkey, %valet1hk%, val1hk, Off
     hotkey, %valet2hk%, val2hk, Off
     hotkey, %phrechk%, phrhk, Off
-    hotkey, %robhk%, rbhk, Off
 Return
 
 UpdateConfig:
@@ -1856,32 +1972,22 @@ UpdateConfig:
     IniWrite, %testmode%, %config%, Yourself, testmode
     ; Server related section
     IniWrite, %rs%, %config%, Server, rs
-    IniWrite, %ca%, %config%, Server, ca
-    IniWrite, %cs%, %config%, Server, cs
     IniWrite, %ds%, %config%, Server, ds
     IniWrite, %ms%, %config%, Server, ms
     IniWrite, %as%, %config%, Server, as
-    IniWrite, %los%, %config%, Server, los
     ; The hotkey related section
     IniWrite, %spikeshk%, %config%, Keys, spikeshk
     IniWrite, %vehimgsearchhk%, %config%, Keys, vehimgsearchhk
     IniWrite, %runplatehk%, %config%, Keys, runplatehk
-    IniWrite, %cpichk%, %config%, Keys, cpichk
-    IniWrite, %911respondhk%, %config%, Keys, 911respondhk
+    IniWrite, %ncichk%, %config%, Keys, ncichk
     IniWrite, %towcallhk%, %config%, Keys, towcallhk
     IniWrite, %towrespondhk%, %config%, Keys, towrespondhk
-    IniWrite, %seatbelthk%, %config%, Keys, seatbelthk
     IniWrite, %enginehk%, %config%, Keys, enginehk
     IniWrite, %valet1hk%, %config%, Keys, valet1hk
     IniWrite, %valet2hk%, %config%, Keys, valet2hk
     IniWrite, %phrechk%, %config%, Keys, phrechk
-    IniWrite, %robhk%, %config%, Keys, robhk
     ; Messages that correspond with the hotkeys
     ; Police related section
-    IniWrite, %cuffmsg1%, %config%, Police, cuffmsg1
-    IniWrite, %cuffmsg2%, %config%, Police, cuffmsg2
-    IniWrite, %911msg%, %config%, Police, 911msg
-    IniWrite, %311msg%, %config%, Police, 311msg
     IniWrite, %dutystartmsg1%, %config%, Police, dutystartmsg1
     IniWrite, %dutystartmsg2%, %config%, Police, dutystartmsg2
     IniWrite, %dutystartmsg3%, %config%, Police, dutystartmsg3
@@ -1905,85 +2011,73 @@ UpdateConfig:
     IniWrite, %gunmsg%, %config%, Normal, gunmsg
     IniWrite, %valet2hkmsg%, %config%, Normal, valet2hkmsg
     IniWrite, %phrechkmsg%, %config%, Normal, phrechkmsg
-    IniWrite, %robhkmsg%, %config%, Normal, robhkmsg
 ; ============================================ READ INI SECTION ============================================
-    ; Re-reads all of the configuration information to validate
+    ; Back to the reading of the configuration
     IniRead, rolepick, %config%, Yourself, role, LEO
-    IniRead, callsign, %config%, Yourself, callsign, A06
-    IniRead, myid, %config%, Yourself, myid, 1
-    IniRead, towcompany, %config%, Yourself, towcompany, skinnydick
+    IniRead, callsign, %config%, Yourself, callsign, D6
+    IniRead, myid, %config%, Yourself, myid, 30
+    IniRead, towcompany, %config%, Yourself, towcompany, DonkeyDick
     IniRead, name, %config%, Yourself, name, Dread
-    IniRead, title, %config%, Yourself, title, Officer
-    IniRead, department, %config%, Yourself, department, LSPD
-    IniRead, phone, %config%, Yourself, phone, 38915
+    IniRead, title, %config%, Yourself, title, Deputy
+    IniRead, department, %config%, Yourself, department, LSSD
+    IniRead, phone, %config%, Yourself, phone, 00030
     ; Client communication and test mode
-    IniRead, delay, %config%, Yourself, delay, 150
+    IniRead, delay, %config%, Yourself, delay, 80
     IniRead, testmode, %config%, Yourself, testmode, 0
     ; Server related section
     IniRead, rs, %config%, Server, rs, /r
-    IniRead, ca, %config%, Server, ca, /answer
-    IniRead, cs, %config%, Server, cs, /c
     IniRead, ds, %config%, Server, ds, /do
     IniRead, ms, %config%, Server, ms, /me
     IniRead, as, %config%, Server, as, /ad
-    IniRead, los, %config%, Server, los, /l
     ; The hotkey related section
     IniRead, spikeshk, %config%, Keys, spikeshk, ^.
     IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
     IniRead, runplatehk, %config%, Keys, runplatehk, ^-
-    IniRead, cpichk, %config%, Keys, cpichk, ^=
-    IniRead, 911respondhk, %config%, Keys, 911respondhk, ^9
+    IniRead, ncichk, %config%, Keys, ncichk, ^=
     IniRead, towcallhk, %config%, Keys, towcallhk, ^k
     IniRead, towrespondhk, %config%, Keys, towrespondhk, ^j
-    IniRead, seatbelthk, %config%, Keys, seatbelthk, F1
-    IniRead, enginehk, %config%, Keys, enginehk, F7
+    IniRead, enginehk, %config%, Keys, enginehk, F9
     IniRead, valet1hk, %config%, Keys, valet1hk, +F11
     IniRead, valet2hk, %config%, Keys, valet2hk, F11
-    IniRead, phrechk, %config%, Keys, phrechk, F6
-    IniRead, robhk, %config%, Keys, robhk, ^r
+    IniRead, phrechk, %config%, Keys, phrechk, F10
     ; Messages that correspond with the hotkeys
     ; Police related section
-    IniRead, cuffmsg1, %config%, Police, cuffmsg1, /do pull out his hand cuffs to cuff the Subject
-    IniRead, cuffmsg2, %config%, Police, cuffmsg2, /do pulls out his keys to release the Subject from the cuffs
-    IniRead, 911msg, %config%, Police, 911msg, /c What is the nature of your emergency and the location?
-    IniRead, 311msg, %config%, Police, 311msg, /c What may I be able to assist you with today?
-    IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, /do secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
-    IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, /do Validates that the Dashcam is functional in both audio and video.
-    IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, /do Logs into the MWS computer.
-    IniRead, friskmsg, %config%, Police, friskmsg, /do Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
-    IniRead, searchmsg, %config%, Police, searchmsg, /do Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
-    IniRead, medicalmsg, %config%, Police, medicalmsg, /l Hello I am ^1%title% Dread %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
-    IniRead, towmsg1, %config%, Police, towmsg1, /r [^1A06^0] to [^3TOW^0]
+    IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
+    IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, %ds% Validates that the Dashcam is functional in both audio and video.
+    IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, %ds% Logs into the MWS computer.
+    IniRead, friskmsg, %config%, Police, friskmsg, %ds% Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
+    IniRead, searchmsg, %config%, Police, searchmsg, %ds% Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
+    IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
+    IniRead, towmsg1, %config%, Police, towmsg1, %rs% [^1%callsign%^0] to [^3TOW^0]
     ; Towing related section
-    IniRead, tadv, %config%, Towing, tadv, /ad I work for [^3skinnydick^0] and we do cool tow stuff that makes tows happy 555-99999!!
-    IniRead, tsend, %config%, Towing, tsend, /r [^3TOW1^0] Send it
-    IniRead, ttowmsg1, %config%, Towing, ttowmsg1, /do attaches the winch cable to the front of the vehicle
-    IniRead, ttowmsg2, %config%, Towing, ttowmsg2, /do attaches the winch cable to the rear of the vehicle
-    IniRead, tsecure1, %config%, Towing, tsecure1, /do secures the rear of the vehicle with extra tow straps
-    IniRead, tsecure2, %config%, Towing, tsecure2, /do secures the front of the vehicle with extra tow straps
-    IniRead, treleasemsg1, %config%, Towing, treleasemsg1, /do releases the extra tow cables from the rear and pulls the winch release lever
-    IniRead, treleasemsg2, %config%, Towing, treleasemsg2, /do releases the extra tow cables from the front and pulls the winch release lever
+    IniRead, tadv, %config%, Towing, tadv, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
+    IniRead, tsend, %config%, Towing, tsend, %rs% [^3TOW%myid%^0] Send it!
+    IniRead, ttowmsg1, %config%, Towing, ttowmsg1, %ds% attaches the winch cable to the front of the vehicle
+    IniRead, ttowmsg2, %config%, Towing, ttowmsg2, %ds% attaches the winch cable to the rear of the vehicle
+    IniRead, tsecure1, %config%, Towing, tsecure1, %ds% secures the rear of the vehicle with extra tow straps
+    IniRead, tsecure2, %config%, Towing, tsecure2, %ds% secures the front of the vehicle with extra tow straps
+    IniRead, treleasemsg1, %config%, Towing, treleasemsg1, %ds% releases the extra tow cables from the rear and pulls the winch release lever
+    IniRead, treleasemsg2, %config%, Towing, treleasemsg2, %ds% releases the extra tow cables from the front and pulls the winch release lever
     ; Help related section
-    IniRead, micmsg, %config%, Help, micmsg, /l How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match aduio devices to the one you are using.
-    IniRead, paystatemsg, %config%, Help, paystatemsg, /l To be able to see your current state debt type "/paystate" to pay off state debt "/paystate amount".
+    IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
+    IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
     ; Normal related section
-    IniRead, gunmsg, %config%, Normal, gunmsg, /do pulls out his ^1pistol ^0from under his shirt
-    IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, /me puts in his ticket into the valet and presses the button to receive his selected vehicle
-    IniRead, phrechkmsg, %config%, Normal, phrechkmsg, /do Pulls out their phone and starts recording audio and video
-    IniRead, robhkmsg, %config%, Normal, robhkmsg, /me takes the persons phone`, weapons`, and any cash on them
+    IniRead, gunmsg, %config%, Normal, gunmsg, %ds% pulls out his ^1pistol ^0from under his shirt
+    IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, %ms% puts in his ticket into the valet and presses the button to receive his selected vehicle
+    IniRead, phrechkmsg, %config%, Normal, phrechkmsg, %ds% Pulls out their phone and starts recording audio and video
 Return
 
 /*
  * * * Compile_AHK SETTINGS BEGIN * * *
 [AHK2EXE]
-Exe_File=AHKGTAV.exe
+Exe_File=AHKNDG.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=12.0.0
+File_Version=5.0.0
 Internal_Name=AHKGTAV
 Legal_Copyright=GNU General Public License 3.0
-Original_Filename=AHKGTAV.exe
-Product_Name=AHKGTAV
-Product_Version=12.0.0
+Original_Filename=AHKNDG.exe
+Product_Name=AHKNDG
+Product_Version=5.0.0
 * * * Compile_AHK SETTINGS END * * *
 */
