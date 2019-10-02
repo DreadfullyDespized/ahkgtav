@@ -778,6 +778,7 @@ Return
     Gui, 5:Add, Edit, x85 y5 w60 voffenderid, 0
     Gui, 5:Add, DropDownList, x265 y5 w50 vcautioncode, |G|PH|V|ST|E|M
     Gui, 5:Add, Button, x320 y4 gcautioncode vcaucode, Set
+    caucode_TT := "Setting {CautionCode} once will add it, setting the same caution code will removeit, they are toggled."
     Gui, 5:Add, Tab3, x10, Citation|Misdemeanor|Felony
     Gui, 5:Add, Edit, Readonly r4 w680 vcitationtext, %citationtext%
     Loop, read, %A_ScriptDir%\NDG-Citation.csv
