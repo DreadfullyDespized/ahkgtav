@@ -446,7 +446,7 @@ ExitApp
 Return
 
 ^4::
-update(4)
+update(5)
 Return
 
 vehimghk:
