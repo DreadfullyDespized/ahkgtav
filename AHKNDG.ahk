@@ -5,7 +5,7 @@
  * @Script Version   : 5.0.0
  * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
  * @Creation Date    : 20190707
- * @Modification Date: 20190926
+ * @Modification Date: 20191002
  * @Description      : Simple autohotkey script to be used with GTAV FiveM NDG.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
@@ -59,11 +59,12 @@ global script := {  based           : scriptobj
                     ,logfile        : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,rfile          : "https://github.com/DreadfullyDespized/ahkgtav"
                     ,crtdate        : "20190707"
-                    ,moddate        : "20190926"
+                    ,moddate        : "20191002"
                     ,conf           : "NDG-Config.ini"}
 ; }
 
-; update(5.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/NDG-Changelog.txt", "github", 5)
+; update(4.0.0, "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog2.txt", "github", 4) 
+
 /*
 This has been disabled for the time being until I get more time to look at it and work on it.
 
@@ -772,8 +773,21 @@ Return
 ^2::
     Gui, 5:Destroy
     Gui, 5:Font,, Consolas
-    Gui, 5:Add, Text,, Offender ID:
-    Gui, 5:Add, Edit, x90 y2 w80 voffenderid, 0
+    Gui, 5:Add, Text, y10, Offender ID:
+    Gui, 5:Add, Text, x190 y10, CautionCode:
+    Gui, 5:Add, Edit, x85 y5 w60 voffenderid, 0
+    Gui, 5:Add, DropDownList, x265 y5 w50 vcautioncode, |G|PH|V|ST|E|M
+        cautioncode_TT :=
+    (
+"G = Gang Affiliated
+PH = Police Hater
+V = Violent
+ST = Suicidal Tendancies - Approved by SAFR Only
+E = Escape Risk
+M = Mental Instability - Approved by SAFR Only"
+    )
+    Gui, 5:Add, Button, x320 y4 gcautioncode vcaucode, Set
+    caucode_TT := "Setting {CautionCode} once will add it, setting the same caution code will removeit, they are toggled."
     Gui, 5:Add, Tab3, x10, Citation|Misdemeanor|Felony
     Gui, 5:Add, Edit, Readonly r4 w680 vcitationtext, %citationtext%
     Loop, read, %A_ScriptDir%\NDG-Citation.csv
@@ -785,7 +799,7 @@ Return
             c_fine_%c_LineNumber% := val2
             c_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y122 gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x353 y124 gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
@@ -801,7 +815,7 @@ Return
             m_fine_%c_LineNumber% := val2
             m_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y108 gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x353 y112 gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
@@ -817,7 +831,7 @@ Return
             f_fine_%c_LineNumber% := val2
             f_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y108 gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x353 y112 gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
@@ -825,11 +839,15 @@ Return
     Gui, 5:Tab
     Gui, 5:Add, Edit, Readonly r5 w703 vpText
     pText_TT := "Use this section to copy the arrest/bill/ticket from, to enter into the game."
-    Gui, 5:Add, Button, gcheck2 vCleanyPoo, CleanyPoo
-    CleanyPoo_TT := "Cleans out the record and updates the Charge Log file."
-    Gui, 5:Add, Button, x80 y763 gwarrant vwarrant, ToWarrant
+    Gui, 5:Add, Button, gcheck2 vsubmit, Submit
+    Submit_TT := "Cleans out the record and updates the Charge Log file."
+    Gui, 5:Add, Button, x60 y767 gwarrant vwarrant, ToWarrant
     warrant_TT := "Converts the charges to a Warrant format."
-    Gui, 5:Show,, Citation | Misdemeanor | Felony - LEO Calculator
+    Gui, 5:Add, Button, x150 y767 gcwarrant vcwarrant, ClearWarrant
+    cwarrant_TT := "Provides command to wipe all warrants on a offender id."
+    Gui, 5:Add, Button, x670 y767 gclear vclear, Clear
+    Clear_TT := "Clears out all entries without saving them."
+    Gui, 5:Show,, Citation | Misdemeanor | Felony | CautionCode - LEO Calculator
     OnMessage(0x200, "WM_MOUSEMOVE")
     lastEdit := ""
     Return
@@ -838,6 +856,36 @@ Return
     5GuiClose:
     Gui, 5:Cancel
     Return
+Return
+
+cautioncode:
+gui,submit,nohide
+PEdit = 
+(
+/cautioncode %offenderid% %cautioncode%
+)
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
+Return
+
+cwarrant:
+gui,submit,nohide
+PEdit = 
+(
+/warrant %offenderid% clear
+)
+if (lastEdit == ""){
+    guicontrol,,pText,% PEdit
+    LastEdit := PEdit
+} else {
+    guicontrol,,pText,% PEdit
+    lastEdit :=
+}
 Return
 
 warrant:
@@ -983,6 +1031,16 @@ FileAppend,
 `n
 ), Charge_log.txt
 lastEdit := A_ScriptDir "\Charge_log.txt Updated"
+offense :=
+fine :=
+arrest :=
+PEdit :=
+guicontrol,,pText,% lastEdit
+return
+
+clear:
+gui,submit,nohide ;updates gui variable
+lastEdit := "Cleared Records"
 offense :=
 fine :=
 arrest :=
