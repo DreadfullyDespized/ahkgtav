@@ -10,6 +10,19 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V6
+Date: 20191016 16:24
+    Changes:
+    ! Ticket calc bug with commercial vehicle fine
+    ! Performance when switching tabs on ticket calc
+    ^ Times and Fines with current laws
+    + Felony/Misdemeanor/Citation csv law exports
+    + Submit logger for history of citatons/arrests/bills (Charge_log.txt)
+    ! 24 hour time stamp on charge_log
+
+    Todo:
+    + SAFR Commands
+
 AHKNDG V5
 Date: 20191002 18:31
     Changes:

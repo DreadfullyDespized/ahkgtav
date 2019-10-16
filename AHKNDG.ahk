@@ -5,7 +5,7 @@
  * @Script Version   : 5
  * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
  * @Creation Date    : 20190707
- * @Modification Date: 20191002
+ * @Modification Date: 20191016
  * @Description      : Simple autohotkey script to be used with GTAV FiveM NDG.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
@@ -52,12 +52,12 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKNDG"
-                    ,version        : "5"
+                    ,version        : "6"
                     ,author         : "DreadfullyDespized"
                     ,email          : "darkestdread@gmail.com"
                     ,Homepage       : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate        : "20190707"
-                    ,moddate        : "20191002"
+                    ,moddate        : "20191016"
                     ,conf           : "NDG-Config.ini"}
 ; }
 
@@ -165,7 +165,7 @@ IfExist, %config%
 {
     ; Cleanup some of the old ini configuration portions
     IniDelete, %config%, Yourself, rolepick
-    IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR|GEORGE
+    IniDelete, %config%, Yourself, |LEO|TOW|CIV|SAFR
     IniDelete, %config%, Normal, val2hkmsg
     IniDelete, %config%, Towing, towmsg1
     IniDelete, %config%, Keys, seatbelthk
@@ -516,7 +516,7 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Text,, First Party Action:
     Gui, 1:Add, Text,, Advertisement:
     Gui, 1:Add, Text, x210 y34, Phone Number:
-    Gui, 1:Add, DropDownList, x100 y30 w80 vrolepick, |LEO|TOW|CIV|SAFR|GEORGE
+    Gui, 1:Add, DropDownList, x100 y30 w80 vrolepick, |LEO|TOW|CIV|SAFR
     rolepick_TT := "Select the character role that you will be playing as"
     Gui, 1:Add, Edit, w80 vcallsign, %callsign%
     callsign_TT := "Callsign for your LEO/EMS character"
@@ -893,6 +893,23 @@ if (n == 6 and InStr(PEdit,"Commercial Vehicle Fine")) {
     msgbox, Commercial Vehicle fine can not be by itself.
 } else if (InStr(PEdit,"/bill")) {
     msgbox, Please Clean out the Misedeamnor or Felony before issuing a ticket.
+} else if (n == 6 and InStr(PEdit,"/arrest")) {
+    offensea = %offense%
+    offenseadd = % c_offense_%n%
+    offense =  %offense% | %offenseadd%
+    fine += % c_fine_%n%
+    if (arrest) {
+        PEdit = 
+        (
+/arrest %offenderid% %arrest% | %offensea% | (%name% - %department%)
+/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
+        )
+    } else {
+        PEdit = 
+        (
+/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
+        )
+    }
 } else if (n == 6) {
     offenseadd = % c_offense_%n%
     offense =  %offense% | %offenseadd%
@@ -900,7 +917,7 @@ if (n == 6 and InStr(PEdit,"Commercial Vehicle Fine")) {
     if (arrest) {
         PEdit = 
         (
-/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/arrest %offenderid% %arrest% | %offensea% | (%name% - %department%)
 /ticket %offenderid% %fine% | %offense% | (%name% - %department%)
         )
     } else {
@@ -1005,7 +1022,7 @@ return
 
 check2:
 gui,submit,nohide ;updates gui variable
-FormatTime, TimeString,, yyyyMMdd hh:mm:ss
+FormatTime, TimeString,, yyyyMMdd HH:mm:ss
 FileAppend,
 (
 %TimeString%
@@ -1728,33 +1745,6 @@ Return
         }
     }
     Return
-    ; ============================================ GEORGE Stuff ============================================
-#If (rolepick = "GEORGE")
-    ; Mainly used for George's scrap collecting.
-    :*:tscrap:: ; Type tscrap in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        InputBox, scrapside, Facing Direction, Type l or r side.
-        if (scrapside="l" || scrapside="r") {
-            clipaboard = %clipboard%
-            Sleep, %delay%
-            Clipboard = %ds% unties one of the bailing wires on the %scrapside% side and then stashes some of the items he found on the bed
-            ClipWait
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Send, {t down}
-            Sleep, %delay%
-            Send, {t up}
-            Sleep, %delay%
-            Clipboard = %ds% Secures the items and then pulls the bailing wire to the %scrapside% side. Then ties it back up.
-            ClipWait
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            clipboard = %clipaboard%
-        } else {
-            MsgBox, Left or Right only. Try again.
-        }
-    }
-    Return
     ; ============================================ HELP Stuff ============================================
 #IF
 ; This provides the help text for micropohone fixing
@@ -2065,11 +2055,11 @@ Return
 Exe_File=AHKNDG.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=5
+File_Version=6
 Internal_Name=AHKGTAV
 Legal_Copyright=GNU General Public License 3.0
 Original_Filename=AHKNDG.exe
 Product_Name=AHKNDG
-Product_Version=5
+Product_Version=6
 * * * Compile_AHK SETTINGS END * * *
 */
