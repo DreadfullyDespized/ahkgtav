@@ -2,7 +2,7 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKNDG - NDG Autohotkey doohicky
- * @Script Version   : 5
+ * @Script Version   : 6
  * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
  * @Creation Date    : 20190707
  * @Modification Date: 20191016
@@ -448,7 +448,7 @@ ExitApp
 Return
 
 ^4::
-update(5)
+update(6)
 Return
 
 vehimghk:
