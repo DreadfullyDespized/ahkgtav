@@ -2,10 +2,10 @@
  * =============================================================================================== *
  * @Author           : DreadfullyDespized (darkestdread@gmail.com)
  * @Script Name      : AHKNDG - NDG Autohotkey doohicky
- * @Script Version   : 6
+ * @Script Version   : 7
  * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
  * @Creation Date    : 20190707
- * @Modification Date: 20191016
+ * @Modification Date: 20191018
  * @Description      : Simple autohotkey script to be used with GTAV FiveM NDG.
  *                     Really just built around to automating repetitive RP related tasks.
  * -----------------------------------------------------------------------------------------------
@@ -52,44 +52,33 @@ Menu, Tray, Icon, shell32.dll, 194
 ; Basic Script Info{
 global script := {  based           : scriptobj
                     ,name           : "AHKNDG"
-                    ,version        : "6"
+                    ,version        : "7"
                     ,author         : "DreadfullyDespized"
-                    ,email          : "darkestdread@gmail.com"
                     ,Homepage       : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate        : "20190707"
-                    ,moddate        : "20191016"
-                    ,conf           : "NDG-Config.ini"}
+                    ,moddate        : "20191018"
+                    ,conf           : "NDG-Config.ini"
+                    ,logurl         : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
+                    ,change         : "Changelog-NDG.txt"
+                    ,bug            : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=bug&template=bug_report.md&title="
+                    ,feedback       : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="}
 ; }
 
+global updatefile = % A_Temp "\" script.change
+global logurl = % script.logurl script.change
+UrlDownloadToFile, %logurl%, %updatefile%
+FileRead, BIGFILE, %updatefile%
+StringGetPos, last25Location, BIGFILE,`n, L12
+StringTrimLeft, smallfile, BIGFILE, %last25Location%
+
 ; ============================================ SCRIPT AUTO UPDATER ============================================
-update(lversion, logurl="", rfile="github", vline=13) {
-    Msgbox,
-          , % "Info"
-          , % "Author: " . script.author . "`n"
-            . "Name: " . script.name . "`n"
-            . "Version: " . script.version . "`n"
-            . "ModDate: " . script.moddate . "`n"
-            . "Config: " . script.conf . "`n"
-            . "Email: " . script.email
-
-    `(rfile = "github") ? logurl := "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog-NDG.txt"
-
+update(lversion) {
     RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
-    
-    if connected := !ErrorLevel
-    {
-        ; msgbox, Connected
-        ; This one actually worked and created the changelog file.
-        UrlDownloadToFile, %logurl%, %a_temp%\Changelog-NDG.txt ; C:\Users\username\AppData\Local\Temp\logurl
-        ; UrlDownloadToFile is being blocked at work
-        if ErrorLevel
-            msgbox, The file failed to download
-        FileReadLine, line, %a_temp%\Changelog-NDG.txt, %vline%
+    if connected := !ErrorLevel {
+        FileReadLine, line, %updatefile%, 13
         RegexMatch(line, "\d", Version)
-        if (rfile = "github") {
-            rfile := "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/AHKNDG.ahk"
-        }
-        if (Version > lversion){
+        rfile := script.logurl script.name ".ahk"
+        if (Version > lversion) {
             Msgbox, 68, % "New Update Available"
                       , % "There is a new update available for this application.`n"
                         . "Do you wish to upgrade to V" Version "?"
@@ -105,12 +94,18 @@ update(lversion, logurl="", rfile="github", vline=13) {
                         . "Enjoy the latest version!"
             Run, %deposit%
             ExitApp
-
         }
-        return debug ? "* update() [End]" : 0
+        if (Version = lversion) {
+            MsgBox, 64, % "Up to Date"
+                    , % "Source Version: " Version "`n"
+                    . "Local Version: " lversion
+        }
+        if (Version < lversion) {
+            MsgBox, 64, % "DEV Version!"
+                    , % "Source Version: " Version "`n"
+                    . "Local Version: " lversion
+        }
     }
-    else
-        return debug ? "* Connection Failed" : 3
 }
 
 ; FiveM Chat formatting
@@ -158,6 +153,8 @@ update(lversion, logurl="", rfile="github", vline=13) {
 ; Unfortunately.  The emojis don't actually save from the ahk to the data entry.
 ; Though if you enter them in the data entry.  They save within the ini.
 ; Configure these variables as you wish to be presented
+textspace = y+3
+towtype = f
 config = NDG-Config.ini
 ; ============================================ INI READING ============================================
 ; Section to read in the configuration file if it exists
@@ -429,8 +426,6 @@ For x2 or more charges.  This should be annotated on report. not Arson 1st Degre
 All indicated arrest/bill amounts are the MAX not the suggested.
 )
 
-towtype = f
-
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
 ; Removes all of the standard options from the system tray
 Menu, Tray, NoStandard
@@ -441,14 +436,94 @@ Menu, Tray, Add, &Reconfigure/Help, ^1
 Menu, Tray, Add, GTAV &Car Search, vehimghk
 Menu, Tray, Add, E&xit,Exit
 
+Gui, 6:Destroy
+Gui, 6:-Caption
+Gui, 6:Font, s10 cRed, Consolas
+Gui, 6:Color, Black, Red
+Gui, 6:Add, Text,, % "Name: " script.name
+Gui, 6:Add, Text, %textspace% , % "FileName: " script.name ".ahk"
+Gui, 6:Add, Text, %textspace% , % "Version: " script.version
+Gui, 6:Add, Text, %textspace% , % "Author: " script.author
+Gui, 6:Add, Text, %textspace% , HomePage:
+Gui, 6:Font, s10 Underline cTeal, Consolas
+Gui, 6:Add, Text, x85 y79 gHomePage, HomePage
+HomePage_TT := "Original home page on NDG forums"
+Gui, 6:Font
+Gui, 6:Font, s10 cRed, Consolas
+Gui, 6:Add, Text, x12 y96, % "Create Date: " script.crtdate
+Gui, 6:Add, Text, %textspace% , % "Modified Date: " script.moddate
+Gui, 6:Add, Text, %textspace% , Config File:
+Gui, 6:Font, s10 Underline cTeal, Consolas
+Gui, 6:Add, Text, x104 y130 geditconfig, ConfigFile
+ConfigFile_TT := "Location of your configuration file"
+Gui, 6:Font
+Gui, 6:Font, s10 cRed, Consolas
+Gui, 6:Add, Text, x12 y150 , Change Log: 
+Gui, 6:Font, s10 Underline cTeal, Consolas
+Gui, 6:Add, Text, x96 y150 gchangelog, ChangeLog
+ChangeLog_TT := "Launches the locally downloaded changelog"
+Gui, 6:Font
+Gui, 6:Font, s10 cRed, Consolas
+Gui, 6:Add, Button, x180 y198 h25 w80 gconfigure, Configure
+configure_TT := "Configures the main portion of the application"
+Gui, 6:Add, Button, x260 y198 h25 w70 gupdatecheck, Update
+update_TT := "Checks for any updates on github compared to your version"
+Gui, 6:Add, Button, x330 y198 h25 w40 gbug, BUG
+bug_TT := "Brings you to github Issues BUG template"
+Gui, 6:Add, Button, x370 y198 h25 w75 gfeedback, Feedback
+feedback_TT := "Brings you to github Issues Feedback/Feature template"
+Gui, 6:Add, Edit, -Wrap Readonly x200 y8 r11 w550 vupdatetext, % smallfile
+updatetext_TT := ""
+Gui, 6:Show,, Information
+OnMessage(0x200, "WM_MOUSEMOVE")
+Return
+
+6GuiEscape:
+Gui, 6:Cancel
+Return
+
+HomePage:
+Run, % script.homepage
+Return
+
+EditConfig:
+Run, % A_ScriptDir "\" script.conf
+Return
+
+Changelog:
+Run, % A_Temp "\" script.change
+Return
+
+configure:
+Gui, 6:Cancel
+Send, ^1
+Return
+
+updatecheck:
+Gui, 6:Cancel
+Send, ^4
+Return
+
+bug:
+Run, % script.bug
+Return
+
+feedback:
+Run, % script.feedback
+Return
+
 #z::Menu, Tray, Show
 
 Exit:
 ExitApp
 Return
 
+^3::
+    Reload
+Return
+
 ^4::
-update(6)
+    update(script.version)
 Return
 
 vehimghk:
@@ -499,6 +574,7 @@ SetScrollLockState, AlwaysOff
     ; ============================================ TESTING GUI ============================================
     Gui, 1:Destroy
     Gui, 1:Font,, Consolas
+    Gui, 1:Color, Silver
     Gui, 1:Add, Tab3,, Help|Configure ME!
     Gui, 1:Add, Edit, Readonly r36 w600 vhelptext, %helptext%
     Gui, 1:Tab, 2
@@ -539,14 +615,16 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Edit, x290 y30 w80 vphone, %phone%
     phone_TT := "Your Phone number, after 555-"
     Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Default, works in-game and notepad.
-    Gui, 1:Add, Button, x280 y490 w80 gSave1, Save
+    Gui, 1:Add, Button, x280 y490 h25 w80 gSave1, Save
+    Gui, 1:Add, Button, x511 y490 h25 w40 gbug, BUG
+    Gui, 1:Add, Button, x550 y490 h25 w65 gfeedback, Feedback
     Gui, 1:Show,, Making the world a better place
     OnMessage(0x200, "WM_MOUSEMOVE")
     Gosub, ReadConfiguration ; Load configuration previously saved.
     Return
 
-    GuiEscape: ; Hitting escape key while open
-    GuiClose: ; Hitting the X while open
+    1GuiEscape: ; Hitting escape key while open
+    1GuiClose: ; Hitting the X while open
     ; MsgBox Nope lol
     Gui, 1:Cancel
     Return
@@ -590,6 +668,7 @@ SetScrollLockState, AlwaysOff
     ; Gui for all of the customized messages to display in-game
     Gui, 2:Destroy
     Gui, 2:Font,, Consolas
+    Gui, 2:Color, Silver
     if (rolepick = "LEO") {
         Gui, 2:Add, tab3,, LEO|Help|General
     } else if (rolepick = "TOW") {
@@ -736,6 +815,8 @@ SetScrollLockState, AlwaysOff
     phrechk_TT := "Hotkey to start recording with your phone"
     Gui, 2:Tab
     Gui, 2:Add, Button, default w80 xm, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
+    Gui, 2:Add, Button, x520 y480 h25 w40 gbug, BUG
+    Gui, 2:Add, Button, x560 y480 h25 w65 gfeedback, Feedback
     Gui, 2:Show,, Main responses for the system - builds from original variables
     OnMessage(0x200, "WM_MOUSEMOVE")
     Return
@@ -755,6 +836,7 @@ Return
 ^2::
     Gui, 5:Destroy
     Gui, 5:Font,, Consolas
+    Gui, 5:Color, Silver
     Gui, 5:Add, Text, y10, Offender ID:
     Gui, 5:Add, Text, x190 y10, CautionCode:
     Gui, 5:Add, Edit, x85 y5 w60 voffenderid, 0
@@ -813,7 +895,7 @@ M = Mental Instability - Approved by SAFR Only"
             f_fine_%c_LineNumber% := val2
             f_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y112 gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x365 y112 gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
@@ -827,8 +909,10 @@ M = Mental Instability - Approved by SAFR Only"
     warrant_TT := "Converts the charges to a Warrant format."
     Gui, 5:Add, Button, x150 y767 gcwarrant vcwarrant, ClearWarrant
     cwarrant_TT := "Provides command to wipe all warrants on a offender id."
-    Gui, 5:Add, Button, x670 y767 gclear vclear, Clear
+    Gui, 5:Add, Button, x370 y767 gclear vclear, Clear
     Clear_TT := "Clears out all entries without saving them."
+    Gui, 5:Add, Button, x600 y767 h25 w40 gbug, BUG
+    Gui, 5:Add, Button, x640 y767 h25 w65 gfeedback, Feedback
     Gui, 5:Show,, Citation | Misdemeanor | Felony | CautionCode - LEO Calculator
     OnMessage(0x200, "WM_MOUSEMOVE")
     lastEdit := ""
@@ -910,7 +994,7 @@ if (n == 6 and InStr(PEdit,"Commercial Vehicle Fine")) {
 /ticket %offenderid% %fine% | %offense% | (%name% - %department%)
         )
     }
-} else if (n == 6) {
+} else if (n == 6 and InStr(PEdit,"/ticket")) {
     offenseadd = % c_offense_%n%
     offense =  %offense% | %offenseadd%
     fine += % c_fine_%n%
@@ -926,6 +1010,11 @@ if (n == 6 and InStr(PEdit,"Commercial Vehicle Fine")) {
 /ticket %offenderid% %fine% | %offense% | (%name% - %department%)
         )
     }
+} else if (n == 6) {
+    PEdit = 
+(
+You can not issue a Commercial Vehicle fine only by itself.  This must be an additional charge.
+)
 } else {
     offense = % c_offense_%n%
     fine = % c_fine_%n%
@@ -990,7 +1079,19 @@ felosub:
 gui,submit,nohide
 RegExMatch(A_GuiControl, "\d+$", n)
 if (InStr(PEdit,"/ticket")) {
-msgbox, You must Clear the Ticket before issuing Felony chargers.
+    msgbox, You must Clear the Ticket before issuing Felony chargers.
+} else if (n == 1 and InStr(PEdit, "Aiding and Abetting")) {
+    msgbox, Aiding and Abetting cannot be on itself.
+} else if (n == 1 and offense) {
+    offenseadd = % f_offense_%n%
+    offense = %offense% | %offenseadd%
+    fine += % f_fine_%n%
+    arrest += % f_arrest_%n%
+    PEdit = 
+    (
+/arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
+/bill %offenderid% %fine% | %offense% | (%name% - %department%)
+    )
 } else if (offense) {
     offenseadd = % f_offense_%n%
     offense = %offense% | %offenseadd%
@@ -1000,6 +1101,11 @@ msgbox, You must Clear the Ticket before issuing Felony chargers.
     (
 /arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
 /bill %offenderid% %fine% | %offense% | (%name% - %department%)
+    )
+} else if (n == 1) {
+    PEdit = 
+    (
+You can not issue a Aiding and Abetting charge by itself.  This must be an additional charge.        
     )
 } else {
     offense = % f_offense_%n%
@@ -1046,10 +1152,6 @@ arrest :=
 PEdit :=
 guicontrol,,pText,% lastEdit
 return
-
-^3::
-    Reload
-Return
 
 ; Empty Recycle Bin
 #Del::FileRecycleEmpty ; Windows + Del
@@ -2055,11 +2157,11 @@ Return
 Exe_File=AHKNDG.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=6
+File_Version=7
 Internal_Name=AHKGTAV
 Legal_Copyright=GNU General Public License 3.0
 Original_Filename=AHKNDG.exe
 Product_Name=AHKNDG
-Product_Version=6
+Product_Version=7
 * * * Compile_AHK SETTINGS END * * *
 */
