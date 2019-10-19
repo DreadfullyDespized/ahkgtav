@@ -10,6 +10,21 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V7
+Date: 20191018 21:00
+    Changes:
+    + BUG button to report bugs on github
+    + Feedback button for feedback/suggestions on github
+    * The backend portions of the update checker
+    + Splash screen with information
+    ! Bug/Feedback button's won't close application window
+    * Change window colors from White to Silver
+    ! Aiding and Abetting being incorrectly applied
+    ! Improved Commercial Vehicle Fine requirements
+
+    Todo:
+    + SAFR Commands
+
 AHKNDG V6
 Date: 20191016 16:24
     Changes:
