@@ -10,6 +10,27 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V8
+Date: 20191022 17:33
+    Changes:
+    + Arrest modifier to change arrest time
+    + Bill/Fine modifier to change ticket/bill
+    + tndghelp - displays ndg help information in local ooc
+    + overlay when doing Control+5
+    + disable overlay when doing Control+6
+    + Control+4 will do the quick update
+    + Control+3 will reload the script manually
+    ! alignment issues with the main windows
+    * Removed not needed button assignments
+    ^ Optimized a lot of the ini building and reading
+    * 5 character limit to arrest
+    * 6 character limit to offender ID
+    * 6 character limit to fine
+    * 8 character limit to license plate
+    ^ Main help text
+    + license plate entry for reporting vehicles stolen/recovered
+    + license reinstate/revoke hunting/gun/driving
+
 AHKNDG V7
 Date: 20191018 21:00
     Changes:
