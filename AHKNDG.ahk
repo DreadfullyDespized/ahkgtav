@@ -1,26 +1,3 @@
-/**
- * =============================================================================================== *
- * @Author           : DreadfullyDespized (darkestdread@gmail.com)
- * @Script Name      : AHKNDG - NDG Autohotkey doohicky
- * @Script Version   : 8
- * @Homepage         : https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218
- * @Creation Date    : 20190707
- * @Modification Date: 20191022
- * @Description      : Simple autohotkey script to be used with GTAV FiveM NDG.
- *                     Really just built around to automating repetitive RP related tasks.
- * -----------------------------------------------------------------------------------------------
- * @License          : Copyright ©2019-2020 DreadfullyDespized <GPLv3>
- *                     This program is free software: you can redistribute it and/or modify it under the terms of
- *                     the GNU General Public License as published by the Free Software Foundation,
- *                     either version 3 of  the  License,  or (at your option) any later version.
- *                     This program is distributed in the hope that it will be useful,
- *                     but WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY  OF MERCHANTABILITY
- *                     or FITNESS FOR A PARTICULAR  PURPOSE.  See  the GNU General Public License for more details.
- *                     You should have received a copy of the GNU General Public License along with this program.
- *                     If not, see <http://www.gnu.org/licenses/gpl-3.0.txt>
- * -----------------------------------------------------------------------------------------------
- */
-
 IF NOT A_IsAdmin
 {
    Run *RunAs "%A_ScriptFullPath%"
@@ -37,44 +14,58 @@ if (a_ahkversion < 1.1){
     Exitapp
 }
 
-; Includes section if needed{
-;}
-
-
-; Directives{
 #NoEnv
 #SingleInstance, Force
 SetWorkingDir, %A_ScriptDir%
-;}
 
 Menu, Tray, Icon, shell32.dll, 194
 
-; Basic Script Info{
-global script := {  based           : scriptobj
-                    ,name           : "AHKNDG"
-                    ,version        : "8"
-                    ,author         : "DreadfullyDespized"
-                    ,Homepage       : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
-                    ,crtdate        : "20190707"
-                    ,moddate        : "20191022"
-                    ,conf           : "NDG-Config.ini"
-                    ,logurl         : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
-                    ,change         : "Changelog-NDG.txt"
-                    ,bug            : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=bug&template=bug_report.md&title="
-                    ,feedback       : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="}
-; }
+global script := {  based               : scriptobj
+                    ,name               : "AHKNDG"
+                    ,version            : "8"
+                    ,author             : "DreadfullyDespized"
+                    ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
+                    ,crtdate            : "20190707"
+                    ,moddate            : "20191023"
+                    ,conf               : "NDG-Config.ini"
+                    ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
+                    ,change             : "Changelog-NDG.txt"
+                    ,bug                : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=bug&template=bug_report.md&title="
+                    ,feedback           : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="
+                    ,citlaw             : "https://forum.newdawn.fun/t/ndg-traffic-laws/555"
+                    ,mislaw             : "https://forum.newdawn.fun/t/ndg-misdemeanor-laws/558"
+                    ,fellaw             : "https://forum.newdawn.fun/t/ndg-felony-laws/559"}
 
 global updatefile = % A_Temp "\" script.change
 global logurl = % script.logurl script.change
 global chrglog = % A_ScriptDir "\Charge_log.txt"
 If (A_ComputerName = "Z017032") {
-    msgbox,,, Asset is %A_ComputerName%
+    ; msgbox,,, Asset is %A_ComputerName%
 } else {
     UrlDownloadToFile, %logurl%, %updatefile%
+    if (ErrorLevel = 1) {
+        msgbox, Unable to communicate with update site.
+        Return
+    }
 }
 FileRead, BIGFILE, %updatefile%
 StringGetPos, last25Location, BIGFILE,`n, L12
 StringTrimLeft, smallfile, BIGFILE, %last25Location%
+
+; This will become the new version checker usage at some point.
+; This will be used once it is fully flushed out.
+
+FileReadLine, checkdate, %A_ScriptFullPath%, 29
+FileReadLine, checkv, %A_ScriptFullPath%, 25
+RegexMatch(checkv,"\d",cver)
+RegexMatch(checkdate,"\d+",cdate)
+checky := cver "." cdate
+ochecky := script.version "." script.moddate
+if (checky >= ochecky) {
+    msgbox,, Version Checker, % "Current Version: " cver "   Old Version: " script.version "`n"
+        . "Current Date: " cdate "   Old Date: " script.moddate "`n"
+        . "Main Version: " checky "   Old Main Version: " ochecky
+}
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
 update(lversion) {
@@ -97,6 +88,10 @@ update(lversion) {
                 msgbox,,, Asset is %A_ComputerName%
             } else {
                 UrlDownloadToFile, %rfile%, %deposit%
+                if (ErrorLevel = 1) {
+                    msgbox, Unable to communicate with update site.
+                    Return
+                }
             }
             Msgbox, 64, % "Download Complete"
                       , % "New version is now running and the old version will now close'n"
@@ -417,7 +412,7 @@ Menu, Tray, Add, &Reload Script, ^3
 Menu, Tray, Add, E&xit,Exit
 
 Gui, 6:Destroy
-Gui, 6:-Caption
+Gui, 6:-Caption +LastFound +ToolWindow
 Gui, 6:Font, s10 cRed, Consolas
 Gui, 6:Color, Black, Red
 Gui, 6:Add, Text,, % "Name: " script.name
@@ -464,13 +459,12 @@ Return
 
 ^5::
 Gui, 7:Destroy
-Gui, 7:+HwndID
+Gui, 7:+HwndID +E0x20 -Caption +LastFound +ToolWindow +AlwaysOnTop
 Gui, 7:Font, s16 cRed w500, Consolas
 Gui, 7:Color, Black
 Gui, 7:Add, Text, x0 y0, %subhelptext%
 Gui, 7:Show, X90 Y300, Overlay
 WinSet, TransColor, Black 255, ahk_id%ID%
-WinSet, AlwaysOnTop, On, ahk_id%ID%
 Gui, 7:-Caption
 Return
 
@@ -848,6 +842,10 @@ M = Mental Instability - Approved by SAFR Only"
                 Gui, 5:Add, Button, gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
 	}
+    Gui, 5:Font, s12 Underline cBlue, Consolas
+    Gui, 5:Add, Text, x590 y650 gcitationlaw vcitationlaw, Citation-Law
+    citationlaw_TT := "Government website with all of the Traffic related laws.  Use for reference."
+    Gui, 5:Font
     Gui, 5:Tab, 2
     Gui, 5:Add, Edit, Readonly r3 w680 vmisdemeanortext, %misdemeanortext%
         Loop, read, %A_ScriptDir%\NDG-Misdemeanor.csv
@@ -864,6 +862,10 @@ M = Mental Instability - Approved by SAFR Only"
                 Gui, 5:Add, Button, gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
 	}
+    Gui, 5:Font, s12 Underline cBlue, Consolas
+    Gui, 5:Add, Text, x565 y650 gmisdemeanorlaw vmisdemeanorlaw, Misdemeanor-Law
+    misdemeanorlaw_TT := "Government website with all of the Misdemeanor related laws.  Use for reference."
+    Gui, 5:Font
     Gui, 5:Tab, 3
     Gui, 5:Add, Edit, Readonly r3 w680 vfelonytext, %felonytext%
             Loop, read, %A_ScriptDir%\NDG-Felony.csv
@@ -880,6 +882,10 @@ M = Mental Instability - Approved by SAFR Only"
                 Gui, 5:Add, Button, gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
 	}
+    Gui, 5:Font, s12 Underline cBlue, Consolas
+    Gui, 5:Add, Text, x610 y650 gfelonylaw vfelonylaw, Felony-Law
+    felonylaw_TT := "Government website with all of the Felony related laws.  Use for reference."
+    Gui, 5:Font
     Gui, 5:Tab, 4
     Gui, 5:Add, Text, x15 y65, Vehicle Report:
     Gui, 5:Add, Text, x15 y95, License Status:
@@ -928,6 +934,18 @@ hunting = revokes or reinstates hunting license"
     5GuiClose:
     Gui, 5:Cancel
     Return
+Return
+
+citationlaw:
+Run, % script.citlaw
+Return
+
+misdemeanorlaw:
+Run, % script.mislaw
+Return
+
+felonylaw:
+Run, % script.fellaw
 Return
 
 cautioncode:
