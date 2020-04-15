@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate            : "20190707"
-                    ,moddate            : "20191023"
+                    ,moddate            : "20191104"
                     ,conf               : "NDG-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
                     ,change             : "Changelog-NDG.txt"
@@ -61,11 +61,11 @@ RegexMatch(checkv,"\d",cver)
 RegexMatch(checkdate,"\d+",cdate)
 checky := cver "." cdate
 ochecky := script.version "." script.moddate
-if (checky >= ochecky) {
-    msgbox,, Version Checker, % "Current Version: " cver "   Old Version: " script.version "`n"
-        . "Current Date: " cdate "   Old Date: " script.moddate "`n"
-        . "Main Version: " checky "   Old Main Version: " ochecky
-}
+; if (checky >= ochecky) {
+;     msgbox,, Version Checker, % "Current Version: " cver "   Old Version: " script.version "`n"
+;         . "Current Date: " cdate "   Old Date: " script.moddate "`n"
+;         . "Main Version: " checky "   Old Main Version: " ochecky
+; }
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
 update(lversion) {
@@ -331,6 +331,8 @@ timpound - place impound sticker
 tplate - notes the plate
 tvin = notes the vin
 ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
+tglovebox - searches through the interior of a vehicle
+tstrunk - searches through the trunk of the vehicle - Face the trunk
 
 Control+1 - Configuration screen
 Control+2 - NDG Ticket|Misdemeanor|Felony Calculator
@@ -417,7 +419,7 @@ Gui, 6:Font, s10 cRed, Consolas
 Gui, 6:Color, Black, Red
 Gui, 6:Add, Text,, % "Name: " script.name
 Gui, 6:Add, Text, %textspace% , % "FileName: " script.name ".ahk"
-Gui, 6:Add, Text, %textspace% , % "Version: " script.version
+Gui, 6:Add, Text, %textspace% , % "Version: " ochecky
 Gui, 6:Add, Text, %textspace% , % "Author: " script.author
 Gui, 6:Add, Text, %textspace% , HomePage:
 Gui, 6:Font, s10 Underline cTeal, Consolas
@@ -747,12 +749,15 @@ SetScrollLockState, AlwaysOff
         Gui, 2:Tab, 4
     }
     Gui, 2:Tab, Help,, Exact
-    Gui, 2:Add, Text,r3 , tmicmsg:
-    Gui, 2:Add, Text,r2, tpaystatemsg:
-    Gui, 2:Add, Edit, r3 vmicmsg w500 x100 y30, %micmsg%
+    Gui, 2:Add, Text,x20 y30, tmicmsg:
+    Gui, 2:Add, Text,x20 y85, tpaystatemsg:
+    Gui, 2:Add, Text,x20 y150, Garbage Items:
+    Gui, 2:Add, Edit, r3 w500 x110 y30 vmicmsg, %micmsg%
     micmsg_TT := "Message used to explain how to use/configure microphone"
-    Gui, 2:Add, Edit, r4 vpaystatemsg w500, %paystatemsg%
+    Gui, 2:Add, Edit, r4 w500 x110 y85 vpaystatemsg, %paystatemsg%
     paystatemsg_TT := "Message used to explain how to handle state debt"
+    Gui, 2:Add, Edit, r5 w500 x110 y150 vItemsar, %Itemsar%
+    Itemsar_TT := "Add items into this list, separated by commas to add to the glovebox and trunk search."
     Gui, 2:Tab, General,, Exact
     Gui, 2:Add, Text, , tgunmsg:
     Gui, 2:Add, Text, r2, valet2hkmsg:
@@ -776,7 +781,7 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Hotkey, w150 vphrechk, %phrechk%
     phrechk_TT := "Hotkey to start recording with your phone"
     Gui, 2:Tab
-    Gui, 2:Add, Button, default w80 xm, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
+    Gui, 2:Add, Button, default x10 y480 w80, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
     Gui, 2:Add, Button, x520 y480 h25 w40 gbug, BUG
     Gui, 2:Add, Button, x560 y480 h25 w65 gfeedback, Feedback
     Gui, 2:Show,, Main responses for the system - builds from original variables
@@ -1616,7 +1621,63 @@ Return
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
-        clipboard = %clipaboard%
+        Clipboard = %clipaboard%
+    }
+    Return
+
+    ; Searches through the glovebox of a vehicle
+    :*:tglovebox:: ; Type tglovebox in-game
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        Items := StrSplit(Itemsar, ",")
+        Random, Item, 1, Items.MaxIndex()
+        Picked := Items[Item]
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        Clipboard = %ms% begins searching the the interior of the vehicle and finds some %Picked%.
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /access
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Clipboard = %clipaboard%
+    }
+    Return
+
+    ; Searches through the trunk of a vehicle
+    :*:tstrunk:: ; Type tstrunk in-game
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        Items := StrSplit(Itemsar, ",")
+        Random, Item, 1, Items.MaxIndex()
+        Picked := Items[Item]
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        Clipboard = /trunk
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = %ms% begins searching the the trunk of the vehicle and finds some %Picked%.
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /access
+        ClipWait
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Clipboard = %clipaboard%
     }
     Return
 
@@ -1629,6 +1690,15 @@ Return
         else
         if (titem = "medbag" || titem = "slimjim" || titem = "tintmeter" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag") {
             clipaboard = %clipboard%
+            Send, {enter}
+            Sleep, %delay%
+            Send, {l down}
+            Sleep, %delay%
+            Send, {l up}
+            Sleep, %delay%
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
             Sleep, %delay%
             Clipboard = /trunk
             ClipWait
@@ -1639,13 +1709,13 @@ Return
             Send, {t up}
             Sleep, %delay%
             if (titem = "cones") {
-                Clipboard = %ds% grabs a few %titem% from the trunk
+                Clipboard = %ds% Grabs a few %titem% from the trunk
                 ClipWait
             } else if (titem = "gsr") {
-                Clipboard = %ds% grabs a %titem% kit from the trunk
+                Clipboard = %ds% Grabs a %titem% kit from the trunk
                 ClipWait
             } else {
-                Clipboard = %ds% grabs a %titem% from the trunk
+                Clipboard = %ds% Grabs a %titem% from the trunk
                 ClipWait
             }
             Send, {Rctrl down}v{Rctrl up}{enter}
@@ -1655,18 +1725,20 @@ Return
                 Sleep, %delay%
                 Send, {t up}
                 Sleep, %delay%
-                Clipboard = /e %titem%
+                Clipboard = /access
                 ClipWait
                 Send, {Rctrl down}v{Rctrl up}{enter}
+                Msgbox, Once completed with your inventory actions, Press T
+                KeyWait, t, D
             }
-            Sleep, %delay%
-            Send, {t down}
-            Sleep, %delay%
-            Send, {t up}
             Sleep, %delay%
             Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Send, {l down}
+            Sleep, %delay%
+            Send, {l up}
             Sleep, %delay%
             clipboard = %clipaboard%
         } else {
@@ -1726,7 +1798,6 @@ Return
         clipboard = %clipaboard%
     }
     Return
-
 
     :*:tsend:: ; Type tsend in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
@@ -2155,6 +2226,7 @@ ReadConfig:
     IniRead, phrechk, %config%, Keys, phrechk, F10
     ; Messages that correspond with the hotkeys
     ; Police related section
+    IniRead, Itemsar, %config%, Police, Itemsar, Twinkie Wrappers,Hotdog buns,Potato chip bags,Used Diappers,Tools,Keyboards
     IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
     IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, %ds% Validates that the Dashcam is functional in both audio and video.
     IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, %ds% Logs into the MWS computer.
@@ -2209,7 +2281,8 @@ UpdateConfig:
     IniWrite, %valet2hk%, %config%, Keys, valet2hk
     IniWrite, %phrechk%, %config%, Keys, phrechk
     ; Messages that correspond with the hotkeys
-    ; Police related section
+    ; Police related 
+    IniWrite, %Itemsar%, %config%, Police, Itemsar
     IniWrite, %dutystartmsg1%, %config%, Police, dutystartmsg1
     IniWrite, %dutystartmsg2%, %config%, Police, dutystartmsg2
     IniWrite, %dutystartmsg3%, %config%, Police, dutystartmsg3
