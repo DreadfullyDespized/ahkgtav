@@ -10,6 +10,22 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V9
+Date: 20200423 16:23
+    Changes:
+    ^ Ini write and read optimized
+    + tstrunk - searches trunk with user provided trash items
+    + tglovebox - searches the glovebox/interior of a vehicle with user provide trash items
+    * Improved Medbag from trunk handling.
+    * converted /do's to /me's for proper RP
+    ! trunk not fully closing on the end of the command
+    + ttv - touch vehicle command added
+    * help text for citations updated
+    ^ Citations no longer able to be modified
+    ! Font issues with NDG citation/misdemeanor/felony
+    + Report section, for statements/arrest reports/etc
+    - Pretty Faces section (moved into the Report Section)
+
 AHKNDG V8
 Date: 20191022 17:33
     Changes:
