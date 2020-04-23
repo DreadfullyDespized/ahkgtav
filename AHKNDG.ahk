@@ -22,11 +22,11 @@ Menu, Tray, Icon, shell32.dll, 194
 
 global script := {  based               : scriptobj
                     ,name               : "AHKNDG"
-                    ,version            : "8"
+                    ,version            : "9"
                     ,author             : "DreadfullyDespized"
                     ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate            : "20190707"
-                    ,moddate            : "20191104"
+                    ,moddate            : "20200423"
                     ,conf               : "NDG-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
                     ,change             : "Changelog-NDG.txt"
@@ -39,6 +39,7 @@ global script := {  based               : scriptobj
 global updatefile = % A_Temp "\" script.change
 global logurl = % script.logurl script.change
 global chrglog = % A_ScriptDir "\Charge_log.txt"
+global replog = % A_ScriptDir "\Report_log.txt"
 If (A_ComputerName = "Z017032") {
     ; msgbox,,, Asset is %A_ComputerName%
 } else {
@@ -176,6 +177,7 @@ IfExist, %config%
 }
 
 GoSub, ReadConfig
+eboxmsg = Danger %name% of the %department%
 
 IfNotExist, NDG-Citation.csv
 FileAppend,
@@ -306,6 +308,9 @@ tmedical - medical rp message
 tmic = mic help
 tpaystate = paystate help
 tndghelp = ndg help
+tglovebox - Search Glovebox
+tstrunk - Search Trunk
+ttv - Check trunk on approach
 )
 
 helptext = 
@@ -323,7 +328,7 @@ ms Delay: Take your ping to the server and double it.  To fill this in with.
 
 Police Commands:
 --------------------
-tdutystart - go on duty (launches mws)
+tdutystart - go on duty (bodycam/engine start)
 tfrisk - frisks subject
 tsearch - searches subject
 tmedical - medical rp message
@@ -331,8 +336,9 @@ timpound - place impound sticker
 tplate - notes the plate
 tvin = notes the vin
 ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
-tglovebox - searches through the interior of a vehicle
+tsglovebox - searches through the interior of a vehicle
 tstrunk - searches through the trunk of the vehicle - Face the trunk
+ttv - Touches the vehicle's trunk lid to leave print and make sure secure
 
 Control+1 - Configuration screen
 Control+2 - NDG Ticket|Misdemeanor|Felony Calculator
@@ -343,15 +349,15 @@ Control+6 - Close Police Overlay
 Control+. - SpikeStrip Toggle
 Control+/ - vehicle image search (uses google images in browser)
 Control+- - preps command for plate running
-Control+K - call for tow over radio
-Control+J - tell tow whats going on
+Control+K - call for tow over radio (needs updating)
+Control+J - tell tow whats going on (needs updating)
 
 Tow Commands:
 -----------------------
 tadv - display your towing advertisement
 tstart - start tow shift/company
-tsend - initial send it
-tonway - showing 76 to them
+tsend - initial send it (needs updating)
+tonway - showing 76 to them (needs updating)
 ttow - towing system
 tsecure - secures tow straps
 trelease - releases tow straps
@@ -385,21 +391,26 @@ citationtext =
 This is the portion to handle citations/tickets.
 You can not GROUP tickets, they must be issued one per infraction.
 The DB records it as one ticket per /ticket given.
-All indicated arrest/ticket amounts are the MAX not the suggested.
+All indicated ticket amounts are non-negotiable Traffic Court may adjust only.
 )
 
 misdemeanortext = 
 (
 This is the portion to handle misdemeanor charges.
 For x2 or more charges.  This should be annotated on report. not Arson 2nd Degree x2 in the /arrest or /bill
-All indicated arrest/bill amounts are the MAX not the suggested.
+All indicated arrest/bill amounts are the MAX not the suggested, Use RP common sense.
 )
 
 felonytext = 
 (
 This is the portion to handle felony charges.
 For x2 or more charges.  This should be annotated on report. not Arson 1st Degree x2 in the /arrest or /bill
-All indicated arrest/bill amounts are the MAX not the suggested.
+All indicated arrest/bill amounts are the MAX not the suggested, Use RP common sense.
+)
+
+reporttext = 
+(
+This section is used to handle report writting.  This can be witness statements, arrest reports or anything else that you run into that could be information for the department to be used.  Including shift notes. You must fill out all fields before you can actually file the report.  The report is appended to your LEO Log.
 )
 
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
@@ -542,8 +553,6 @@ Return
 ; ============================================ START HOTKEY CONFIRUATION ============================================
 
 ; SetKeyDelay , Delay, PressDuration, Play
-; Both numbers should match to work with your ping to the server.
-; Take your ping to the server and then times it by two to equal the delay numbers
 SetKeyDelay, 0, 100
 
 ; Default state of lock keys
@@ -802,7 +811,7 @@ Return
 
 ^2::
     Gui, 5:Destroy
-    Gui, 5:Font,, Consolas
+    Gui, 5:Font, s8, Consolas
     Gui, 5:Color, Silver
     Gui, 5:Add, Text, y10, Offender ID:
     Gui, 5:Add, Text, x140 y10, CautionCode:
@@ -826,12 +835,12 @@ M = Mental Instability - Approved by SAFR Only"
     Gui, 5:Add, Edit, x360 y6 w45 varrestmod Limit5, 0
     arrestmod_TT := "This would modify the original max time to what you specify"
     Gui, 5:Add, Edit, x464 y6 w50 vfinemod Limit6, 0
-    billmod_TT := "This would modify the original max fine/ticket to what you specify"
+    billmod_TT := "This would modify the original max fine to what you specify"
     Gui, 5:Add, Edit, x623 y6 w70 vplate Limit8, 0
     plate_TT := "License plate of the vehicle in question"
     Gui, 5:Add, Button, x515 y5 gchargemod vchgmod, Set Mods
-    chgmod_TT := "This should configure both the arrestmod and the bill/ticket mod"
-    Gui, 5:Add, Tab3, x10, Citation|Misdemeanor|Felony|PrettyFaces
+    chgmod_TT := "This will apply the ArrestMod time and the FineMod amount to displayed charges"
+    Gui, 5:Add, Tab3, x10, Citation|Misdemeanor|Felony|Report
     Gui, 5:Add, Edit, Readonly r4 w680 vcitationtext, %citationtext%
     Loop, read, %A_ScriptDir%\NDG-Citation.csv
 	{
@@ -842,7 +851,7 @@ M = Mental Instability - Approved by SAFR Only"
             c_fine_%c_LineNumber% := val2
             c_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y124 gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x353 y128 gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
@@ -851,6 +860,7 @@ M = Mental Instability - Approved by SAFR Only"
     Gui, 5:Add, Text, x590 y650 gcitationlaw vcitationlaw, Citation-Law
     citationlaw_TT := "Government website with all of the Traffic related laws.  Use for reference."
     Gui, 5:Font
+    Gui, 5:Font, s8, Consolas
     Gui, 5:Tab, 2
     Gui, 5:Add, Edit, Readonly r3 w680 vmisdemeanortext, %misdemeanortext%
         Loop, read, %A_ScriptDir%\NDG-Misdemeanor.csv
@@ -862,7 +872,7 @@ M = Mental Instability - Approved by SAFR Only"
             m_fine_%c_LineNumber% := val2
             m_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y112 gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x353 y115 gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
@@ -871,6 +881,7 @@ M = Mental Instability - Approved by SAFR Only"
     Gui, 5:Add, Text, x565 y650 gmisdemeanorlaw vmisdemeanorlaw, Misdemeanor-Law
     misdemeanorlaw_TT := "Government website with all of the Misdemeanor related laws.  Use for reference."
     Gui, 5:Font
+    Gui, 5:Font, s8, Consolas
     Gui, 5:Tab, 3
     Gui, 5:Add, Edit, Readonly r3 w680 vfelonytext, %felonytext%
             Loop, read, %A_ScriptDir%\NDG-Felony.csv
@@ -882,7 +893,7 @@ M = Mental Instability - Approved by SAFR Only"
             f_fine_%c_LineNumber% := val2
             f_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x365 y112 gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x365 y115 gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gfelosub vfBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
@@ -890,31 +901,51 @@ M = Mental Instability - Approved by SAFR Only"
     Gui, 5:Font, s12 Underline cBlue, Consolas
     Gui, 5:Add, Text, x610 y650 gfelonylaw vfelonylaw, Felony-Law
     felonylaw_TT := "Government website with all of the Felony related laws.  Use for reference."
-    Gui, 5:Font
     Gui, 5:Tab, 4
-    Gui, 5:Add, Text, x15 y65, Vehicle Report:
-    Gui, 5:Add, Text, x15 y95, License Status:
-    Gui, 5:Add, DropDownList, x105 y60 w90 vvehreport, |recovered|stolen
+    Gui, 5:Font
+    Gui, 5:Font, s8, Consolas
+    Gui, 5:Add, Edit, Readonly r3 w680 vreporttext, %reporttext%
+    Gui, 5:Add, Text, x25 y116, Vehicle Report:
+    Gui, 5:Add, Text, x320 y116, License Status:
+    Gui, 5:Add, DropDownList, x115 y112 w90 vvehreport, |recovered|stolen
     vehreport_TT :=
     (
 "Recovered = Reports the plate entered recovered
 Stolen = Reports the plate entered stolen"
     )
-    Gui, 5:Add, DropDownList, x105 y90 w90 vlrevoke, |revoke|reinstate
+    Gui, 5:Add, DropDownList, x410 y112 w90 vlrevoke, |revoke|reinstate
     lrevoke_TT :=
     (
 "revoke = revokes the selected license
 reinstate = reinstates the select license"
     )
-    Gui, 5:Add, DropDownList, x195 y90 w90 vltype, |drivers|gun|hunting
+    Gui, 5:Add, DropDownList, x500 y112 w90 vltype, |drivers|gun|hunting
     ltype_TT :=
     (
 "drivers = revokes or reinstates drivers license
 gun = revokes or reinstates gun license
 hunting = revokes or reinstates hunting license"
     )
-    Gui, 5:Add, Button, x195 y60 gvcheck vvset, Set Vehicle
-    Gui, 5:Add, Button, x285 y90 glcheck vlset, Set License
+    Gui, 5:Add, Button, x205 y111 gvcheck vvset, Set Vehicle
+    Gui, 5:Add, Button, x590 y111 glcheck vlset, Set License
+    Gui, 5:Add, Text, x25 y165, Subjects:
+    Gui, 5:Add, Edit, x85 y160 w220 vsubjects,
+    subjects_TT := "Enter any subjects identified or described in the report with comma separation."
+    Gui, 5:Add, Text, x25 y185, Witnesses:
+    Gui, 5:Add, Edit, x85 y180 w220 vwitnesses,
+    witnesses_TT := "Enter any witnesses identified in the report with comma separation."
+    Gui, 5:Add, Text, x440 y165, District:
+    Gui, 5:Add, Edit, x495 y160 w205 vdistrict,
+    district_TT := "Enter the location that this incident took place."
+    Gui, 5:Font
+    Gui, 5:Font, s8 Bold Underline, Consolas
+    Gui, 5:Add, Text, x25 y205, Narrative
+    Gui, 5:Font
+    Gui, 5:Font, s8, Consolas
+    Gui, 5:Add, Edit, r30 w675 vnText,
+    nText_TT := "Use this section to provide your statements, viewpoints and accounts of the situation."
+    Gui, 5:Add, Button, gncheck1 vnbutton, File Report
+    nbutton_TT := "This button will add the following narrative to your Report Log file."
     Gui, 5:Tab
     Gui, 5:Add, Edit, Readonly r5 w706 vpText
     pText_TT := "Use this section to copy the arrest/bill/ticket from, to enter into the game."
@@ -926,8 +957,10 @@ hunting = revokes or reinstates hunting license"
     cwarrant_TT := "Provides command to wipe all warrants on a offender id."
     Gui, 5:Add, Button, x250 y768 gclear vclear, Clear
     Clear_TT := "Clears out all entries without saving them."
-    Gui, 5:add, Button, x292 y768 gclearall vclearall, ClearAll
+    Gui, 5:Add, Button, x292 y768 gclearall vclearall, ClearAll
     clearall_TT := "Clears all possible fields other then the Offender ID"
+    Gui, 5:Add, Button, x402 y768 garlog varlog, LEO Log
+    arlog_TT := "Brings up the Arrest Log in your default text editor"
     Gui, 5:Add, Button, x610 y768 h25 w40 gbug, BUG
     Gui, 5:Add, Button, x650 y768 h25 w65 gfeedback, Feedback
     Gui, 5:Show,, Citation | Misdemeanor | Felony | CautionCode - LEO Calculator
@@ -939,6 +972,10 @@ hunting = revokes or reinstates hunting license"
     5GuiClose:
     Gui, 5:Cancel
     Return
+Return
+
+arlog:
+Run %chrglog%
 Return
 
 citationlaw:
@@ -1008,10 +1045,14 @@ if (!finemod) {
     finemod := fine
 }
 Taste := StrSplit(PEdit, A_Space, "/")
+if (InStr(PEdit,"/ticket")) {
+    msgbox,64, Danger %name% of the %department%,  We are no longer allowed to modify the ticket amount.  Max is applied and the DOJ provides Traffic Court if needed.
+    Return
+}
 if (InStr(PEdit,"/arrest")) {
     Grab1 := arrest
 }
-if (Instr(PEdit,"/ticket") or Instr(PEdit,"/bill")) {
+if (Instr(PEdit,"/bill")) {
     Grab2 := fine
 }
 if (arrestmod > arrest) {
@@ -1026,7 +1067,7 @@ PEdit := StrReplace(PEdit,Grab1,arrestmod,,Limit := 1)
 arrest := arrestmod
 PEdit := StrReplace(PEdit,Grab2,finemod,,Limit := 1)
 fine := finemod
-if (lastEdit == ""){
+if (lastEdit == "") {
     guicontrol,,pText,% PEdit
     LastEdit := PEdit
 } else {
@@ -1197,8 +1238,7 @@ FormatTime, TimeString,, yyyyMMdd HH:mm:ss
 FileAppend,
 (
 %TimeString%
-%PEdit%
-`n
+%PEdit%`n`n
 ), %chrglog%
 lastEdit := chrglog " Updated"
 offense :=
@@ -1206,7 +1246,43 @@ fine :=
 arrest :=
 PEdit :=
 guicontrol,,pText,% lastEdit
-; Run %chrglog%
+Return
+
+ncheck1:
+gui,submit,nohide ;updates gui variable
+if (subjects == "") {
+    msgbox,64,%eboxmsg%, Please enter Subjects or subject description.
+    Return
+}
+if (witnesses = "") {
+    msgbox,64,%eboxmsg%, Please enter Witnesses for the situation.
+    Return
+}
+if (district = "") {
+    msgbox,64,%eboxmsg%, Please enter District as to where the scene was located.
+    Return
+}
+if (nText = "") {
+    msgbox,64,%eboxmsg%, Please enter Narrative for the course of events and or statements.
+    Return
+}
+FormatTime, TimeString,, yyyyMMdd HH:mm:ss
+FileAppend,
+(
+TimeStamp: %TimeString%
+Subjects: %subjects%
+Witnesses: %witnesses%
+District: %district%
+Narrative:
+------------------------------------------------------------------------
+%nText%
+------------------------------------------------------------------------`n
+), %chrglog%
+guicontrol,,subjects,
+guicontrol,,witnesses,
+guicontrol,,district,
+guicontrol,,nText,
+guicontrol,,pText,% PEdit
 Return
 
 lcheck:
@@ -1609,7 +1685,7 @@ Return
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
-        Clipboard = %ds% tears off the written impound sticker and places it on the vehicle
+        Clipboard = %ms% tears off the written impound sticker and places it on the vehicle
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
@@ -1626,7 +1702,7 @@ Return
     Return
 
     ; Searches through the glovebox of a vehicle
-    :*:tglovebox:: ; Type tglovebox in-game
+    :*:tsglovebox:: ; Type tsglovebox in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         Items := StrSplit(Itemsar, ",")
         Random, Item, 1, Items.MaxIndex()
@@ -1692,38 +1768,30 @@ Return
             clipaboard = %clipboard%
             Send, {enter}
             Sleep, %delay%
-            Send, {l down}
+            Send, l
             Sleep, %delay%
-            Send, {l up}
-            Sleep, %delay%
-            Send, {t down}
-            Sleep, %delay%
-            Send, {t up}
+            Send, t
             Sleep, %delay%
             Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
-            Send, {t down}
-            Sleep, %delay%
-            Send, {t up}
+            Send, t
             Sleep, %delay%
             if (titem = "cones") {
-                Clipboard = %ds% Grabs a few %titem% from the trunk
+                Clipboard = %ms% Grabs a few %titem% from the trunk
                 ClipWait
             } else if (titem = "gsr") {
-                Clipboard = %ds% Grabs a %titem% kit from the trunk
+                Clipboard = %ms% Grabs a %titem% kit from the trunk
                 ClipWait
             } else {
-                Clipboard = %ds% Grabs a %titem% from the trunk
+                Clipboard = %ms% Grabs a %titem% from the trunk
                 ClipWait
             }
             Send, {Rctrl down}v{Rctrl up}{enter}
             If (titem = "medbag") {
                 Sleep, %delay%
-                Send, {t down}
-                Sleep, %delay%
-                Send, {t up}
+                Send, t
                 Sleep, %delay%
                 Clipboard = /access
                 ClipWait
@@ -1732,13 +1800,12 @@ Return
                 KeyWait, t, D
             }
             Sleep, %delay%
+            Sleep, %delay%
             Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
-            Send, {l down}
-            Sleep, %delay%
-            Send, {l up}
+            Send, l
             Sleep, %delay%
             clipboard = %clipaboard%
         } else {
@@ -1923,7 +1990,7 @@ Return
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
-        Clipboard = %ds% opens the toolbox and removes kitty litter from it
+        Clipboard = %ms% opens the toolbox and removes kitty litter from it
         ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
@@ -1954,10 +2021,10 @@ Return
                     Send, {t up}
                     Sleep, %delay%
                     if (bitem = "cones") {
-                        Clipboard = %ds% grabs a few %bitem% from the %vehicle%
+                        Clipboard = %ms% grabs a few %bitem% from the %vehicle%
                         ClipWait
                     } else {
-                        Clipboard = %ds% grabs a %bitem% from the %vehicle%
+                        Clipboard = %ms% grabs a %bitem% from the %vehicle%
                         ClipWait
                     }
                     Send, {Rctrl down}v{Rctrl up}{enter}
@@ -2199,12 +2266,12 @@ Return
 ReadConfig:
     ; Back to the reading of the configuration
     IniRead, rolepick, %config%, Yourself, role, LEO
-    IniRead, callsign, %config%, Yourself, callsign, D6
+    IniRead, callsign, %config%, Yourself, callsign, 306
     IniRead, myid, %config%, Yourself, myid, 30
     IniRead, towcompany, %config%, Yourself, towcompany, DonkeyDick
-    IniRead, name, %config%, Yourself, name, Dread
-    IniRead, title, %config%, Yourself, title, Deputy
-    IniRead, department, %config%, Yourself, department, LSSD
+    IniRead, name, %config%, Yourself, name, Mallard
+    IniRead, title, %config%, Yourself, title, Trooper
+    IniRead, department, %config%, Yourself, department, SASP
     IniRead, phone, %config%, Yourself, phone, 00030
     ; Client communication and test mode
     IniRead, delay, %config%, Yourself, delay, 80
@@ -2227,9 +2294,9 @@ ReadConfig:
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniRead, Itemsar, %config%, Police, Itemsar, Twinkie Wrappers,Hotdog buns,Potato chip bags,Used Diappers,Tools,Keyboards
-    IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ds% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
-    IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, %ds% Validates that the Dashcam is functional in both audio and video.
-    IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, %ds% Logs into the MWS computer.
+    IniRead, dutystartmsg1, %config%, Police, dutystartmsg1, %ms% secures the bodycam to the chest and then turns it on and validates that it is recording and listening.
+    IniRead, dutystartmsg2, %config%, Police, dutystartmsg2, %ms% Validates that the Dashcam is functional in both audio and video.
+    IniRead, dutystartmsg3, %config%, Police, dutystartmsg3, %ms% Logs into the MWS computer.
     IniRead, friskmsg, %config%, Police, friskmsg, %ds% Frisks the Subject looking for any weapons and removes ^1ALLLL ^0of them
     IniRead, searchmsg, %config%, Police, searchmsg, %ds% Searches the Subject completely and stows ^1ALLLL ^0items into the evidence bags
     IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
@@ -2237,19 +2304,19 @@ ReadConfig:
     ; Towing related section
     IniRead, tadv, %config%, Towing, tadv, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy 555-%phone%!!
     IniRead, tsend, %config%, Towing, tsend, %rs% [^3TOW%myid%^0] Send it!
-    IniRead, ttowmsg1, %config%, Towing, ttowmsg1, %ds% attaches the winch cable to the front of the vehicle
-    IniRead, ttowmsg2, %config%, Towing, ttowmsg2, %ds% attaches the winch cable to the rear of the vehicle
-    IniRead, tsecure1, %config%, Towing, tsecure1, %ds% secures the rear of the vehicle with extra tow straps
-    IniRead, tsecure2, %config%, Towing, tsecure2, %ds% secures the front of the vehicle with extra tow straps
-    IniRead, treleasemsg1, %config%, Towing, treleasemsg1, %ds% releases the extra tow cables from the rear and pulls the winch release lever
-    IniRead, treleasemsg2, %config%, Towing, treleasemsg2, %ds% releases the extra tow cables from the front and pulls the winch release lever
+    IniRead, ttowmsg1, %config%, Towing, ttowmsg1, %ms% attaches the winch cable to the front of the vehicle
+    IniRead, ttowmsg2, %config%, Towing, ttowmsg2, %ms% attaches the winch cable to the rear of the vehicle
+    IniRead, tsecure1, %config%, Towing, tsecure1, %ms% secures the rear of the vehicle with extra tow straps
+    IniRead, tsecure2, %config%, Towing, tsecure2, %ms% secures the front of the vehicle with extra tow straps
+    IniRead, treleasemsg1, %config%, Towing, treleasemsg1, %ms% releases the extra tow cables from the rear and pulls the winch release lever
+    IniRead, treleasemsg2, %config%, Towing, treleasemsg2, %ms% releases the extra tow cables from the front and pulls the winch release lever
     ; Help related section
     IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
     IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
     ; Normal related section
     IniRead, gunmsg, %config%, Normal, gunmsg, %ds% pulls out his ^1pistol ^0from under his shirt
     IniRead, valet2hkmsg, %config%, Normal, valet2hkmsg, %ms% puts in his ticket into the valet and presses the button to receive his selected vehicle
-    IniRead, phrechkmsg, %config%, Normal, phrechkmsg, %ds% Pulls out their phone and starts recording audio and video
+    IniRead, phrechkmsg, %config%, Normal, phrechkmsg, %ms% Pulls out their phone and starts recording audio and video
 Return
 
 UpdateConfig:
