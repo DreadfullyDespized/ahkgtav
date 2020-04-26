@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate            : "20190707"
-                    ,moddate            : "20200423"
+                    ,moddate            : "20200425"
                     ,conf               : "NDG-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
                     ,change             : "Changelog-NDG.txt"
@@ -1768,15 +1768,21 @@ Return
             clipaboard = %clipboard%
             Send, {enter}
             Sleep, %delay%
-            Send, l
+            Send, {l down}
             Sleep, %delay%
-            Send, t
+            Send, {l up}
+            Sleep, %delay%
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
             Sleep, %delay%
             Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
-            Send, t
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
             Sleep, %delay%
             if (titem = "cones") {
                 Clipboard = %ms% Grabs a few %titem% from the trunk
@@ -1791,7 +1797,9 @@ Return
             Send, {Rctrl down}v{Rctrl up}{enter}
             If (titem = "medbag") {
                 Sleep, %delay%
-                Send, t
+                Send, {t down}
+                Sleep, %delay%
+                Send, {t up}
                 Sleep, %delay%
                 Clipboard = /access
                 ClipWait
@@ -1800,12 +1808,17 @@ Return
                 KeyWait, t, D
             }
             Sleep, %delay%
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
             Sleep, %delay%
             Clipboard = /trunk
             ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
-            Send, l
+            Send, {l down}
+            Sleep, %delay%
+            Send, {l up}
             Sleep, %delay%
             clipboard = %clipaboard%
         } else {
