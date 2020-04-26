@@ -11,9 +11,10 @@ Versioning:
 ==================
 
 AHKNDG V9.20200425
-Date: 20200425 19:01
+Date: 20200425 19:32
     Changes:
     ! trunk now works correctly with door locks
+    ^ Version checker to include build date as well
 
 AHKNDG V9
 Date: 20200423 16:23
