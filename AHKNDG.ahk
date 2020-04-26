@@ -39,7 +39,6 @@ global script := {  based               : scriptobj
 global updatefile = % A_Temp "\" script.change
 global logurl = % script.logurl script.change
 global chrglog = % A_ScriptDir "\Charge_log.txt"
-global replog = % A_ScriptDir "\Report_log.txt"
 If (A_ComputerName = "Z017032") {
     ; msgbox,,, Asset is %A_ComputerName%
 } else {
