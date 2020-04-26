@@ -55,7 +55,6 @@ StringTrimLeft, smallfile, BIGFILE, %last25Location%
 
 ; This will become the new version checker usage at some point.
 ; This will be used once it is fully flushed out.
-
 FileReadLine, checkdate, %A_ScriptFullPath%, 29
 FileReadLine, checkv, %A_ScriptFullPath%, 25
 RegexMatch(checkv,"\d",cver)
@@ -69,16 +68,17 @@ ochecky := script.version "." script.moddate
 ; }
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
-update(lversion) {
+update(ochecky) {
     RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
     if connected := !ErrorLevel {
         FileReadLine, line, %updatefile%, 13
         RegexMatch(line, "\d.\d{8}", Version)
         rfile := script.logurl script.name ".ahk"
-        if (Version > lversion) {
+        if (Version > ochecky) {
             Msgbox, 68, % "New Update Available"
                       , % "There is a new update available for this application.`n"
-                        . "Do you wish to upgrade to V" Version "?"
+                        . "Do you wish to upgrade to V" Version "?`n"
+                        . "Local Version: " ochecky
                       , 10 ; 10s timeout
             IfMsgbox, Timeout
                 return debug ? "* Update message timed out" : 1
@@ -100,15 +100,15 @@ update(lversion) {
             Run, %deposit%
             ExitApp
         }
-        if (Version = lversion) {
+        if (Version = ochecky) {
             MsgBox, 64, % "Up to Date"
                     , % "Source Version: " Version "`n"
-                    . "Local Version: " lversion
+                    . "Local Version: " ochecky
         }
-        if (Version < lversion) {
+        if (Version < ochecky) {
             MsgBox, 64, % "DEV Version!"
                     , % "Source Version: " Version "`n"
-                    . "Local Version: " lversion
+                    . "Local Version: " ochecky
         }
     }
 }
@@ -526,7 +526,7 @@ Return
 Return
 
 ^4::
-    update(script.version)
+    update(ochecky)
 Return
 
 vehimghk:
