@@ -73,7 +73,7 @@ update(lversion) {
     RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
     if connected := !ErrorLevel {
         FileReadLine, line, %updatefile%, 13
-        RegexMatch(line, "\d", Version)
+        RegexMatch(line, "\d.\d{8}", Version)
         rfile := script.logurl script.name ".ahk"
         if (Version > lversion) {
             Msgbox, 68, % "New Update Available"
