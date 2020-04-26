@@ -10,7 +10,7 @@ Versioning:
     ^ Update
 ==================
 
-AHKNDG V9.20200425.1
+AHKNDG V9.20200426
 Date: 20200425 19:32
     Changes:
     ! trunk now works correctly with door locks
