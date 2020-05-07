@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate            : "20190707"
-                    ,moddate            : "20200506"
+                    ,moddate            : "20200507"
                     ,conf               : "NDG-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
                     ,change             : "Changelog-NDG.txt"
@@ -311,7 +311,7 @@ FileAppend,
 1-404 Escape From Custody,1250,30
 1-405 Conspiracy,1250,30
 1-406 Criminal Recklessness,1250,30
-1-407 Fleeding and Eluding,1250,30
+1-407 Fleeing and Eluding,1250,30
 1-408 Criminal Conversion,1250,30
 1-409 Forgery/Fraud,1250,30
 1-410 Grand Theft Auto,1250,30

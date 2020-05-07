@@ -10,6 +10,11 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V9.20200507
+Date: 20200507 22:43
+    Changes:
+    ! Typo on charge for Fleeding and Eluding
+
 AHKNDG V9.20200506
 Date: 20200506 21:19
     Changes:
