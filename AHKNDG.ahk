@@ -26,15 +26,15 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate            : "20190707"
-                    ,moddate            : "20200429"
+                    ,moddate            : "20200506"
                     ,conf               : "NDG-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
                     ,change             : "Changelog-NDG.txt"
                     ,bug                : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=bug&template=bug_report.md&title="
                     ,feedback           : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="
-                    ,citlaw             : "https://forum.newdawn.fun/t/ndg-traffic-laws/555"
-                    ,mislaw             : "https://forum.newdawn.fun/t/ndg-misdemeanor-laws/558"
-                    ,fellaw             : "https://forum.newdawn.fun/t/ndg-felony-laws/559"}
+                    ,citlaw             : "https://docs.google.com/spreadsheets/d/1ybXWPzNIqXDEhjlGz6SO1_nHPMISvzQNsUmo8QqX_5g/edit#gid=1491079056"
+                    ,mislaw             : "https://docs.google.com/spreadsheets/d/1ybXWPzNIqXDEhjlGz6SO1_nHPMISvzQNsUmo8QqX_5g/edit#gid=480225561"
+                    ,fellaw             : "https://docs.google.com/spreadsheets/d/1ybXWPzNIqXDEhjlGz6SO1_nHPMISvzQNsUmo8QqX_5g/edit#gid=0"}
 
 global updatefile = % A_Temp "\" script.change
 global logurl = % script.logurl script.change
@@ -54,6 +54,7 @@ StringTrimLeft, smallfile, BIGFILE, %last25Location%
 
 ; This will become the new version checker usage at some point.
 ; This will be used once it is fully flushed out.
+
 FileReadLine, checkdate, %A_ScriptFullPath%, 29
 FileReadLine, checkv, %A_ScriptFullPath%, 25
 RegexMatch(checkv,"\d",cver)
@@ -194,115 +195,136 @@ IfExist, %config%
 GoSub, ReadConfig
 eboxmsg = Danger %name% of the %department%
 
-IfNotExist, NDG-Citation.csv
+FileDelete, NDG-Citation.csv
 FileAppend,
 (
-10-19 MPH Over,200,
-20-29 MPH Over,400,
-30+ MPH Over,600,
-Broken Windshield,250,
-Careless Driving,1000,
-Commercial Vehicle Fine,1000,
-Driving under the Influence,2500,30
-Excessive vehicle noise,400,
-Failure to have correct registration on vehicle,600,
-Failure to have registration displayed on vehicle,350,
-Failure to use Headlights at night,250,
-Failure to use signal when turning/changing lanes,150,
-Failure to yield right of way to traffic,400,
-Failure to yield to emergency vehicle,600,
-Hit and Run,5000,20
-Illegal passing,200,
-Illegal turn,400,
-Illegal U-Turn,400,
-Illegally parked vehicle,400,
-Impeding flow of traffic,500,
-Running a red light,400,
-Running a stop sign,300,
-Tailight or headlight out,250,
-Traveling wrong way,300,
-Unroadworthy vehicle,300,
+3-100 Drivers License,200,
+3-101 Speeding 5MPH-10MPH,90,
+3-102 Speeding 10MPH-20MPH,100,
+3-103 Speeding 21MPH-30MPH,150,
+3-104 Speeding 30MPH+,500,
+3-105 Failure to Yield to Emergency Vehicle,100,
+3-106 Careless Driving,350,
+3-107 Reckless Driving,500,15
+3-108 Broken Windshield,50,
+3-109 Unregistered Motor Vehicle,150,
+3-110 Failure to Obey Traffic Control Devices,250,
+3-111 Following Distance,150,
+3-112 Failure to Stop at a Stop Sign,150,
+3-113 Failure to yield right of way to traffic,100,
+3-114 Failure to Use Turn Signal,50,
+3-115 Illegal Passing,100,
+3-116 Illegal turn/U-turn,100,
+3-117 Impeding flow of traffic,100,
+3-118 Driving while Opposing Traffic,150,
+3-119 Exhibition Driving,70,
+3-120 Commercial Moving or Traffic Violations,200,
+3-121 Visible Plate,50,
+3-122 Unroadworthy Vehicle,300,
+3-123 Driving Without Lights,75,
+3-124 Tail Light or Headlight Out,60,
+3-200 Loitering,50,
+3-201 Littering,100,
+3-202 Illegally Parked Vehicle,60,
+3-203 Jaywalking,50,
 )
 ,NDG-Citation.csv
 
-IfNotExist, NDG-Misdemeanor.csv
+FileDelete, NDG-Misdemeanor.csv
 FileAppend,
 (
-Arson 2nd Degree,1500,20
-Assault 2nd Degree,2500,15
-Attempted Grand Theft Auto,1000,10
-Brandishing of a Firearm,1000,10
-Destruction of Government Property,1500,15
-Destruction of Property,1000,10
-Disorderly Conduct,500,10
-Domestic Violence,1000,20
-Driving on suspended license,1000,10
-Driving without a license,1500,15
-Failure to comply with lawful order,700,15
-Failure to identify to LEO,,99999
-Failure to pay fines,1000,15
-Failure to supply documentation to LEO,700,15
-False 911 calls,1500,20
-False Report,1500,20
-Harassment,1000,10
-JayWalking,200,
-Joyriding,600,15
-Loitering,500,
-Petty Theft,1500,15
-Poaching,500,20
-Possession of a stolen identification,1500,10
-Posession of burglary tools,1000,20
-Possession of illegal substance (General),1500,20
-Possession of Marijuana,1000,
-Prostitution,800,10
-Public Indecency,500,10
-Public Intoxication,800,10
-Reckless Driving,2500,15
-Reckless Endangerment,2000,20
-Stalking,1500,15
-Street Racing,1500,20
-Trespassing,1000,10
-Trespassing on Government Property,2500,15
-Unlawful Imprisonment,1500,10
-Unlawful use of a weapon,3000,20
+2-100 Resisting a Peace Officer,1000,25
+2-101 Criminal Confinement,1000,25
+2-102 Tampering with Evidence,1000,25
+2-103 Brandishing a Firearm,1000,25
+2-104 Unlawful Use of a Weapon,1000,25
+2-105 Pandering/Pimping,1000,25
+2-200 Criminal Recklessness,750,20
+2-201 Criminal Conversion,750,20
+2-202 Theft,750,20
+2-203 Battery,750,20
+2-204 Destruction of Government Property,750,20
+2-205 Posession of Marijuana,750,20
+2-206 Hit and Run,750,20
+2-207 Obstruction of a Government Employee,750,20
+2-208 Poaching,750,20
+2-209 Posession of a CDS,750,20
+2-210 Stalking,750,20
+2-300 Reckless Driving,500,15
+2-301 Criminal Mischief,500,15
+2-302 Harassment,500,15
+2-303 Failure to Identify to a Peace Officer,500,15
+2-304 Criminal Threats,500,15
+2-305 Trespassing,500,15
+2-306 Possession of Paraphernalia,500,15
+2-307 Attempted Grand Theft Auto,500,15
+2-308 Filing a false Police Report,500,15
+2-309 Misuse of a Government Hotline,500,15
+2-310 Joyriding,500,15
+2-311 Possession of Burglary Tools,500,15
+2-312 Possession of Stolen Identification,500,15
+2-313 Street Racing,500,15
+2-314 Incitement to Riot,500,15
+2-315 Restricted Flight Area,500,15
+2-316 Driving Under the Influence,500,15
+2-400 Disorderly Conduct,250,10
+2-401 Illegal Dumping,250,10
+2-402 Unlawful Assembly,250,10
+2-403 Open Container,250,10
+2-404 Driving with a Suspended or Revoked License,250,10
+2-405 Public Intoxication,250,10
+2-406 Immediate Detention,250,10
+2-407 Minor Consumption,250,10
+2-408 Failure to pay fines,250,10
+2-409 Contempt of Court,250,10
+2-410 Failure to Appear,250,10
+2-411 Prostitution,250,10
+2-412 Public Indecency,250,10
+2-413 Under the Influence of a CDS,250,10
 )
 ,NDG-Misdemeanor.csv
 
-IfNotExist, NDG-Felony.csv
+FileDelete, NDG-Felony.csv
 FileAppend,
 (
-Aiding and Abetting/Accessory,,
-Arson 1st Degree,3000,35
-Assault 1st Degree,4000,30
-Assault on Emergency Services,6000,40
-Assault with a deadly weapon,5500,35
-Attempted murder,5000,40
-Attempted murder of Emergency Services,7000,50
-Bribery of a Public Servant,3000,10
-Burglary,3500,30
-Conspiracy to Commit a Criminal Act,1500,15
-Criminal Possession of Government Issued Equipment,5000,25
-Criminal threat,4000,20
-Destruction of physical evidence,1000,30
-Escaping Custody,3000,20
-Falsifying Government Document,3000,20
-Fleeing and Eluding,1500,15
-Fraud,1500,10
-Grand Theft,3500,30
-Grand Theft Auto,1500,20
-Illegal possession of a Weapon/Firearm,2500,20
-Impersonation,1000,10
-Impersonation of an Emergency Services,2500,20
-Kidnapping,3000,25
-Manslaughter,5500,30
-Murder,7000,50
-Murder of a Emergency Services,12000,60
-Obstruction of Justice,2000,10
-Possession of a outlawed Weapon,3000,30
-Possession of Marijuana with intent to sell,2500,15
-Robbery/Armed Robbery,6000,30
-Terroristic Acts,30000,999
-Vehiclular Manslaughter,5500,30
+1-100 Terroristic Acts,99999,9999
+1-101 Murder,99999,9999
+1-200 Attempted Murder of a Public Servant,99999,9999
+1-201 Attempted Murder,99999,9999
+1-202 Racketeering/RICO,1750,60
+1-203 Trafficking of Marijuana,1750,60
+1-204 Voluntary Manslaughter,1750,60
+1-300 Falsifying Government Document,1500,50
+1-301 Impersonation of a Government Employee,1500,50
+1-302 Possession of an Illegal Weapon,1500,50
+1-303 Arson,1500,50
+1-304 Criminal Confinement,1500,50
+1-305 Extortion,1500,50
+1-306 Armed Robbery,1500,50
+1-307 Burglary,1500,50
+1-308 Kidnapping,1500,50
+1-309 Possession of a CDS w/Intent to Sell,1500,50
+1-400 Bribery of a Public Official,1250,30
+1-401 Involuntary Manslaughter,1250,30
+1-402 Battery,1250,30
+1-403 Kidnapping,1250,30
+1-404 Escape From Custody,1250,30
+1-405 Conspiracy,1250,30
+1-406 Criminal Recklessness,1250,30
+1-407 Fleeding and Eluding,1250,30
+1-408 Criminal Conversion,1250,30
+1-409 Forgery/Fraud,1250,30
+1-410 Grand Theft Auto,1250,30
+1-411 Burglary,1250,30
+1-412 Theft,1250,30
+1-413 Posession of Marijuana,1250,30
+1-414 Posession of Marijuana w/Intent to Distribute,1250,30
+1-415 Robbery,1250,30
+1-416 Manufacture of a CDS,1250,30
+1-417 Sexual Battery,1250,30
+1-418 Dissuading a Victim,1250,30
+1-419 Aiding & Abetting/Accessory,1250,30
+1-420 Animal Cruelty,1250,30
 )
 ,NDG-Felony.csv
 
@@ -402,14 +424,14 @@ All indicated ticket amounts are non-negotiable Traffic Court may adjust only.
 
 misdemeanortext = 
 (
-This is the portion to handle misdemeanor charges.
-For x2 or more charges.  This should be annotated on report. not Arson 2nd Degree x2 in the /arrest or /bill
+Class A=100, Class B=200, Class C=300, Class D=400.  Series numbers of classifications
+For x2 or more charges. This should be annotated on report. Not Arson 2nd Degree x2 in the /arrest or /bill
 All indicated arrest/bill amounts are the MAX not the suggested, Use RP common sense.
 )
 
 felonytext = 
 (
-This is the portion to handle felony charges.
+Class A=100, Class B=200, Class C=300, Class D=400.  Series numbers of classifications
 For x2 or more charges.  This should be annotated on report. not Arson 1st Degree x2 in the /arrest or /bill
 All indicated arrest/bill amounts are the MAX not the suggested, Use RP common sense.
 )
@@ -477,7 +499,7 @@ Gui, 6:Cancel
 Return
 
 ^5::
-Gui, 7:Destroy 
+Gui, 7:Destroy
 Gui, 7:+HwndID +E0x20 -Caption +LastFound +ToolWindow +AlwaysOnTop
 Gui, 7:Font, s16 cRed w500, Consolas
 Gui, 7:Color, Black
@@ -557,10 +579,8 @@ Gosub, UpdateConfig
 Return
 
 ; ============================================ START HOTKEY CONFIRUATION ============================================
-
 ; SetKeyDelay , Delay, PressDuration, Play
 SetKeyDelay, 0, 100
-
 ; Default state of lock keys
 SetNumLockState, AlwaysOn
 SetScrollLockState, AlwaysOff
@@ -805,7 +825,7 @@ M = Mental Instability - Approved by SAFR Only"
     plate_TT := "License plate of the vehicle in question"
     Gui, 5:Add, Button, x515 y5 gchargemod vchgmod, Set Mods
     chgmod_TT := "This will apply the ArrestMod time and the FineMod amount to displayed charges"
-    Gui, 5:Add, Tab3, x10, Citation|Misdemeanor|Felony|Report
+    Gui, 5:Add, Tab3, vOuterTab x10, Citation|Misdemeanor|Felony|Report
     Gui, 5:Add, Edit, Readonly r4 w680 vcitationtext, %citationtext%
     Loop, read, %A_ScriptDir%\NDG-Citation.csv
 	{
@@ -816,13 +836,13 @@ M = Mental Instability - Approved by SAFR Only"
             c_fine_%c_LineNumber% := val2
             c_arrest_%c_LineNumber% := val3
             if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y128 gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
+                Gui, 5:Add, Button, x353 y125 gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gcitsub vcBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
 	}
     Gui, 5:Font, s12 Underline cBlue, Consolas
-    Gui, 5:Add, Text, x590 y650 gcitationlaw vcitationlaw, Citation-Law
+    Gui, 5:Add, Text, x590 y760 gcitationlaw vcitationlaw, Citation-Law
     citationlaw_TT := "Government website with all of the Traffic related laws.  Use for reference."
     Gui, 5:Font
     Gui, 5:Font, s8, Consolas
@@ -836,14 +856,14 @@ M = Mental Instability - Approved by SAFR Only"
             m_offense_%c_LineNumber% := val1
             m_fine_%c_LineNumber% := val2
             m_arrest_%c_LineNumber% := val3
-            if (c_LineNumber == 20) {
-                Gui, 5:Add, Button, x353 y115 gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
+            if (c_LineNumber == 25) {
+                Gui, 5:Add, Button, x365 y115 gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
             } else {
                 Gui, 5:Add, Button, gmisdsub vmBtn%c_LineNumber%, %val1%-%c_LineNumber%
             }
 	}
     Gui, 5:Font, s12 Underline cBlue, Consolas
-    Gui, 5:Add, Text, x565 y650 gmisdemeanorlaw vmisdemeanorlaw, Misdemeanor-Law
+    Gui, 5:Add, Text, x565 y760 gmisdemeanorlaw vmisdemeanorlaw, Misdemeanor-Law
     misdemeanorlaw_TT := "Government website with all of the Misdemeanor related laws.  Use for reference."
     Gui, 5:Font
     Gui, 5:Font, s8, Consolas
@@ -864,7 +884,7 @@ M = Mental Instability - Approved by SAFR Only"
             }
 	}
     Gui, 5:Font, s12 Underline cBlue, Consolas
-    Gui, 5:Add, Text, x610 y650 gfelonylaw vfelonylaw, Felony-Law
+    Gui, 5:Add, Text, x610 y760 gfelonylaw vfelonylaw, Felony-Law
     felonylaw_TT := "Government website with all of the Felony related laws.  Use for reference."
     Gui, 5:Tab, 4
     Gui, 5:Font
@@ -919,18 +939,18 @@ hunting = revokes or reinstates hunting license"
     pText_TT := "Use this section to copy the arrest/bill/ticket from, to enter into the game."
     Gui, 5:Add, Button, gcheck2 vsubmit, Submit
     Submit_TT := "Cleans out the record and updates the Charge Log file."
-    Gui, 5:Add, Button, x60 y768 gwarrant vwarrant, ToWarrant
+    Gui, 5:Add, Button, x60 y900 gwarrant vwarrant, ToWarrant
     warrant_TT := "Converts the charges to a Warrant format."
-    Gui, 5:Add, Button, x125 y768 gcwarrant vcwarrant, ClearWarrant
+    Gui, 5:Add, Button, x125 y900 gcwarrant vcwarrant, ClearWarrant
     cwarrant_TT := "Provides command to wipe all warrants on a offender id."
-    Gui, 5:Add, Button, x250 y768 gclear vclear, Clear
+    Gui, 5:Add, Button, x250 y900 gclear vclear, Clear
     Clear_TT := "Clears out all entries without saving them."
-    Gui, 5:Add, Button, x292 y768 gclearall vclearall, ClearAll
+    Gui, 5:Add, Button, x292 y900 gclearall vclearall, ClearAll
     clearall_TT := "Clears all possible fields other then the Offender ID"
-    Gui, 5:Add, Button, x402 y768 garlog varlog, LEO Log
+    Gui, 5:Add, Button, x402 y900 garlog varlog, LEO Log
     arlog_TT := "Brings up the Arrest Log in your default text editor"
-    Gui, 5:Add, Button, x610 y768 h25 w40 gbug, BUG
-    Gui, 5:Add, Button, x650 y768 h25 w65 gfeedback, Feedback
+    Gui, 5:Add, Button, x610 y900 h25 w40 gbug, BUG
+    Gui, 5:Add, Button, x650 y900 h25 w65 gfeedback, Feedback
     Gui, 5:Show,, Citation | Misdemeanor | Felony | CautionCode - LEO Calculator
     OnMessage(0x200, "WM_MOUSEMOVE")
     lastEdit := ""
@@ -1051,44 +1071,6 @@ if (n == 6 and InStr(PEdit,"Commercial Vehicle Fine")) {
     msgbox, Commercial Vehicle fine can not be by itself.
 } else if (InStr(PEdit,"/bill")) {
     msgbox, Please Clean out the Misedeamnor or Felony before issuing a ticket.
-} else if (n == 6 and InStr(PEdit,"/arrest")) {
-    offensea = %offense%
-    offenseadd = % c_offense_%n%
-    offense =  %offense% | %offenseadd%
-    fine += % c_fine_%n%
-    if (arrest) {
-        PEdit = 
-        (
-/arrest %offenderid% %arrest% | %offensea% | (%name% - %department%)
-/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
-        )
-    } else {
-        PEdit = 
-        (
-/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
-        )
-    }
-} else if (n == 6 and InStr(PEdit,"/ticket")) {
-    offenseadd = % c_offense_%n%
-    offense =  %offense% | %offenseadd%
-    fine += % c_fine_%n%
-    if (arrest) {
-        PEdit = 
-        (
-/arrest %offenderid% %arrest% | %offensea% | (%name% - %department%)
-/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
-        )
-    } else {
-        PEdit = 
-        (
-/ticket %offenderid% %fine% | %offense% | (%name% - %department%)
-        )
-    }
-} else if (n == 6) {
-    PEdit = 
-(
-You can not issue a Commercial Vehicle fine only by itself.  This must be an additional charge.
-)
 } else {
     offense = % c_offense_%n%
     fine = % c_fine_%n%
@@ -1362,11 +1344,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /spikes
-        ClipWait
         Send, {RCtrl down}v{RCtrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1379,7 +1359,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard := "/runplate "
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}
     }
     Return
@@ -1396,7 +1375,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /fuelhud
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1404,7 +1382,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /gps
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1412,7 +1389,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = %dutystartmsg%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {F9 down}
@@ -1420,7 +1396,6 @@ Return
         Send, {F9 up}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1430,7 +1405,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %friskmsg%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1438,11 +1412,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /frisk
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1452,7 +1424,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %searchmsg%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1460,11 +1431,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /search
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1474,11 +1443,9 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %ms% touches the trunk lid of the vehicle
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1488,11 +1455,9 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %medicalmsg%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1502,7 +1467,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1510,11 +1474,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = %ms% notes a few things to himself that he thinks are important.
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1524,7 +1486,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1532,7 +1493,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = %ms% notes the plate down
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {m down}
@@ -1540,7 +1500,6 @@ Return
         Send, {m up}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1550,7 +1509,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1558,7 +1516,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = %ms% notes the vin information
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1566,11 +1523,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /vin
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1580,7 +1535,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /e notepad
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1588,7 +1542,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = %ms% tears off the written impound sticker and places it on the vehicle
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1596,11 +1549,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /impound
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1613,7 +1564,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %ms% begins searching the the interior of the vehicle and finds some %Picked%.
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1621,11 +1571,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /access
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1638,7 +1586,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /trunk
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1646,7 +1593,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = %ms% begins searching the the trunk of the vehicle and finds some %Picked%.
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1654,11 +1600,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /access
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1682,7 +1626,6 @@ Return
             Send, {t up}
             Sleep, %delay%
             Clipboard = /trunk
-            ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
             Send, {t down}
@@ -1691,13 +1634,10 @@ Return
             Sleep, %delay%
             if (titem = "cones") {
                 Clipboard = %ms% Grabs a few %titem% from the trunk
-                ClipWait
             } else if (titem = "gsr") {
                 Clipboard = %ms% Grabs a %titem% kit from the trunk
-                ClipWait
             } else {
                 Clipboard = %ms% Grabs a %titem% from the trunk
-                ClipWait
             }
             Send, {Rctrl down}v{Rctrl up}{enter}
             If (titem = "medbag") {
@@ -1707,7 +1647,6 @@ Return
                 Send, {t up}
                 Sleep, %delay%
                 Clipboard = /access
-                ClipWait
                 Send, {Rctrl down}v{Rctrl up}{enter}
                 Msgbox, Once completed with your inventory actions, Press T
                 KeyWait, t, D
@@ -1718,7 +1657,6 @@ Return
             Send, {t up}
             Sleep, %delay%
             Clipboard = /trunk
-            ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
             Send, {l down}
@@ -1726,7 +1664,6 @@ Return
             Send, {l up}
             Sleep, %delay%
             Clipboard = %clipaboard%
-            ClipWait
         } else {
             Send, {enter}
             MsgBox, That %titem% is not in your trunk. Try again.
@@ -1742,7 +1679,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /rc %trc%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1750,11 +1686,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /clockin %towcompany%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1763,11 +1697,9 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %tadv%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1776,11 +1708,9 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %tsend%
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1798,11 +1728,9 @@ Return
                 clipaboard = %clipboard%
                 Sleep, %delay%
                 Clipboard = %rs% [^3TOW%myid%^0] to [^1%caller%^0] will be 76 to you ETA %eta% mikes.
-                ClipWait
                 Send, {Rctrl down}v{Rctrl up}{enter}
                 Sleep, %delay%
                 Clipboard = %clipaboard%
-                ClipWait
             }
         }
     }
@@ -1816,7 +1744,6 @@ Return
             clipaboard = %clipboard%
             Sleep, %delay%
             Clipboard = /emote kneel
-            ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
             Send, {t down}
@@ -1828,15 +1755,12 @@ Return
             } else if (towtype = "b") {
                 Clipboard = %ttowmsg2%
             }
-            ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
             Clipboard = /tow
-            ClipWait
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
             Clipboard = %clipaboard%
-            ClipWait
         } else {
             MsgBox, f or b only. Try again.
         }
@@ -1849,7 +1773,6 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = /emote kneel
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1861,11 +1784,9 @@ Return
         } else {
             Clipboard = %tsecure2%
         }
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1879,7 +1800,6 @@ Return
         } else {
             Clipboard = %treleasemsg2%
         }
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Send, {t down}
@@ -1887,11 +1807,9 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /tow
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
 
@@ -1901,11 +1819,9 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         Clipboard = %ms% opens the toolbox and removes kitty litter from it
-        ClipWait
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
-        ClipWait
     }
     Return
     ; ============================================ SAFR Stuff ============================================
@@ -1924,7 +1840,6 @@ Return
                     clipaboard = %clipboard%
                     SLeep, %delay%
                     Clipboard = /door b%bside%
-                    ClipWait
                     Send, {Rctrl down}v{Rctrl up}{enter}
                     Sleep, %delay%
                     Send, {t down}
@@ -1933,10 +1848,8 @@ Return
                     Sleep, %delay%
                     if (bitem = "cones") {
                         Clipboard = %ms% grabs a few %bitem% from the %vehicle%
-                        ClipWait
                     } else {
                         Clipboard = %ms% grabs a %bitem% from the %vehicle%
-                        ClipWait
                     }
                     Send, {Rctrl down}v{Rctrl up}{enter}
                     If (bitem = "medbag") {
@@ -1946,7 +1859,6 @@ Return
                         Send, {t up}
                         Sleep, %delay%
                         Clipboard = /e %bitem%
-                        ClipWait
                         Send, {Rctrl down}v{Rctrl up}{enter}
                     }
                     Sleep, %delay%
@@ -1955,11 +1867,9 @@ Return
                     Send, {t up}
                     Sleep, %delay%
                     Clipboard = /door b%bside%
-                    ClipWait
                     Send, {Rctrl down}v{Rctrl up}{enter}
                     Sleep, %delay%
                     Clipboard = %clipaboard%
-                    ClipWait
                 } else {
                     Send, {enter}
                     MsgBox, That %bitem% is not in your %vehicle%. Try again.
@@ -1978,11 +1888,9 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
     clipaboard = %clipboard%
     Sleep, %delay%
     Clipboard = %micmsg%
-    ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
     Sleep, %delay%
     Clipboard = %clipaboard%
-    ClipWait
 }
 Return
 
@@ -1992,11 +1900,9 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
     clipaboard = %clipboard%
     Sleep, %delay%
     Clipboard = %paystatemsg%
-    ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
     Sleep, %delay%
     Clipboard = %clipaboard%
-    ClipWait
 }
 Return
 
@@ -2006,11 +1912,9 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
     clipaboard = %clipboard%
     Sleep, %delay%
     Clipboard := "New Dawn Gaming information at ^1 https://forum.newdawn.fun/ ^0 for the forums and for the player list ^2 https://newdawn.fun/ ^0 for guides ^8 https://forum.newdawn.fun/c/for-new-members/guides"
-    ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
     Sleep, %delay%
     Clipboard = %clipaboard%
-    ClipWait
 }
 Return
 
@@ -2025,11 +1929,9 @@ if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitle
     Send, {t up}
     Sleep, %delay%
     clipboard = /engine
-    ClipWait
     Send, {Rctrl down}v{Rctrl up}{enter}
     Sleep, %delay%
     Clipboard = %clipaboard%
-    ClipWait
 }
 Return
 
