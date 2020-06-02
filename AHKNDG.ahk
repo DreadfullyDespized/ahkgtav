@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate            : "20190707"
-                    ,moddate            : "20200507"
+                    ,moddate            : "20200602"
                     ,conf               : "NDG-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
                     ,change             : "Changelog-NDG.txt"
@@ -39,15 +39,6 @@ global script := {  based               : scriptobj
 global updatefile = % A_Temp "\" script.change
 global logurl = % script.logurl script.change
 global chrglog = % A_ScriptDir "\Charge_log.txt"
-If (A_ComputerName = "Z017032") {
-    ; msgbox,,, Asset is %A_ComputerName%
-} else {
-    UrlDownloadToFile, %logurl%, %updatefile%
-    if (ErrorLevel = 1) {
-        msgbox, Unable to communicate with update site.
-        Return
-    }
-}
 FileRead, BIGFILE, %updatefile%
 StringGetPos, last25Location, BIGFILE,`n, L12
 StringTrimLeft, smallfile, BIGFILE, %last25Location%
@@ -1032,16 +1023,15 @@ if (!arrestmod) {
 if (!finemod) {
     finemod := fine
 }
-Taste := StrSplit(PEdit, A_Space, "/")
 if (InStr(PEdit,"/ticket")) {
     msgbox,64, Danger %name% of the %department%,  We are no longer allowed to modify the ticket amount.  Max is applied and the DOJ provides Traffic Court if needed.
     Return
 }
 if (InStr(PEdit,"/arrest")) {
-    Grab1 := arrest
+    Grab1 := " " arrest " |"
 }
 if (Instr(PEdit,"/bill")) {
-    Grab2 := fine
+    Grab2 := " " fine " |"
 }
 if (arrestmod > arrest) {
     msgbox,64, Danger %name% of the %department%, You can not go beyond the maximum arrest time of [%arrest%] minutes based on the charges provided.  Please clear and try again.
@@ -1051,9 +1041,9 @@ if (finemod > fine) {
     msgbox,64, Danger %name% of the %department%, You can not go beyond the maximum fine/bill of [$%fine%] based on the charges provided.  Please clear and try again.
     Return
 }
-PEdit := StrReplace(PEdit,Grab1,arrestmod,,Limit := 1)
+PEdit := StrReplace(PEdit,Grab1," " arrestmod " |",,Limit := 1)
 arrest := arrestmod
-PEdit := StrReplace(PEdit,Grab2,finemod,,Limit := 1)
+PEdit := StrReplace(PEdit,Grab2," " finemod " |",,Limit := 1)
 fine := finemod
 if (lastEdit == "") {
     guicontrol,,pText,% PEdit
@@ -2021,7 +2011,7 @@ ReadConfig:
     IniRead, treleasemsg1, %config%, Towing, treleasemsg1, %ms% releases the extra tow cables from the rear and pulls the winch release lever
     IniRead, treleasemsg2, %config%, Towing, treleasemsg2, %ms% releases the extra tow cables from the front and pulls the winch release lever
     ; Help related section
-    IniRead, micmsg, %config%, Help, micmsg, How to fix microphone - ESC -> Settings -> Voice Chat -> Toggle On/Off -> Increase Mic Volume and Mic Sensitivity -> Match audio devices to the one you are using.
+    IniRead, micmsg, %config%, Help, micmsg, How to fix your microphone - ^2ESC^0 -> ^2Settings^0 -> ^2Voice Chat^0 -> ^2Toggle On/Off^0 -> ^2Increase Mic Volume and Mic Sensitivity^0 -> Match audio devices to the one you are using.
     IniRead, paystatemsg, %config%, Help, paystatemsg, State debt is composed of your Medical and Civil bills.  To see how much you have, type ^1/paystate^0.  To pay.  Go to the Courthouse front door on ^2Power Street / Occupation Avenue^0 and then use ^2/payticket (TicketID)^0 to pay it.  ^8State Debt must be paid from your bank account
 Return
 
