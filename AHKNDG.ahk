@@ -26,9 +26,9 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,Homepage           : "https://forum.newdawn.fun/t/a-little-something-that-i-use-and-work-on/1218"
                     ,crtdate            : "20190707"
-                    ,moddate            : "20200602"
+                    ,moddate            : "20200715"
                     ,conf               : "NDG-Config.ini"
-                    ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
+                    ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/" 
                     ,change             : "Changelog-NDG.txt"
                     ,bug                : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=bug&template=bug_report.md&title="
                     ,feedback           : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="
@@ -39,6 +39,11 @@ global script := {  based               : scriptobj
 global updatefile = % A_Temp "\" script.change
 global logurl = % script.logurl script.change
 global chrglog = % A_ScriptDir "\Charge_log.txt"
+UrlDownloadToFile, %logurl%, %updatefile%
+if (ErrorLevel = 1) {
+    msgbox, Unable to communicate with github...well fuck...
+    Return
+}
 FileRead, BIGFILE, %updatefile%
 StringGetPos, last25Location, BIGFILE,`n, L12
 StringTrimLeft, smallfile, BIGFILE, %last25Location%
@@ -81,7 +86,7 @@ update(ochecky) {
             } else {
                 UrlDownloadToFile, %rfile%, %deposit%
                 if (ErrorLevel = 1) {
-                    msgbox, Unable to communicate with update site.
+                    msgbox, Unable to communicate with github...well fuck...
                     Return
                 }
             }
@@ -101,6 +106,8 @@ update(ochecky) {
                     , % "Source Version: " Version "`n"
                     . "Local Version: " ochecky
         }
+    } else {
+        MsgBox, 68, % "No internets"
     }
 }
 
@@ -1148,7 +1155,7 @@ if (InStr(PEdit,"/ticket")) {
 /arrest %offenderid% %arrest% | %offense% | (%name% - %department%)
 /bill %offenderid% %fine% | %offense% | (%name% - %department%)
     )
-} else if (n == 1) {
+} else if (n == 37) {
     PEdit = 
     (
 You can not issue a Aiding and Abetting charge by itself.  This must be an additional charge.        

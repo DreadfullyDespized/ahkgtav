@@ -10,6 +10,12 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V9.20200715
+Date: 20200715 09:59
+    Changes:
+    ! Terroristic Acts under Felony
+    ! Aiding and Abetting under Felony
+
 AHKNDG V9.20200602
 Date: 20200602 12:30
     Changes:
