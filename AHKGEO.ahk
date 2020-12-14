@@ -218,7 +218,6 @@ Control+- - preps command for plate running
 
 Tow Commands:
 -----------------------
-tadv - display your towing advertisement
 tstart - start tow shift/company
 ttow - towing system
 tsecure - secures tow straps
@@ -411,7 +410,6 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Text,, Department:
     Gui, 1:Add, Text,, ms Delay:
     Gui, 1:Add, Text,, First Party Action:
-    Gui, 1:Add, Text,, Advertisement:
     Gui, 1:Add, Text, x210 y34, Phone Number:
     Gui, 1:Add, DropDownList, x90 y30 w110 vrolepick, |LEO|TOW|CIV|SAFR
     rolepick_TT := "Select the character role that you will be playing as"
@@ -430,7 +428,6 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Edit, w110 vdelay, %delay%
     delay_TT := "milisecond delay.  Take your ping to the server x2"
     Gui, 1:Add, Edit, x140 y245 w60 vms, %ms%
-    Gui, 1:Add, Edit, x107 y272 w60 vas, %as%
     Gui, 1:Add, Edit, x290 y30 w110 vphone, %phone%
     phone_TT := "Your Phone number, ###-###-####"
     Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Default, works in-game and notepad.
@@ -449,9 +446,7 @@ SetScrollLockState, AlwaysOff
 
     Save1:
     Gui, 1:Submit
-    ; Towing related section
-    tadv = %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy %phone%!!
-        ; Police related section
+    ; Police related section
     medicalmsg = Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
     GoSub, UpdateConfig
 
@@ -499,19 +494,13 @@ SetScrollLockState, AlwaysOff
     } else {
         Gui, 2:Tab, 2
     }
-    Gui, 2:Add, Text,r3, tadv:
-    Gui, 2:Add, Text,r1, tsend:
     Gui, 2:Add, Text,r2, ttowmsg1:
     Gui, 2:Add, Text,r2, ttowmsg2:
     Gui, 2:Add, Text,r2, tsecure1:
     Gui, 2:Add, Text,r2, tsecure2:
     Gui, 2:Add, Text,r2, treleasemsg1:
     Gui, 2:Add, Text,r2, treleasemsg2:
-    Gui, 2:Add, Edit, r3 vtadv w500 x100 y30, %tadv%
-    tadv_TT := "Advertisement you use for your tow company"
-    Gui, 2:Add, Edit, r1 vtsend w500, %tsend%
-    tsend_TT := "Typical send it tow response to call for tow"
-    Gui, 2:Add, Edit, r2 vttowmsg1 w500, %ttowmsg1%
+    Gui, 2:Add, Edit, r2 vttowmsg1 w500 x100 y30, %ttowmsg1%
     ttowmsg1_TT := "Hooking up vehicle from the front"
     Gui, 2:Add, Edit, r2 vttowmsg2 w500, %ttowmsg2%
     ttowmsg2_TT := "Hooking up vehicle from the rear"
@@ -645,9 +634,12 @@ Return
         Send, {Rctrl down}v{Rctrl up}{enter}
         ; Puts on your seatbelt
         Sleep, %delay%
-        Send, {b down}
+        Send, {t down}
         Sleep, %delay%
-        Send, {b up}
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /belt
+        Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
     }
@@ -790,28 +782,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /clockin %towcompany%
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
-    Return
-
-    :*:tadv:: ; Type tadv in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = %tadv%
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
-    Return
-
-    :*:tsend:: ; Type tsend in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = %tsend%
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
@@ -995,7 +965,6 @@ ReadConfig:
     IniRead, testmode, %config%, Yourself, testmode, 0
     ; Server related section
     IniRead, ms, %config%, Server, ms, /me
-    IniRead, as, %config%, Server, as, /ad
     ; The hotkey related section
     IniRead, spikeshk, %config%, Keys, spikeshk, ^.
     IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
@@ -1005,7 +974,6 @@ ReadConfig:
     IniRead, Itemsar, %config%, Police, Itemsar, Twinkie Wrappers,Hotdog buns,Potato chip bags,Used Diappers,Tools,Keyboards
     IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1%ms% Medical staff waves the %title% in^0.
     ; Towing related section
-    IniRead, tadv, %config%, Towing, tadv, %as% I work for [^3%towcompany%^0] and we do cool tow stuff that makes tows happy %phone%!!
     IniRead, ttowmsg1, %config%, Towing, ttowmsg1, %ms% attaches the winch cable to the front of the vehicle
     IniRead, ttowmsg2, %config%, Towing, ttowmsg2, %ms% attaches the winch cable to the rear of the vehicle
     IniRead, tsecure1, %config%, Towing, tsecure1, %ms% secures the rear of the vehicle with extra tow straps
@@ -1031,7 +999,6 @@ UpdateConfig:
     IniWrite, %testmode%, %config%, Yourself, testmode
     ; Server related section
     IniWrite, %ms%, %config%, Server, ms
-    IniWrite, %as%, %config%, Server, as
     ; The hotkey related section
     IniWrite, %spikeshk%, %config%, Keys, spikeshk
     IniWrite, %vehimgsearchhk%, %config%, Keys, vehimgsearchhk
@@ -1041,7 +1008,6 @@ UpdateConfig:
     IniWrite, %Itemsar%, %config%, Police, Itemsar
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
     ; Towing related section
-    IniWrite, %tadv%, %config%, Towing, tadv
     IniWrite, %ttowmsg1%, %config%, Towing, ttowmsg1
     IniWrite, %ttowmsg2%, %config%, Towing, ttowmsg2
     IniWrite, %tsecure1%, %config%, Towing, tsecure1
