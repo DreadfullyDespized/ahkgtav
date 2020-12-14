@@ -1,0 +1,16 @@
+Versioning:
+     Major.Minor.Fix-Build
+
+ Legend:
+==================
+    + Add
+    - Remove
+    ! Fix
+    * Change
+    ^ Update
+==================
+
+AHKNDG V1.20201214
+Date: 20201214 15:40
+    Changes:
+    * Used NDG version to create Geo version.
