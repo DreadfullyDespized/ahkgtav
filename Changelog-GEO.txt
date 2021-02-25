@@ -10,6 +10,15 @@ Versioning:
     ^ Update
 ==================
 
+AHKNDG V1.1217
+Date: 20201217 15:40
+    Changes:
+    * Modified help text
+    - Removed the tplate command
+    ! issues with tdutystart
+    ^ General cleanup of lingering stuffs
+    ^ Phone number format in help text
+
 AHKNDG V1.20201214
 Date: 20201214 15:40
     Changes:
