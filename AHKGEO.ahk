@@ -204,8 +204,7 @@ Police Commands:
 --------------------
 tdutystart - go on duty
 tmedical - medical rp message
-tplate - notes the plate
-ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag)
+ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag|spikes)
 
 Control+1 - Configuration screen
 Control+3 - Reload Script
@@ -228,11 +227,6 @@ Help Commands:
 --------------------
 tmic = help text about fixing mic in local ooc
 tgeohelp = display Geodexon help information in local ooc
-
-General Commands:
----------------------------
-tgun - use firearm
-tscrap - rp the scrap to truck
 )
 
 helptext2 = 
@@ -429,7 +423,7 @@ SetScrollLockState, AlwaysOff
     delay_TT := "milisecond delay.  Take your ping to the server x2"
     Gui, 1:Add, Edit, x140 y245 w60 vms, %ms%
     Gui, 1:Add, Edit, x290 y30 w110 vphone, %phone%
-    phone_TT := "Your Phone number, ###-###-####"
+    phone_TT := "Your Phone number, (###) ###-####"
     Gui, 1:Add, Checkbox, x100 y470 vtestmode, Enable TestMode? Default, works in-game and notepad.
     Gui, 1:Add, Button, x280 y490 h25 w80 gSave1, Save
     Gui, 1:Add, Button, x511 y490 h25 w40 gbug, BUG
@@ -583,7 +577,6 @@ Return
 ; ====================== GTAV Stuff =========================
 
 ; not used on NDG - F4 F9 F10 F11
-; Pressing T to open chat and then typing unrack/rack
 
 ; ============================================ LEO Stuff ============================================
 #if (rolepick = "LEO")
@@ -676,32 +669,6 @@ Return
     }
     Return
 
-    ; Pulls out the notepad to write out the plate of the vehicle
-    :*:tplate:: ; Type tplate in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = /e notepad
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = %ms% notes the plate down
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /runplate
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
-    Return
-
     ; Items that can be pulled out from the trunk of a vehicle.
     :*:ttrunk:: ; Type ttrunk in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
@@ -709,7 +676,7 @@ Return
         if ErrorLevel
             Return
         else
-        if (titem = "medbag" || titem = "lockpick" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag") {
+        if (titem = "medbag" || titem = "lockpick" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag" || titem = "spikes") {
             clipaboard = %clipboard%
             Send, {enter}
             Sleep, %delay%
@@ -732,6 +699,8 @@ Return
                 Clipboard = %ms% Grabs a few %titem% from the trunk
             } else if (titem = "gsr") {
                 Clipboard = %ms% Grabs a %titem% kit from the trunk
+            } else if (titem = "spikes") {
+                Clipboard = %ms% Grabs a spikestrip from the trunk
             } else {
                 Clipboard = %ms% Grabs a %titem% from the trunk
             }
@@ -744,7 +713,7 @@ Return
                 Sleep, %delay%
                 Clipboard = /inventory
                 Send, {Rctrl down}v{Rctrl up}{enter}
-                Msgbox, Once completed with your inventory actions, Press T
+                Msgbox, Once completed with your inventory actions. Close inventory and then press T.
                 KeyWait, t, D
             }
             Sleep, %delay%
