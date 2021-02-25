@@ -196,7 +196,6 @@ citationreport - Submits citation report
 warrantreport - Submits warrant report
 timpound - place impound sticker
 ttrunk - get itmes from trunk
-tsglovebox - searches through the interior of a vehicle
 ttv - Touches the vehicle's trunk lid to leave print and make sure secure
 
 Control+1 - Configuration screen
@@ -209,7 +208,6 @@ Control+/ - vehicle image search (uses google images in browser)
 Help Commands:
 --------------------
 tmic = help text about fixing mic in local ooc
-
 )
 
 helptext2 = 
@@ -594,7 +592,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Send, %A_Tab%
-        Msgbox, Once completed with your inventory actions, Press T
         KeyWait, t, D
         Sleep, %delay%
         Send, {l down}
@@ -612,6 +609,7 @@ Return
         FormatTime, newTime, % Time, HH:mm:ss
         FormatTime, Date,, MM/dd/yyyy
         clipaboard = %clipboard%
+        Sleep, %delay%
         clipboard = 
         (
 Time: %newTime% EST
@@ -654,6 +652,7 @@ Nothing else follows ---------------- %title% %name% of the %department% -------
         FormatTime, newTime, % Time, HH:mm:ss
         FormatTime, Date,, MM/dd/yyyy
         clipaboard = %clipboard%
+        Sleep, %delay%
         clipboard = 
         (
 Time: %newTime% EST
@@ -682,6 +681,7 @@ Nothing else follows ---------------- %title% %name% of the %department% -------
         InputBox, subject, Warrant Subject, Who do you want to put on the warrant?
         StringUpper, subject, subject
         clipaboard = %clipboard%
+        Sleep, %delay%
         clipboard = 
         (
 THE STATE OF SAN ANDREAS VS %subject% - To Any PEACE OFFICER In the State of San Andreas Greetings: YOU ARE HEREBY COMMANDED to arrest %subject% if found in the State of San Andreas, and bring him before a Justice of the Peace for Precinct No. 1 of Los Santos County, San Andreas to answer to the STATE OF SAN ANDREAS for the charges and incident below.
