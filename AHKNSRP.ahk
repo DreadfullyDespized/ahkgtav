@@ -173,6 +173,11 @@ citationreport - Submits citation report
 warrantreport - Submits warrant report
 ttrunk - opens the trunk
 ttv - Check trunk on approach
+Control+Up - Performs Search
+Control+Down - Launches MDT
+Control+Left - Performs Escort
+Control+Right - Performs Force
+Shift+Up - Performs 1038 call
 )
 
 helptext = 
@@ -195,7 +200,7 @@ arrestreport - Submits arrest report
 citationreport - Submits citation report
 warrantreport - Submits warrant report
 timpound - place impound sticker
-ttrunk - get itmes from trunk
+ttrunk - Get itmes from trunk
 ttv - Touches the vehicle's trunk lid to leave print and make sure secure
 
 Control+1 - Configuration screen
@@ -203,7 +208,12 @@ Control+3 - Reload Script
 Control+4 - Update Checker
 Control+5 - Police Overlay
 Control+6 - Close Police Overlay
-Control+/ - vehicle image search (uses google images in browser)
+Control+/ - Vehicle image search (uses google images in browser)
+Control+Up - Performs Search
+Control+Down - Launches MDT
+Control+Left - Performs Escort
+Control+Right - Performs Force
+Shift+Up - Performs 1038 call
 
 Help Commands:
 --------------------
@@ -421,8 +431,6 @@ SetScrollLockState, AlwaysOff
 
     Save1:
     Gui, 1:Submit
-    ; Police related section
-    medicalmsg = Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
     GoSub, UpdateConfig
 
     ; ============================================ CUSTOM MSGS GUI ============================================
@@ -437,12 +445,27 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Text,x20 y82, tdutystartmsg:
     Gui, 2:Add, Text,x20 y150, Vehicle Image Search:
     Gui, 2:Add, Text,, RunPlate:
+    Gui, 2:Add, Text,, Search:
+    Gui, 2:Add, Text,, MDT:
+    Gui, 2:Add, Text,, Escort:
+    Gui, 2:Add, Text,, Force:
+    Gui, 2:Add, Text,, Call 1038:
     Gui, 2:Add, Edit, r4 vdutystartmsg w500 x115 y80, %dutystartmsg%
     dutystartmsg1_TT := "Bodycam duty start message"
     Gui, 2:Add, Hotkey,x150 y146 w150 vvehimgsearchhk, %vehimgsearchhk%
     vehimgsearchhk_TT := "Hotkey to search for a vehicle's image on google"
     Gui, 2:Add, Hotkey, w150 vrunplatehk, %runplatehk%
     runplatehk_TT := "Hotkey to run a plate"
+    Gui, 2:Add, Hotkey, w150 vsearchhk, %searchhk%
+    runplatehk_TT := "Hotkey to search"
+    Gui, 2:Add, Hotkey, w150 vmdthk, %mdthk%
+    runplatehk_TT := "Hotkey to run MDT"
+    Gui, 2:Add, Hotkey, w150 vescorthk, %escorthk%
+    runplatehk_TT := "Hotkey to Escort"
+    Gui, 2:Add, Hotkey, w150 vforcehk, %forcehk%
+    runplatehk_TT := "Hotkey to Force"
+    Gui, 2:Add, Hotkey, w150 v1038callhk, %1038callhk%
+    runplatehk_TT := "Hotkey to call 1038 into dispatch"
     Gui, 2:Add, Button, default x10 y480 w80, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
     Gui, 2:Add, Button, x520 y480 h25 w40 gbug, BUG
     Gui, 2:Add, Button, x560 y480 h25 w65 gfeedback, Feedback
@@ -489,12 +512,14 @@ Return
     ; ^-:: ; Control + -
     rphk:
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
         Send, {t down}
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
         Clipboard := "/runplate "
         Send, {Rctrl down}v{Rctrl up}
+        clipboard = %clipaboard%
     }
     Return
 
@@ -512,11 +537,78 @@ Return
         Clipboard = %dutystartmsg%
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
-        Send, m
-        KeyWait, t, D
+        Send, {m down}
+        Sleep, %delay%
+        Send, {m up}
+        Sleep, %delay%
         Send, %A_Tab%
         Sleep, %delay%
         Clipboard = %clipaboard%
+    }
+    Return
+
+    sehk:
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /search
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        clipboard = %clipaboard%
+    }
+    Return
+
+    mdhk:
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /mdt
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        clipboard = %clipaboard%
+    }
+    Return
+
+    eschk:
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /escort
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        clipboard = %clipaboard%
+    }
+    Return
+
+    forhk:
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /force
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        clipboard = %clipaboard%
+    }
+    Return
+
+    1038hk:
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /call 360 10-38
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        clipboard = %clipaboard%
     }
     Return
 
@@ -525,7 +617,7 @@ Return
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
-        Clipboard = %ms% touches the trunk lid of the vehicle
+        Clipboard = %ms% lhand touches the trunk lid of the vehicle
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
@@ -591,7 +683,7 @@ Return
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
-        Send, %A_Tab%
+        Send, {Tab}
         KeyWait, t, D
         Sleep, %delay%
         Send, {l down}
@@ -611,9 +703,9 @@ Return
         clipaboard = %clipboard%
         Sleep, %delay%
         clipboard = 
-        (
-Time: %newTime% EST
-Date: %Date%
+(
+
+TimeLine: %Date% - %newTime% EST
 
 Officers Involved: 
 %callsign% | %name%
@@ -635,8 +727,9 @@ Seized Item(s):
 Evidence: 
 
 Charge(s): 
+P.C.
 
-Did the suspect Plead Guilty, Not Guilty, or No Contest?
+Plead Guilty/NotGuilty:
 
 Nothing else follows ---------------- %title% %name% of the %department% ----------------
 )
@@ -654,16 +747,54 @@ Nothing else follows ---------------- %title% %name% of the %department% -------
         clipaboard = %clipboard%
         Sleep, %delay%
         clipboard = 
-        (
-Time: %newTime% EST
-Date: %Date%
+(
+TimeLine: %Date% - %newTime% EST
 
 Location(s): %location%
+
+Vehicle Plate:
+Vehicle Description:
 
 Briefly describe the offense:
 ------------------------------------------------------------------------
 
 ------------------------------------------------------------------------
+
+Nothing else follows ---------------- %title% %name% of the %department% ----------------
+)
+        Send, {Rctrl down}v{Rctrl up}
+        Sleep, %delay%
+        clipboard = %clipaboard%
+    Return
+
+    ; Submits the template to author a search warrant.
+    :*:searchreport::
+        Time := A_NowUTC
+        Time += -5, H
+        FormatTime, newTime, % Time, HH:mm:ss
+        FormatTime, Date,, MM/dd/yyyy
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        clipboard = 
+(
+REQUEST DATE: %Date% - %newTime% EST
+
+REQUESTED BY:
+%callsign% | %name%
+
+TO BE ENFORCED UPON:
+
+PROPERTIES TO SEARCH:
+
+SEARCH REQUEST:
+
+SUMMARY OF JUSTIFICATION:
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+SUPPORTING DOCUMENTS/EVIDENCE:
+
 
 Nothing else follows ---------------- %title% %name% of the %department% ----------------
 )
@@ -683,11 +814,10 @@ Nothing else follows ---------------- %title% %name% of the %department% -------
         clipaboard = %clipboard%
         Sleep, %delay%
         clipboard = 
-        (
+(
 THE STATE OF SAN ANDREAS VS %subject% - To Any PEACE OFFICER In the State of San Andreas Greetings: YOU ARE HEREBY COMMANDED to arrest %subject% if found in the State of San Andreas, and bring him before a Justice of the Peace for Precinct No. 1 of Los Santos County, San Andreas to answer to the STATE OF SAN ANDREAS for the charges and incident below.
 
-Time: %newTime% EST
-Date: %Date%
+TimeLine: %Date% - %newTime% EST
 Officers Involved(Names):
 %callsign% | %name%
 
@@ -700,7 +830,8 @@ Probable Cause(must include evidence either photographic, documentation or bodyc
 
 Evidence of Positive Identificatoin(Photograph of Fingerprint Scanner/ID etc.): %evidence%
 
-Charge(s): %charges%
+Charge(s):
+P.C. %charges%
 
 Nothing else follows ---------------- %title% %name% of the %department% ----------------
 )
@@ -766,6 +897,11 @@ WM_MOUSEMOVE()
 hotkeys:
     hotkey, %vehimgsearchhk%, vehimghk, On
     hotkey, %runplatehk%, rphk, On
+    hotkey, %searchhk%, sehk, On
+    hotkey, %mdthk%, mdhk, On
+    hotkey, %escorthk%, eschk, On
+    hotkey, %forcehk%, forhk, On
+    hotkey, %1038callhk%, 1038hk, On
 Return
 
 ReadConfig:
@@ -784,6 +920,11 @@ ReadConfig:
     ; The hotkey related section
     IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
     IniRead, runplatehk, %config%, Keys, runplatehk, ^-
+    IniRead, searchhk, %config%, Keys, searchhk, ^Up
+    IniRead, mdthk, %config%, Keys, mdthk, ^Down
+    IniRead, escorthk, %config%, Keys, escorthk, ^Left
+    IniRead, forcehk, %config%, Keys, forcehk, ^Right
+    IniRead, 1038callhk, %config%, Keys, 1038callhk, +Up
     ; Messages that correspond with the hotkeys
     ; Police related section
     IniRead, dutystartmsg, %config%, Police, dutystartmsg, %ms% secures bodycam and validates functionality, then turns on the dashcam and validates functionality.
@@ -807,6 +948,11 @@ UpdateConfig:
     ; The hotkey related section
     IniWrite, %vehimgsearchhk%, %config%, Keys, vehimgsearchhk
     IniWrite, %runplatehk%, %config%, Keys, runplatehk
+    IniWrite, %searchhk%, %config%, Keys, searchhk
+    IniWrite, %mdthk%, %config%, Keys, mdthk
+    IniWrite, %escorthk%, %config%, Keys, escorthk
+    IniWrite, %forcehk%, %config%, Keys, forcehk
+    IniWrite, %1038callhk%, %config%, Keys, 1038callhk
     ; Messages that correspond with the hotkeys
     ; Police related 
     IniWrite, %dutystartmsg%, %config%, Police, dutystartmsg
