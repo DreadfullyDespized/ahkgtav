@@ -24,9 +24,9 @@ global script := {  based               : scriptobj
                     ,name               : "AHKGEO"
                     ,version            : "1"
                     ,author             : "DreadfullyDespized"
-                    ,Homepage           : ""
+                    ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
                     ,crtdate            : "20201214"
-                    ,moddate            : "20201214"
+                    ,moddate            : "20211105"
                     ,conf               : "GEO-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/" 
                     ,change             : "Changelog-GEO.txt"
@@ -34,7 +34,9 @@ global script := {  based               : scriptobj
                     ,feedback           : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="}
 
 global updatefile = % A_Temp "\" script.change
+; Temp\script.change
 global logurl = % script.logurl script.change
+; https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog-GEO.txt
 global chrglog = % A_ScriptDir "\Charge_log.txt"
 UrlDownloadToFile, %logurl%, %updatefile%
 if (ErrorLevel = 1) {
@@ -44,28 +46,18 @@ if (ErrorLevel = 1) {
 FileRead, BIGFILE, %updatefile%
 StringGetPos, last25Location, BIGFILE,`n, L12
 StringTrimLeft, smallfile, BIGFILE, %last25Location%
-
-; This will become the new version checker usage at some point.
-; This will be used once it is fully flushed out.
-
-FileReadLine, checkdate, %A_ScriptFullPath%, 29
-FileReadLine, checkv, %A_ScriptFullPath%, 25
-RegexMatch(checkv,"\d",cver)
-RegexMatch(checkdate,"\d+",cdate)
-checky := cver "." cdate
-ochecky := script.version "." script.moddate
-; if (checky >= ochecky) {
-;     msgbox,, Version Checker, % "Current Version: " cver "   Old Version: " script.version "`n"
-;         . "Current Date: " cdate "   Old Date: " script.moddate "`n"
-;         . "Main Version: " checky "   Old Main Version: " ochecky
-; }
+; MsgBox, 64, % "Version check Test"
+;           , % "last25Location: " last25Location "`n"
+;             . "smallfile: " smallfile
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
 update(ochecky) {
     RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
     if connected := !ErrorLevel {
-        FileReadLine, line, %updatefile%, 13
+        FileReadLine, line, %smallfile%, 1
+        MsgBox, 64, % "FileReadLine: " FileReadLine
         RegexMatch(line, "\d.\d{8}", Version)
+        MsgBox, 64, % "RegexMatch.Version: " Version
         rfile := script.logurl script.name ".ahk"
         if (Version > ochecky) {
             Msgbox, 68, % "New Update Available"
@@ -180,6 +172,10 @@ Police Hotkeys:
 Control+1 = Config
 Control+3 = Reload Script
 Control+/ = Vehicle Image Search
+arrestreport - Submits arrest report
+citationreport - Submits citation report
+searchreport - Submits search warrant report
+warrantreport - Submits warrant report
 Control+- = runplate
 Control+. = spikestrip
 tmedical - medical rp message
@@ -203,6 +199,10 @@ ms Delay: Take your ping to the server and double it.  To fill this in with.
 Police Commands:
 --------------------
 tdutystart - go on duty
+arrestreport - Submits arrest report
+citationreport - Submits citation report
+searchreport - Submits search warrant report
+warrantreport - Submits warrant report
 tmedical - medical rp message
 ttrunk - get itmes from trunk (medbag|slimjim|tintmeter|cones|gsr|breathalizer|bodybag|spikes)
 
@@ -234,6 +234,11 @@ helptext2 =
 If you wish to change any of the hotkeys.
 This is the section to do so. Click on the box and then
 hit the keys together to configure the hotkey.
+)
+
+reporttext = 
+(
+This section is used to handle report writting.  This can be witness statements, arrest reports or anything else that you run into that could be information for the department to be used.  Including shift notes. You must fill out all fields before you can actually file the report.  The report is appended to your LEO Log.
 )
 
 ; ============================================ CUSTOM SYSTEM TRAY ============================================
@@ -735,6 +740,151 @@ Return
         }
     }
     Return
+        ; Submits the template to author an arrest.
+    :*:arrestreport::
+        Time := A_NowUTC
+        Time += -5, H
+        FormatTime, newTime, % Time, HH:mm:ss
+        FormatTime, Date,, MM/dd/yyyy
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        clipboard = 
+(
+
+TimeLine: %Date% - %newTime% EST
+
+Officers Involved:
+%callsign% | %name%
+
+
+Location(s): 
+
+Any Nickname(s): 
+
+Is he or she known to be a part of a gang: 
+
+Incident Report:
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+Seized Item(s): 
+
+Evidence: 
+
+Plead Guilty/NotGuilty:
+
+Nothing else follows ---------------- %title% %name% of the %department% ----------------
+)
+        Send, {Rctrl down}v{Rctrl up}
+        Sleep, %delay%
+        clipboard = %clipaboard%
+    Return
+
+    ; Submits the template to author a citation.
+    :*:citationreport::
+        Time := A_NowUTC
+        Time += -5, H
+        FormatTime, newTime, % Time, HH:mm:ss
+        FormatTime, Date,, MM/dd/yyyy
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        clipboard = 
+(
+TimeLine: %Date% - %newTime% EST
+
+Location(s): 
+
+Vehicle Plate: 
+Vehicle Description: 
+
+Briefly describe the offense:
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+Nothing else follows ---------------- %title% %name% of the %department% ----------------
+)
+        Send, {Rctrl down}v{Rctrl up}
+        Sleep, %delay%
+        clipboard = %clipaboard%
+    Return
+
+    ; Submits the template to author a search warrant.
+    :*:searchreport::
+        Time := A_NowUTC
+        Time += -5, H
+        FormatTime, newTime, % Time, HH:mm:ss
+        FormatTime, Date,, MM/dd/yyyy
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        clipboard = 
+(
+REQUEST DATE: %Date% - %newTime% EST
+
+REQUESTED BY:
+%callsign% | %name%
+
+
+TO BE ENFORCED UPON: 
+
+PROPERTIES TO SEARCH: 
+
+SEARCH REQUEST: 
+
+SUMMARY OF JUSTIFICATION:
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+SUPPORTING DOCUMENTS/EVIDENCE:
+
+
+Nothing else follows ---------------- %title% %name% of the %department% ----------------
+)
+        Send, {Rctrl down}v{Rctrl up}
+        Sleep, %delay%
+        clipboard = %clipaboard%
+    Return
+
+    ; Submits the template to author a warrant.
+    :*:warrantreport::
+        Time := A_NowUTC
+        Time += -5, H
+        FormatTime, newTime, % Time, HH:mm:ss
+        FormatTime, Date,, MM/dd/yyyy
+        InputBox, subject, Warrant Subject, Who do you want to put on the warrant?
+        StringUpper, subject, subject
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        clipboard = 
+(
+THE STATE OF SAN ANDREAS VS %subject% - To Any PEACE OFFICER In the State of San Andreas Greetings: YOU ARE HEREBY COMMANDED to arrest %subject% if found in the State of San Andreas, and bring him before a Justice of the Peace for Precinct No. 1 of Los Santos County, San Andreas to answer to the STATE OF SAN ANDREAS for the charges and incident below.
+
+TimeLine: %Date% - %newTime% EST
+Officers Involved(Names):
+%callsign% | %name%
+
+
+Incident Report:
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+Probable Cause(must include evidence either photographic, documentation): 
+
+Evidence of Positive Identificatoin(Photograph of Fingerprint Scanner/ID etc.): 
+
+Nothing else follows ---------------- %title% %name% of the %department% ----------------
+)
+        Send, {Rctrl down}v{Rctrl up}
+        Sleep, %delay%
+        clipboard = %clipaboard%
+    Return
+
+
+
+
     ; ============================================ CIV Stuff ============================================
 #If (rolepick = "CIV")
     ; ============================================ TOW Stuff ============================================

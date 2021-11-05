@@ -10,6 +10,15 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20211105
+Date: 20211105 12:00
+    Changes:
+    ! Update checker and log version format
+    + arrestreport - Type to format arrest report
+    + citationreport - Type to format citation report
+    + searchreport - Type to format search warrant report
+    + warrantreport - Type to format arrest warrant report
+
 AHKGEO V1.20201217
 Date: 20201217 15:40
     Changes:
