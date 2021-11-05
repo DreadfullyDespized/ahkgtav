@@ -10,7 +10,7 @@ Versioning:
     ^ Update
 ==================
 
-AHKGEO V1.1217
+AHKGEO V1.20201217
 Date: 20201217 15:40
     Changes:
     * Modified help text
