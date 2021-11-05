@@ -10,7 +10,7 @@ Versioning:
     ^ Update
 ==================
 
-AHKNDG V1.1217
+AHKGEO V1.1217
 Date: 20201217 15:40
     Changes:
     * Modified help text
@@ -19,7 +19,7 @@ Date: 20201217 15:40
     ^ General cleanup of lingering stuffs
     ^ Phone number format in help text
 
-AHKNDG V1.20201214
+AHKGEO V1.20201214
 Date: 20201214 15:40
     Changes:
     * Used NDG version to create Geo version.
