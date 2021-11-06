@@ -10,6 +10,11 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20211106
+Date: 20211105 14:14
+    Changes:
+    * Slight format and spelling changes on all report commands
+
 AHKGEO V1.20211105
 Date: 20211105 12:00
     Changes:
