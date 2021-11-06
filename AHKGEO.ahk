@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
                     ,crtdate            : "20201214"
-                    ,moddate            : "20211105"
+                    ,moddate            : "20211106"
                     ,conf               : "GEO-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/" 
                     ,change             : "Changelog-GEO.txt"
@@ -774,7 +774,7 @@ Evidence:
 
 Plead Guilty/NotGuilty:
 
-Nothing else follows ---------------- %title% %name% of the %department% ----------------
+Nothing else follows ---------- %title% %name% of the %department% ----------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
@@ -796,6 +796,7 @@ TimeLine: %Date% - %newTime% EST
 Location(s): 
 
 Vehicle Plate: 
+Vehicle VIN: 
 Vehicle Description: 
 
 Briefly describe the offense:
@@ -803,7 +804,7 @@ Briefly describe the offense:
 
 ------------------------------------------------------------------------
 
-Nothing else follows ---------------- %title% %name% of the %department% ----------------
+Nothing else follows ---------- %title% %name% of the %department% ----------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
@@ -840,7 +841,7 @@ SUMMARY OF JUSTIFICATION:
 SUPPORTING DOCUMENTS/EVIDENCE:
 
 
-Nothing else follows ---------------- %title% %name% of the %department% ----------------
+Nothing else follows ---------- %title% %name% of the %department% ----------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
@@ -873,9 +874,9 @@ Incident Report:
 
 Probable Cause(must include evidence either photographic, documentation): 
 
-Evidence of Positive Identificatoin(Photograph of Fingerprint Scanner/ID etc.): 
+Evidence of Positive Identification (Photograph of Fingerprint Scanner/ID etc.): 
 
-Nothing else follows ---------------- %title% %name% of the %department% ----------------
+Nothing else follows ---------- %title% %name% of the %department% ----------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
