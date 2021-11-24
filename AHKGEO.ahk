@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
                     ,crtdate            : "20201214"
-                    ,moddate            : "20211106"
+                    ,moddate            : "20211124"
                     ,conf               : "GEO-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/" 
                     ,change             : "Changelog-GEO.txt"
@@ -38,26 +38,34 @@ global updatefile = % A_Temp "\" script.change
 global logurl = % script.logurl script.change
 ; https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog-GEO.txt
 global chrglog = % A_ScriptDir "\Charge_log.txt"
-UrlDownloadToFile, %logurl%, %updatefile%
-if (ErrorLevel = 1) {
-    msgbox, Unable to communicate with github...well fuck...
-    Return
+
+RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
+if connected := !ErrorLevel {
+    UrlDownloadToFile, %logurl%, %updatefile%
+    if (ErrorLevel = 1) {
+        MsgBox, 16, Unable to communicate with github...well fuck...
+        Return
+    }
+    FileRead, BIGFILE, %updatefile%
+    StringGetPos, last25Location, BIGFILE,`n, L12
+    StringTrimLeft, smallfile, BIGFILE, %last25Location%
 }
-FileRead, BIGFILE, %updatefile%
-StringGetPos, last25Location, BIGFILE,`n, L12
-StringTrimLeft, smallfile, BIGFILE, %last25Location%
-; MsgBox, 64, % "Version check Test"
-;           , % "last25Location: " last25Location "`n"
-;             . "smallfile: " smallfile
+ochecky := script.version "." script.moddate
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
 update(ochecky) {
     RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
     if connected := !ErrorLevel {
-        FileReadLine, line, %smallfile%, 1
-        MsgBox, 64, % "FileReadLine: " FileReadLine
+        UrlDownloadToFile, %logurl%, %updatefile%
+        if (ErrorLevel = 1) {
+            MsgBox, 16, Unable to communicate with github...well fuck...
+            Return
+        }
+        FileReadLine, line, %updatefile%, 13
         RegexMatch(line, "\d.\d{8}", Version)
-        MsgBox, 64, % "RegexMatch.Version: " Version
+        ; MsgBox, 64, % "REGEXMATCH CHECK"
+        ;         ,   % "FileReadLine: " line "`n"
+        ;             . "RegexMatch.Version: " Version
         rfile := script.logurl script.name ".ahk"
         if (Version > ochecky) {
             Msgbox, 68, % "New Update Available"
@@ -70,15 +78,6 @@ update(ochecky) {
             IfMsgbox, No
                 return debug ? "* Update aborted by user" : 2
             deposit := A_ScriptDir "\AHKGEO.ahk"
-            if (A_ComputerName = "Z017032") {
-                msgbox,,, Asset is %A_ComputerName%
-            } else {
-                UrlDownloadToFile, %rfile%, %deposit%
-                if (ErrorLevel = 1) {
-                    msgbox, Unable to communicate with github...well fuck...
-                    Return
-                }
-            }
             Msgbox, 64, % "Download Complete"
                       , % "New version is now running and the old version will now close'n"
                         . "Enjoy the latest version!"
@@ -87,16 +86,16 @@ update(ochecky) {
         }
         if (Version = ochecky) {
             MsgBox, 64, % "Up to Date"
-                    , % "Source Version: " Version "`n"
+                    , % "Online Version: " Version "`n"
                     . "Local Version: " ochecky
         }
         if (Version < ochecky) {
             MsgBox, 64, % "DEV Version!"
-                    , % "Source Version: " Version "`n"
+                    , % "Online Version: " Version "`n"
                     . "Local Version: " ochecky
         }
     } else {
-        MsgBox, 68, % "No internets"
+        MsgBox, 16, % "No internets"
     }
 }
 
@@ -630,13 +629,45 @@ Return
         ; Turns on the vehicle engine
         Clipboard = /engine
         Send, {Rctrl down}v{Rctrl up}{enter}
-        ; Puts on your seatbelt
         Sleep, %delay%
+        ; Puts on your seatbelt
         Send, {t down}
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
         Clipboard = /belt
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        ; Put on body armor
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /use armor
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        ; Toggle 911 phone calling
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /911t
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        ; Set Radio Channel to 1 (emergency)
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /rc 1
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        ; Set Radio Volume to 0.8
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /rvol 0.8
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
@@ -740,7 +771,8 @@ Return
         }
     }
     Return
-        ; Submits the template to author an arrest.
+
+    ; Submits the template to author an arrest.
     :*:arrestreport::
         Time := A_NowUTC
         Time += -5, H
@@ -755,7 +787,6 @@ TimeLine: %Date% - %newTime% EST
 
 Officers Involved:
 %callsign% | %name%
-
 
 Location(s): 
 
@@ -826,7 +857,6 @@ REQUEST DATE: %Date% - %newTime% EST
 REQUESTED BY:
 %callsign% | %name%
 
-
 TO BE ENFORCED UPON: 
 
 PROPERTIES TO SEARCH: 
@@ -866,7 +896,6 @@ TimeLine: %Date% - %newTime% EST
 Officers Involved(Names):
 %callsign% | %name%
 
-
 Incident Report:
 ------------------------------------------------------------------------
 
@@ -882,9 +911,6 @@ Nothing else follows ---------- %title% %name% of the %department% ----------
         Sleep, %delay%
         clipboard = %clipaboard%
     Return
-
-
-
 
     ; ============================================ CIV Stuff ============================================
 #If (rolepick = "CIV")

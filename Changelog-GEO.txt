@@ -10,6 +10,18 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20211124
+Date: 20211124 15:00
+    Changes:
+    ^ Rebuilt the update checker to be a little more robust
+    ^ tdutystart
+        + Vehicle Engine Start
+        + Put on seatbelt
+        + Put on bodyarmor
+        + Turn on 911 call queue
+        + Set Radio Channel to 1
+        + Set Radio Volume to 0.8 instead of 1.0
+
 AHKGEO V1.20211106
 Date: 20211106 14:14
     Changes:
