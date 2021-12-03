@@ -795,9 +795,9 @@ Any Nickname(s):
 Is he or she known to be a part of a gang: 
 
 Incident Report:
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
 Seized Item(s): 
 
@@ -805,7 +805,7 @@ Evidence:
 
 Plead Guilty/NotGuilty:
 
-Nothing else follows ---------- %title% %name% of the %department% ----------
+Nothing else follows --------------- %title% %name% of the %department% ---------------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
@@ -831,11 +831,11 @@ Vehicle VIN:
 Vehicle Description: 
 
 Briefly describe the offense:
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
-Nothing else follows ---------- %title% %name% of the %department% ----------
+Nothing else follows --------------- %title% %name% of the %department% ---------------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
@@ -864,14 +864,14 @@ PROPERTIES TO SEARCH:
 SEARCH REQUEST: 
 
 SUMMARY OF JUSTIFICATION:
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
 SUPPORTING DOCUMENTS/EVIDENCE:
 
 
-Nothing else follows ---------- %title% %name% of the %department% ----------
+Nothing else follows --------------- %title% %name% of the %department% ---------------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
@@ -897,15 +897,15 @@ Officers Involved(Names):
 %callsign% | %name%
 
 Incident Report:
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 
 Probable Cause(must include evidence either photographic, documentation): 
 
 Evidence of Positive Identification (Photograph of Fingerprint Scanner/ID etc.): 
 
-Nothing else follows ---------- %title% %name% of the %department% ----------
+Nothing else follows --------------- %title% %name% of the %department% ---------------
 )
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
