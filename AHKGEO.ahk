@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
                     ,crtdate            : "20201214"
-                    ,moddate            : "20211124"
+                    ,moddate            : "20211203"
                     ,conf               : "GEO-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/" 
                     ,change             : "Changelog-GEO.txt"
@@ -468,13 +468,25 @@ SetScrollLockState, AlwaysOff
         Gui, 2:Add, Tab3,, LEO|TOW|CIV|SAFR|Help|General
     }
     Gui, 2:Add, Text,, %helptext2%
-    Gui, 2:Add, Text,x20 y78, tmedicalmsg:
-    Gui, 2:Add, Text,x20 y370, Spikes:
+    Gui, 2:Add, Text,x15 y78, tmedicalmsg:
+    Gui, 2:Add, Text,x15 y140, arrestreport:
+    Gui, 2:Add, Text,x15 y280, citationreport:
+    Gui, 2:Add, Text,x15 y420, searchreport:
+    Gui, 2:Add, Text,x15 y560, warrantreport:
+    Gui, 2:Add, Text,x20 y710, Spikes:
     Gui, 2:Add, Text,, Vehicle Image Search:
     Gui, 2:Add, Text,, RunPlate:
-    Gui, 2:Add, Edit,x98 y78 r4 vmedicalmsg w500, %medicalmsg%
+    Gui, 2:Add, Edit,x108 y78 r4 vmedicalmsg w530, %medicalmsg%
     medicalmsg_TT := "OOC message that you would tell someone to perform their own medical process"
-    Gui, 2:Add, Hotkey, w150 x150 y365 vspikeshk, %spikeshk%
+    Gui, 2:Add, Edit,x108 y140 r10 varrestreport w530, %arrestreport%
+    arrestreport_TT := "This is going to be the format of your Arrest Report, Only edit after the Locations line!"
+    Gui, 2:Add, Edit,x108 y280 r10 vcitationreport w530, %citationreport%
+    citationreport_TT := "This is going to be the format of your Citation Report, Only edit after the Locations line!"
+    Gui, 2:Add, Edit,x108 y420 r10 vsearchreport w530, %searchreport%
+    searchreport_TT := "This is going to be the format of your Search Warrant, Only edit after the TO BE ENFORCED UPON line!"
+    Gui, 2:Add, Edit,x108 y560 r10 vwarrantreport w530, %warrantreport%
+    warrantreport_TT := "This is going to be the format of your Arrest Warrant, Only edit after the Incident Report line!"
+    Gui, 2:Add, Hotkey, w150 x150 y705 vspikeshk, %spikeshk%
     spikeshk_TT := "Hotkey to be used to deploy/remove spike strip"
     Gui, 2:Add, Hotkey, w150 vvehimgsearchhk, %vehimgsearchhk%
     vehimgsearchhk_TT := "Hotkey to search for a vehicle's image on google"
@@ -537,16 +549,16 @@ SetScrollLockState, AlwaysOff
     }
     Gui, 2:Tab, Help,, Exact
     Gui, 2:Add, Text,x20 y30, tmicmsg:
-    Gui, 2:Add, Text,x20 y150, Garbage Items:
+    Gui, 2:Add, Text,x20 y80, Garbage Items:
     Gui, 2:Add, Edit, r3 w500 x110 y30 vmicmsg, %micmsg%
     micmsg_TT := "Message used to explain how to use/configure microphone"
-    Gui, 2:Add, Edit, r5 w500 x110 y150 vItemsar, %Itemsar%
+    Gui, 2:Add, Edit, r5 w500 x110 y80 vItemsar, %Itemsar%
     Itemsar_TT := "Add items into this list, separated by commas to add to the glovebox and trunk search."
     Gui, 2:Tab, General,, Exact
     Gui, 2:Tab
-    Gui, 2:Add, Button, default x10 y480 w80, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
-    Gui, 2:Add, Button, x520 y480 h25 w40 gbug, BUG
-    Gui, 2:Add, Button, x560 y480 h25 w65 gfeedback, Feedback
+    Gui, 2:Add, Button, default x15 y800 w80, OK  ; The label ButtonOK (if it exists) will be run when the button is pressed.
+    Gui, 2:Add, Button, x540 y800 h25 w40 gbug, BUG
+    Gui, 2:Add, Button, x580 y800 h25 w65 gfeedback, Feedback
     Gui, 2:Show,, Main responses for the system - builds from original variables
     OnMessage(0x200, "WM_MOUSEMOVE")
     Return
@@ -778,35 +790,10 @@ Return
         Time += -5, H
         FormatTime, newTime, % Time, HH:mm:ss
         FormatTime, Date,, MM/dd/yyyy
+        arrestreport := RegExReplace(arrestreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
         clipaboard = %clipboard%
         Sleep, %delay%
-        clipboard = 
-(
-
-TimeLine: %Date% - %newTime% EST
-
-Officers Involved:
-%callsign% | %name%
-
-Location(s): 
-
-Any Nickname(s): 
-
-Is he or she known to be a part of a gang: 
-
-Incident Report:
------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------
-
-Seized Item(s): 
-
-Evidence: 
-
-Plead Guilty/NotGuilty:
-
-Nothing else follows --------------- %title% %name% of the %department% ---------------
-)
+        clipboard = %arrestreport%
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
         clipboard = %clipaboard%
@@ -818,25 +805,10 @@ Nothing else follows --------------- %title% %name% of the %department% --------
         Time += -5, H
         FormatTime, newTime, % Time, HH:mm:ss
         FormatTime, Date,, MM/dd/yyyy
+        citationreport := RegExReplace(citationreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
         clipaboard = %clipboard%
         Sleep, %delay%
-        clipboard = 
-(
-TimeLine: %Date% - %newTime% EST
-
-Location(s): 
-
-Vehicle Plate: 
-Vehicle VIN: 
-Vehicle Description: 
-
-Briefly describe the offense:
------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------
-
-Nothing else follows --------------- %title% %name% of the %department% ---------------
-)
+        clipboard = %citationreport%
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
         clipboard = %clipaboard%
@@ -848,31 +820,10 @@ Nothing else follows --------------- %title% %name% of the %department% --------
         Time += -5, H
         FormatTime, newTime, % Time, HH:mm:ss
         FormatTime, Date,, MM/dd/yyyy
+        searchreport := RegExReplace(searchreport, "REQUEST\sDATE:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
         clipaboard = %clipboard%
         Sleep, %delay%
-        clipboard = 
-(
-REQUEST DATE: %Date% - %newTime% EST
-
-REQUESTED BY:
-%callsign% | %name%
-
-TO BE ENFORCED UPON: 
-
-PROPERTIES TO SEARCH: 
-
-SEARCH REQUEST: 
-
-SUMMARY OF JUSTIFICATION:
------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------
-
-SUPPORTING DOCUMENTS/EVIDENCE:
-
-
-Nothing else follows --------------- %title% %name% of the %department% ---------------
-)
+        clipboard = %searchreport%
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
         clipboard = %clipaboard%
@@ -886,27 +837,11 @@ Nothing else follows --------------- %title% %name% of the %department% --------
         FormatTime, Date,, MM/dd/yyyy
         InputBox, subject, Warrant Subject, Who do you want to put on the warrant?
         StringUpper, subject, subject
+        warrantreport := RegExReplace(warrantreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
+        warrantreport := RegExReplace(warrantreport, "SUBJECT", subject)
         clipaboard = %clipboard%
         Sleep, %delay%
-        clipboard = 
-(
-THE STATE OF SAN ANDREAS VS %subject% - To Any PEACE OFFICER In the State of San Andreas Greetings: YOU ARE HEREBY COMMANDED to arrest %subject% if found in the State of San Andreas, and bring him before a Justice of the Peace for Precinct No. 1 of Los Santos County, San Andreas to answer to the STATE OF SAN ANDREAS for the charges and incident below.
-
-TimeLine: %Date% - %newTime% EST
-Officers Involved(Names):
-%callsign% | %name%
-
-Incident Report:
------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------
-
-Probable Cause(must include evidence either photographic, documentation): 
-
-Evidence of Positive Identification (Photograph of Fingerprint Scanner/ID etc.): 
-
-Nothing else follows --------------- %title% %name% of the %department% ---------------
-)
+        clipboard = %warrantreport%
         Send, {Rctrl down}v{Rctrl up}
         Sleep, %delay%
         clipboard = %clipaboard%
@@ -1119,6 +1054,19 @@ ReadConfig:
     ; Police related section
     IniRead, Itemsar, %config%, Police, Itemsar, Twinkie Wrappers,Hotdog buns,Potato chip bags,Used Diappers,Tools,Keyboards
     IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1%ms% Medical staff waves the %title% in^0.
+    
+    IniRead, arrestreport, %config%, Police, arrestreport, TimeLine: %Date% - %newTime% EST§§Officers Involved:§%callsign% | %name%§§Location(s): §§Any Nickname(s): §§Is he or she known to be a part of a gang: §§Incident Report:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Seized Item(s): §§Evidence: §§Plead Guilty/NotGuilty:§§Nothing else follows --------------- %title% %name% of the %department% ---------------
+    StringReplace, arrestreport,arrestreport,§,`n,all
+    
+    IniRead, citationreport, %config%, Police, citationreport, TimeLine: %Date% - %newTime% EST§§Location(s): §§Vehicle Plate: §Vehicle VIN: §Vehicle Description: §§Briefly describe the offense:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Nothing else follows --------------- %title% %name% of the %department% ---------------
+    StringReplace, citationreport,citationreport,§,`n,all
+    
+    IniRead, searchreport, %config%, Police, searchreport, REQUEST DATE: %Date% - %newTime% EST§§REQUESTED BY:§%callsign% | %name%§§TO BE ENFORCED UPON: §§PROPERTIES TO SEARCH: §§SEARCH REQUEST: §§SUMMARY OF JUSTIFICATION:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§SUPPORTING DOCUMENTS/EVIDENCE:§§§Nothing else follows --------------- %title% %name% of the %department% ---------------
+    StringReplace, searchreport,searchreport,§,`n,all
+
+    IniRead, warrantreport, %config%, Police, warrantreport, THE STATE OF SAN ANDREAS VS SUBJECT§§To Any PEACE OFFICER in the State of San Andreas Greetings: YOU ARE HEREBY COMMANDED to arrest SUBJECT if found in the State of San Andreas, and bring him or her before a Justice of the Peace for Precinct No. 1 of Los Santos County, San Andreas to answer to the STATE OF SAN ANDREAS for the charges and incident below.§§TimeLine: %Date% - %newTime% EST§§Officers Involved(Names): §%callsign% | %name%§§Incident Report:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Probable Cause(must include evidence either photographic, documentation): §§Evidence of Positive Identification (Photograph of Fingerprint Scanner/ID etc.): §§Nothing else follows --------------- %title% %name% of the %department% ---------------
+    StringReplace, warrantreport,warrantreport,§,`n,all
+
     ; Towing related section
     IniRead, ttowmsg1, %config%, Towing, ttowmsg1, %ms% attaches the winch cable to the front of the vehicle
     IniRead, ttowmsg2, %config%, Towing, ttowmsg2, %ms% attaches the winch cable to the rear of the vehicle
@@ -1153,6 +1101,19 @@ UpdateConfig:
     ; Police related 
     IniWrite, %Itemsar%, %config%, Police, Itemsar
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
+    
+    StringReplace, arrestreport,arrestreport,`n,§,all
+    IniWrite, %arrestreport%, %config%, Police, arrestreport
+    
+    StringReplace, citationreport,citationreport,`n,§,all
+    IniWrite, %citationreport%, %config%, Police, citationreport
+
+    StringReplace, searchreport,searchreport,`n,§,all
+    IniWrite, %searchreport%, %config%, Police, searchreport
+
+    StringReplace, warrantreport,warrantreport,`n,§,all
+    IniWrite, %warrantreport%, %config%, Police, warrantreport
+
     ; Towing related section
     IniWrite, %ttowmsg1%, %config%, Towing, ttowmsg1
     IniWrite, %ttowmsg2%, %config%, Towing, ttowmsg2
