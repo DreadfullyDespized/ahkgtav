@@ -10,6 +10,15 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20211203
+Date: 20211203 14:00
+    Changes:
+    ^ arrestreport - Ability to Edit with tooltip (saved in ini under police block)
+    ^ citationreport - Ability to Edit with tooltip (saved in ini under police block)
+    ^ searchreport - Ability to Edit with tooltip (saved in ini under police block)
+    ^ warrantreport - Ability to Edit with tooltip (saved in ini under police block)
+    ! UI alignment issues with the updates mentioned above
+
 AHKGEO V1.20211124
 Date: 20211124 15:00
     Changes:
