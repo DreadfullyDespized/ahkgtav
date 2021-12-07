@@ -26,7 +26,7 @@ global script := {  based               : scriptobj
                     ,author             : "DreadfullyDespized"
                     ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
                     ,crtdate            : "20201214"
-                    ,moddate            : "20211203"
+                    ,moddate            : "20211206"
                     ,conf               : "GEO-Config.ini"
                     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/" 
                     ,change             : "Changelog-GEO.txt"
@@ -637,6 +637,8 @@ Return
             Inputbox, name, Name, Enter your name to use.
         }
         clipaboard = %clipboard%
+        delay2x := delay * 1.5
+        delay2s := 2200
         Sleep, %delay%
         ; Turns on the vehicle engine
         Clipboard = /engine
@@ -648,14 +650,6 @@ Return
         Send, {t up}
         Sleep, %delay%
         Clipboard = /belt
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        ; Put on body armor
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /use armor
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         ; Toggle 911 phone calling
@@ -682,6 +676,52 @@ Return
         Clipboard = /rvol 0.8
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
+        ; Display the Radio, turn on the Radio, Remove Radio
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /r
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay2x%
+        Click, 1793 726, Left
+        Sleep, %delay2x%
+        Send, {TAB down}{TAB up}
+        ; Main Radar Setup
+        Sleep, %delay%
+        Send, {t down}
+        Sleep, %delay%
+        Send, {t up}
+        Sleep, %delay%
+        Clipboard = /radar_remote
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        ; Toggle Display
+        Sleep, %delay2x%
+        Click, 959 304, Left
+        Sleep, %delay2x%
+        ; Power Button
+        Sleep, %delay2x%
+        Click, 1557 984, Left
+        Sleep, %delay2s%
+        ; Front Hold and Front Opp
+        Click, 958 374, Left
+        Sleep, %delay2x%
+        Click, 910 374, Left
+        Sleep, %delay2x%
+        ;Rear Hold and Rear Same
+        Click, 959 435, Left
+        Sleep, %delay2x%
+        Click, 1007 435, Left
+        ; Next part for Radar
+        ; Plate Reader
+        Sleep, %delay2x%
+        Click, 926 580, Left
+        Sleep, %delay2x%
+        ; Plate Reader, Toggle Display
+        Click, 959 452, Left
+        Sleep, %delay2x%
+        Click, , Right
+        Sleep, %delay2x%
         Clipboard = %clipaboard%
     }
     Return
