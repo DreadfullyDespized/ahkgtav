@@ -10,6 +10,17 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20211206
+Date: 20211206 17:00
+    Changes:
+    ^ tdutystart
+        + Turn radio on
+        + Turn on radar
+        + Set Radar front Ant to OPP
+        + Set Radar rear Ant to SAME
+        + Turn on Plate Reader
+        - Armor use, because equip will auto-use on logon
+
 AHKGEO V1.20211203
 Date: 20211203 14:00
     Changes:
