@@ -684,7 +684,7 @@ Return
         Clipboard = /r
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay2x%
-        Click, 1793 726, Left
+        Click, 2388 1000, Left
         Sleep, %delay2x%
         Send, {TAB down}{TAB up}
         ; Main Radar Setup
@@ -697,28 +697,28 @@ Return
         Send, {Rctrl down}v{Rctrl up}{enter}
         ; Toggle Display
         Sleep, %delay2x%
-        Click, 959 304, Left
+        Click, 568 320, Left
         Sleep, %delay2x%
         ; Power Button
         Sleep, %delay2x%
-        Click, 1557 984, Left
+        Click, 2200 1245, Left
         Sleep, %delay2s%
         ; Front Hold and Front Opp
-        Click, 958 374, Left
+        Click, 554 388, Left
         Sleep, %delay2x%
-        Click, 910 374, Left
+        Click, 500 388, Left
         Sleep, %delay2x%
         ;Rear Hold and Rear Same
-        Click, 959 435, Left
+        Click, 550 445, Left
         Sleep, %delay2x%
-        Click, 1007 435, Left
+        Click, 601 445, Left
         ; Next part for Radar
         ; Plate Reader
         Sleep, %delay2x%
-        Click, 926 580, Left
+        Click, 515 577, Left
         Sleep, %delay2x%
         ; Plate Reader, Toggle Display
-        Click, 959 452, Left
+        Click, 1276 628, Left
         Sleep, %delay2x%
         Click, , Right
         Sleep, %delay2x%
