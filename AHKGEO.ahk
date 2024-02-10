@@ -655,7 +655,7 @@ Return
         ; Toggle GPS position to top center
         Send, {t down}
         Sleep, %delay%
-        Sent, {t up}
+        Send, {t up}
         Sleep, %delay%
         Clipboard = /gps
         Send, {Rctrl down}v{Rctrl up}{enter}
