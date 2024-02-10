@@ -652,6 +652,14 @@ Return
         Clipboard = /belt
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
+        ; Toggle GPS position to top center
+        Send, {t down}
+        Sleep, %delay%
+        Sent, {t up}
+        Sleep, %delay%
+        Clipboard = /gps
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
         ; Toggle 911 phone calling
         Send, {t down}
         Sleep, %delay%
@@ -687,41 +695,14 @@ Return
         Click, 2388 1000, Left
         Sleep, %delay2x%
         Send, {TAB down}{TAB up}
-        ; Main Radar Setup
         Sleep, %delay%
+        ; Main Radar Setup
         Send, {t down}
         Sleep, %delay%
         Send, {t up}
         Sleep, %delay%
         Clipboard = /radar_remote
         Send, {Rctrl down}v{Rctrl up}{enter}
-        ; Toggle Display
-        Sleep, %delay2x%
-        Click, 568 320, Left
-        Sleep, %delay2x%
-        ; Power Button
-        Sleep, %delay2x%
-        Click, 2200 1245, Left
-        Sleep, %delay2s%
-        ; Front Hold and Front Opp
-        Click, 554 388, Left
-        Sleep, %delay2x%
-        Click, 500 388, Left
-        Sleep, %delay2x%
-        ;Rear Hold and Rear Same
-        Click, 550 445, Left
-        Sleep, %delay2x%
-        Click, 601 445, Left
-        ; Next part for Radar
-        ; Plate Reader
-        Sleep, %delay2x%
-        Click, 515 577, Left
-        Sleep, %delay2x%
-        ; Plate Reader, Toggle Display
-        Click, 1276 628, Left
-        Sleep, %delay2x%
-        Click, , Right
-        Sleep, %delay2x%
         Clipboard = %clipaboard%
     }
     Return
@@ -1095,7 +1076,7 @@ ReadConfig:
     IniRead, Itemsar, %config%, Police, Itemsar, Twinkie Wrappers,Hotdog buns,Potato chip bags,Used Diappers,Tools,Keyboards
     IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1%ms% Medical staff waves the %title% in^0.
     
-    IniRead, arrestreport, %config%, Police, arrestreport, TimeLine: %Date% - %newTime% EST§§Officers Involved:§%callsign% | %name%§§Location(s): §§Any Nickname(s): §§Is he or she known to be a part of a gang: §§Incident Report:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Seized Item(s): §§Evidence: §§Plead Guilty/NotGuilty:§§Nothing else follows --------------- %title% %name% of the %department% ---------------
+    IniRead, arrestreport, %config%, Police, arrestreport, TimeLine: %Date% - %newTime% EST§§Officers Involved:§%callsign% | %name%§§Location(s): §§Any Nickname(s): §§Is he or she known to be a part of a gang: §§Incident Report:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Seized Item(s): §§Evidence: §§Plead Guilty/NotGuilty:§§Time:§Fine:§§Nothing else follows --------------- %title% %name% of the %department% ---------------
     StringReplace, arrestreport,arrestreport,§,`n,all
     
     IniRead, citationreport, %config%, Police, citationreport, TimeLine: %Date% - %newTime% EST§§Location(s): §§Vehicle Plate: §Vehicle VIN: §Vehicle Description: §§Briefly describe the offense:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Nothing else follows --------------- %title% %name% of the %department% ---------------

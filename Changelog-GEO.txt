@@ -10,6 +10,13 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20240210
+Date: 20240210 17:00
+    Changes:
+    ^ tdutystart
+        - Radar setup, only opens it, rest is yours.
+        + /gps added to position GPS in top center of screen
+
 AHKGEO V1.20211206
 Date: 20211206 17:00
     Changes:
