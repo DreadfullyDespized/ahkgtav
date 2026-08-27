@@ -10,6 +10,14 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20251205
+Date: 20251205 18:00
+    Changes:
+    * Decreased textual output latency.
+    * Updater window is now Alt+Tab friendly and can be moved. (shows up on taskbar)
+    ^ Added checkers for fivem or notepad for the different report commands to avoid accidental pastes.
+    * Fixed quite a few instances of formatting inconsistencies.
+
 AHKGEO V1.20240210
 Date: 20240210 17:00
     Changes:

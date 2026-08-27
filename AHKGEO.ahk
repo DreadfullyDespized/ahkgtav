@@ -1,7 +1,7 @@
 IF NOT A_IsAdmin
 {
-   Run *RunAs "%A_ScriptFullPath%"
-   ExitApp
+    Run *RunAs "%A_ScriptFullPath%"
+    ExitApp
 }
 
 if (a_ahkversion < 1.1){
@@ -16,22 +16,24 @@ if (a_ahkversion < 1.1){
 
 #NoEnv
 #SingleInstance, Force
+#InputLevel, 1
+SendMode Input
 SetWorkingDir, %A_ScriptDir%
 
 Menu, Tray, Icon, shell32.dll, 194
 
 global script := {  based               : scriptobj
-                    ,name               : "AHKGEO"
-                    ,version            : "1"
-                    ,author             : "DreadfullyDespized"
-                    ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
-                    ,crtdate            : "20201214"
-                    ,moddate            : "20211206"
-                    ,conf               : "GEO-Config.ini"
-                    ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/" 
-                    ,change             : "Changelog-GEO.txt"
-                    ,bug                : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=bug&template=bug_report.md&title="
-                    ,feedback           : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="}
+    ,name               : "AHKGEO"
+    ,version            : "1"
+    ,author             : "DreadfullyDespized"
+    ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
+    ,crtdate            : "20201214"
+    ,moddate            : "20251205" ; This line should be updated on each new release.
+    ,conf               : "GEO-Config.ini"
+    ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
+    ,change             : "Changelog-GEO.txt"
+    ,bug                : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=bug&template=bug_report.md&title="
+    ,feedback           : "https://github.com/DreadfullyDespized/ahkgtav/issues/new?assignees=DreadfullyDespized&labels=enhancement&template=feature_request.md&title="}
 
 global updatefile = % A_Temp "\" script.change
 ; Temp\script.change
@@ -69,30 +71,30 @@ update(ochecky) {
         rfile := script.logurl script.name ".ahk"
         if (Version > ochecky) {
             Msgbox, 68, % "New Update Available"
-                      , % "There is a new update available for this application.`n"
-                        . "Do you wish to upgrade to V" Version "?`n"
-                        . "Local Version: " ochecky
-                      , 10 ; 10s timeout
+                , % "There is a new update available for this application.`n"
+                . "Do you wish to upgrade to V" Version "?`n"
+                . "Local Version: " ochecky
+                , 10 ; 10s timeout
             IfMsgbox, Timeout
                 return debug ? "* Update message timed out" : 1
             IfMsgbox, No
                 return debug ? "* Update aborted by user" : 2
             deposit := A_ScriptDir "\AHKGEO.ahk"
             Msgbox, 64, % "Download Complete"
-                      , % "New version is now running and the old version will now close'n"
-                        . "Enjoy the latest version!"
+                , % "New version is now running and the old version will now close'n"
+                . "Enjoy the latest version!"
             Run, %deposit%
             ExitApp
         }
         if (Version = ochecky) {
             MsgBox, 64, % "Up to Date"
-                    , % "Online Version: " Version "`n"
-                    . "Local Version: " ochecky
+                , % "Online Version: " Version "`n"
+                . "Local Version: " ochecky
         }
         if (Version < ochecky) {
             MsgBox, 64, % "DEV Version!"
-                    , % "Online Version: " Version "`n"
-                    . "Local Version: " ochecky
+                , % "Online Version: " Version "`n"
+                . "Local Version: " ochecky
         }
     } else {
         MsgBox, 16, % "No internets"
@@ -165,7 +167,7 @@ eboxmsg = Danger %name% of the %department%
 
 ; ============================================ HELP TEXT FORMAT ============================================
 ; Main portion of the help text that is displayed
-subhelptext = 
+subhelptext =
 (
 Police Hotkeys:
 Control+1 = Config
@@ -182,7 +184,7 @@ tmic = mic help
 tgeohelp = Geodexon help
 )
 
-helptext = 
+helptext =
 (
 This script is used to well. Help you with some of the repetitive tasks within GTAV RP on Geodexon.
 With the following commands available to you.  Added the ability to change syntax as well.
@@ -228,14 +230,14 @@ tmic = help text about fixing mic in local ooc
 tgeohelp = display Geodexon help information in local ooc
 )
 
-helptext2 = 
+helptext2 =
 (
 If you wish to change any of the hotkeys.
 This is the section to do so. Click on the box and then
 hit the keys together to configure the hotkey.
 )
 
-reporttext = 
+reporttext =
 (
 This section is used to handle report writting.  This can be witness statements, arrest reports or anything else that you run into that could be information for the department to be used.  Including shift notes. You must fill out all fields before you can actually file the report.  The report is appended to your LEO Log.
 )
@@ -251,7 +253,6 @@ Menu, Tray, Add, &Reload Script, ^3
 Menu, Tray, Add, E&xit,Exit
 
 Gui, 6:Destroy
-Gui, 6:-Caption +LastFound +ToolWindow
 Gui, 6:Font, s10 cRed, Consolas
 Gui, 6:Color, Black, Red
 Gui, 6:Add, Text,, % "Name: " script.name
@@ -272,7 +273,7 @@ Gui, 6:Add, Text, x104 y130 geditconfig, ConfigFile
 ConfigFile_TT := "Location of your configuration file"
 Gui, 6:Font
 Gui, 6:Font, s10 cRed, Consolas
-Gui, 6:Add, Text, x12 y150 , Change Log: 
+Gui, 6:Add, Text, x12 y150 , Change Log:
 Gui, 6:Font, s10 Underline cTeal, Consolas
 Gui, 6:Add, Text, x96 y150 gchangelog, ChangeLog
 ChangeLog_TT := "Launches the locally downloaded changelog"
@@ -293,52 +294,54 @@ OnMessage(0x200, "WM_MOUSEMOVE")
 Return
 
 6GuiEscape:
-Gui, 6:Cancel
+    Gui, 6:Cancel
 Return
 
 ^5::
-Gui, 7:Destroy
-Gui, 7:+HwndID +E0x20 -Caption +LastFound +ToolWindow +AlwaysOnTop
-Gui, 7:Font, s16 cRed w500, Consolas
-Gui, 7:Color, Black
-Gui, 7:Add, Text, x0 y0, %subhelptext%
-Gui, 7:Show, X90 Y300, Overlay
-WinSet, TransColor, Black 255, ahk_id%ID%
-Gui, 7:-Caption
+    Gui, 7:Destroy
+    Gui, 7:+HwndID +E0x20 -Caption +LastFound +ToolWindow +AlwaysOnTop
+    Gui, 7:Font, s16 cRed w500, Consolas
+    Gui, 7:Color, Black
+    Gui, 7:Add, Text, x0 y0, %subhelptext%
+    Gui, 7:Show, X90 Y300, Overlay
+    WinSet, TransColor, Black 255, ahk_id%ID%
+    Gui, 7:-Caption
 Return
 
 ^6::
-Gui, 7:Cancel
+    Gui, 7:Cancel
 Return
 
 HomePage:
-Run, % script.homepage
+    Run, % script.homepage
 Return
 
 EditConfig:
-Run, % A_ScriptDir "\" script.conf
+    Run, % A_ScriptDir "\" script.conf
 Return
 
 Changelog:
-Run, % A_Temp "\" script.change
+    Run, % A_Temp "\" script.change
 Return
 
 configure:
-Gui, 6:Cancel
-Send, ^1
+    Gui, 6:Cancel
+    ; Send, ^1
+    Gosub, ^1
 Return
 
 updatecheck:
-Gui, 6:Cancel
-Send, ^4
+    Gui, 6:Cancel
+    ; Send, ^4
+    update(ochecky)
 Return
 
 bug:
-Run, % script.bug
+    Run, % script.bug
 Return
 
 feedback:
-Run, % script.feedback
+    Run, % script.feedback
 Return
 
 #z::Menu, Tray, Show
@@ -356,21 +359,21 @@ Return
 Return
 
 vehimghk:
-Gui, Search:Add, Edit, vgtavsearch w100
-Gui, Search:Add, Button, Default gSearch, Search
-Gui, Search:Show,, Gtav car model
+    Gui, Search:Add, Edit, vgtavsearch w100
+    Gui, Search:Add, Button, Default gSearch, Search
+    Gui, Search:Show,, Gtav car model
 Return
 
 SearchGuiEscape:
 SearchGuiClose:
-Gui, Search:Cancel
+    Gui, Search:Cancel
 Return
 
 Search:
-Gui, Search:Submit
-gtavsearch = gta v %gtavsearch%
-Run, http://www.google.com/search?tbm=isch&q=%gtavsearch%
-Gui, Search:Destroy
+    Gui, Search:Submit
+    gtavsearch = gta v %gtavsearch%
+    Run, http://www.google.com/search?tbm=isch&q=%gtavsearch%
+    Gui, Search:Destroy
 Return
 
 Gosub, UpdateConfig
@@ -378,7 +381,9 @@ Return
 
 ; ============================================ START HOTKEY CONFIRUATION ============================================
 ; SetKeyDelay , Delay, PressDuration, Play
-SetKeyDelay, 0, 100
+; SetKeyDelay, 0, 100
+SetKeyDelay, -1, 0     ; instant press, 0 ms hold → proven safe in FiveM
+SetBatchLines, -1      ; removes the hidden 10 ms sleep between every line
 ; Default state of lock keys
 SetNumLockState, AlwaysOn
 SetScrollLockState, AlwaysOff
@@ -435,14 +440,14 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Show,, Making the world a better place
     OnMessage(0x200, "WM_MOUSEMOVE")
     Gosub, ReadConfiguration ; Load configuration previously saved.
-    Return
+Return
 
-    1GuiEscape: ; Hitting escape key while open
-    1GuiClose: ; Hitting the X while open
+1GuiEscape: ; Hitting escape key while open
+1GuiClose: ; Hitting the X while open
     Gui, 1:Cancel
-    Return
+Return
 
-    Save1:
+Save1:
     Gui, 1:Submit
     ; Police related section
     medicalmsg = Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/do's ^0and ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1/do Medical staff waves the %title% in^0.
@@ -561,15 +566,15 @@ SetScrollLockState, AlwaysOff
     Gui, 2:Add, Button, x580 y800 h25 w65 gfeedback, Feedback
     Gui, 2:Show,, Main responses for the system - builds from original variables
     OnMessage(0x200, "WM_MOUSEMOVE")
-    Return
+Return
 
-    2GuiClose:
-    2GuiEscape:
+2GuiClose:
+2GuiEscape:
     Msgbox Nope lol
     Gui, 2:Cancel
-    Return
+Return
 
-    2ButtonOK:
+2ButtonOK:
     Gui, 2:Submit  ; Save the input from the user to each control's associated variable.
     Gosub, UpdateConfig
     Gosub, hotkeys
@@ -600,301 +605,345 @@ Return
     ; This will lay the spikes or remove the spikes based on variable.
     ; ^.:: ; Control + . in-game
     sphk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /spikes
-        Send, {RCtrl down}v{RCtrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            clipaboard = %clipboard%
+            Sleep, %delay%
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /spikes
+            Send, {RCtrl down}v{RCtrl up}{enter}
+            Sleep, %delay%
+            Clipboard = %clipaboard%
+        }
     Return
 
     ; Runplate to be ran and save the plate you ran, also caches the name into clipboard
     ; ^-:: ; Control + -
     rphk:
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard := "/runplate "
-        Send, {Rctrl down}v{Rctrl up}
-    }
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard := "/runplate "
+            Send, {Rctrl down}v{Rctrl up}
+        }
     Return
 
     ; This will be used to set your callsign for the environment.
     :*:tdutystart:: ; Type tdutystart in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        if (!callsign) {
-            InputBox, callsign, CallSign, Enter your callsign to use.
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            if (!callsign) {
+                InputBox, callsign, CallSign, Enter your callsign to use.
+            }
+            if (!name) {
+                Inputbox, name, Name, Enter your name to use.
+            }
+            clipaboard = %clipboard%
+            delay2x := delay * 1.5
+            delay2s := 2200
+            Sleep, %delay%
+            ; Turns on the vehicle engine
+            Clipboard = /engine
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            ; Puts on your seatbelt
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /belt
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            ; Toggle GPS position to top center
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /gps
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            ; Toggle 911 phone calling
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /911t
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            ; Set Radio Channel to 1 (emergency)
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /rc 1
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            ; Set Radio Volume to 0.8
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /rvol 0.8
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            ; Display the Radio, turn on the Radio, Remove Radio
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /r
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay2x%
+            Click, 2388 1000, Left
+            Sleep, %delay2x%
+            Send, {TAB down}{TAB up}
+            Sleep, %delay%
+            ; Main Radar Setup
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = /radar_remote
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Clipboard = %clipaboard%
         }
-        if (!name) {
-            Inputbox, name, Name, Enter your name to use.
-        }
-        clipaboard = %clipboard%
-        delay2x := delay * 1.5
-        delay2s := 2200
-        Sleep, %delay%
-        ; Turns on the vehicle engine
-        Clipboard = /engine
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        ; Puts on your seatbelt
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /belt
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        ; Toggle GPS position to top center
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /gps
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        ; Toggle 911 phone calling
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /911t
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        ; Set Radio Channel to 1 (emergency)
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /rc 1
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        ; Set Radio Volume to 0.8
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /rvol 0.8
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        ; Display the Radio, turn on the Radio, Remove Radio
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /r
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay2x%
-        Click, 2388 1000, Left
-        Sleep, %delay2x%
-        Send, {TAB down}{TAB up}
-        Sleep, %delay%
-        ; Main Radar Setup
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /radar_remote
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Clipboard = %clipaboard%
-    }
     Return
 
     ; Tells subject on how to do the medical RP for themselves.
     :*:tmedical:: ; Type tmedical in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = %medicalmsg%
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            ; clipaboard = %clipboard%
+            ; Sleep, %delay%
+            ; Clipboard = %medicalmsg%
+            ; Send, {Rctrl down}v{Rctrl up}{enter}
+            ; Sleep, %delay%
+            ; Clipboard = %clipaboard%
+            SendInput, {Text}%medicalmsg%{Enter}
+        }
     Return
 
     ; Test running through timing.
     :*:ttest:: ; Type ttest in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = /e notepad
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = %ms% notes a few things to himself that he thinks are important.
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            clipaboard = %clipboard%
+            Sleep, %delay%
+            Clipboard = /e notepad
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
+            Sleep, %delay%
+            Clipboard = %ms% notes a few things to himself that he thinks are important.
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Clipboard = %clipaboard%
+        }
     Return
 
     ; Items that can be pulled out from the trunk of a vehicle.
     :*:ttrunk:: ; Type ttrunk in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        InputBox, titem, Trunk Item, What do you want from your trunk?
-        if ErrorLevel
-            Return
-        else
-        if (titem = "medbag" || titem = "lockpick" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag" || titem = "spikes") {
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            InputBox, titem, Trunk Item, What do you want from your trunk?
+            if ErrorLevel
+                Return
+            else
+                if (titem = "medbag" || titem = "lockpick" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag" || titem = "spikes") {
+                    clipaboard = %clipboard%
+                    Send, {enter}
+                    Sleep, %delay%
+                    Send, {l down}
+                    Sleep, %delay%
+                    Send, {l up}
+                    Sleep, %delay%
+                    Send, {t down}
+                    Sleep, %delay%
+                    Send, {t up}
+                    Sleep, %delay%
+                    Clipboard = /trunk
+                    Send, {Rctrl down}v{Rctrl up}{enter}
+                    Sleep, %delay%
+                    Send, {t down}
+                    Sleep, %delay%
+                    Send, {t up}
+                    Sleep, %delay%
+                    if (titem = "cones") {
+                        Clipboard = %ms% Grabs a few %titem% from the trunk
+                    } else if (titem = "gsr") {
+                        Clipboard = %ms% Grabs a %titem% kit from the trunk
+                    } else if (titem = "spikes") {
+                        Clipboard = %ms% Grabs a spikestrip from the trunk
+                    } else {
+                        Clipboard = %ms% Grabs a %titem% from the trunk
+                    }
+                    Send, {Rctrl down}v{Rctrl up}{enter}
+                    If (titem = "medbag") {
+                        Sleep, %delay%
+                        Send, {t down}
+                        Sleep, %delay%
+                        Send, {t up}
+                        Sleep, %delay%
+                        Clipboard = /inventory
+                        Send, {Rctrl down}v{Rctrl up}{enter}
+                        Msgbox, Once completed with your inventory actions. Close inventory and then press T.
+                        KeyWait, t, D
+                    }
+                    Sleep, %delay%
+                    Send, {t down}
+                    Sleep, %delay%
+                    Send, {t up}
+                    Sleep, %delay%
+                    Clipboard = /trunk
+                    Send, {Rctrl down}v{Rctrl up}{enter}
+                    Sleep, %delay%
+                    Send, {l down}
+                    Sleep, %delay%
+                    Send, {l up}
+                    Sleep, %delay%
+                    Clipboard = %clipaboard%
+                } else {
+                    Send, {enter}
+                    MsgBox, That %titem% is not in your trunk. Try again.
+                }
+        }
+    Return
+
+    ; Submits the template to author an arrest.
+    ; :*:arrestreport::
+    ;     Time := A_NowUTC
+    ;     Time += -5, H
+    ;     FormatTime, newTime, % Time, HH:mm:ss
+    ;     FormatTime, Date,, MM/dd/yyyy
+    ;     arrestreport := RegExReplace(arrestreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
+    ;     clipaboard = %clipboard%
+    ;     Sleep, %delay%
+    ;     clipboard = %arrestreport%
+    ;     Send, {Rctrl down}v{Rctrl up}
+    ;     Sleep, %delay%
+    ;     clipboard = %clipaboard%
+    ; Return
+    :*:arrestreport::
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            Time := A_NowUTC, Time -= 5, Hours
+            FormatTime, TS, %Time%, MM/dd/yyyy HH:mm:ss
+            text := StrReplace(arrestreport, "TimeLine: -- --EST", "TimeLine: " TS " EST")
+            SendInput {Text}%text%{Enter}
+        }
+    Return
+
+    ; Submits the template to author a citation.
+    :*:citationreport::
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            Time := A_NowUTC
+            Time += -5, H
+            FormatTime, newTime, % Time, HH:mm:ss
+            FormatTime, Date,, MM/dd/yyyy
+            citationreport := RegExReplace(citationreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
             clipaboard = %clipboard%
-            Send, {enter}
             Sleep, %delay%
-            Send, {l down}
+            clipboard = %citationreport%
+            Send, {Rctrl down}v{Rctrl up}
             Sleep, %delay%
-            Send, {l up}
+            clipboard = %clipaboard%
+        }
+    Return
+
+    ; Submits the template to author a search warrant.
+    :*:searchreport::
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            Time := A_NowUTC
+            Time += -5, H
+            FormatTime, newTime, % Time, HH:mm:ss
+            FormatTime, Date,, MM/dd/yyyy
+            searchreport := RegExReplace(searchreport, "REQUEST\sDATE:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
+            clipaboard = %clipboard%
             Sleep, %delay%
-            Send, {t down}
+            clipboard = %searchreport%
+            Send, {Rctrl down}v{Rctrl up}
             Sleep, %delay%
-            Send, {t up}
+            clipboard = %clipaboard%
+        }
+    Return
+
+    ; Submits the template to author a warrant.
+    :*:warrantreport::
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            Time := A_NowUTC
+            Time += -5, H
+            FormatTime, newTime, % Time, HH:mm:ss
+            FormatTime, Date,, MM/dd/yyyy
+            InputBox, subject, Warrant Subject, Who do you want to put on the warrant?
+            StringUpper, subject, subject
+            warrantreport := RegExReplace(warrantreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
+            warrantreport := RegExReplace(warrantreport, "SUBJECT", subject)
+            clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = /trunk
+            clipboard = %warrantreport%
+            Send, {Rctrl down}v{Rctrl up}
+            Sleep, %delay%
+            clipboard = %clipaboard%
+        }
+    Return
+
+; ============================================ CIV Stuff ============================================
+#If (rolepick = "CIV")
+; ============================================ TOW Stuff ============================================
+#If (rolepick = "TOW")
+    :*:tstart:: ; Type tstart in-game
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            clipaboard = %clipboard%
+            Sleep, %delay%
+            Clipboard = /rc 105
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            if (titem = "cones") {
-                Clipboard = %ms% Grabs a few %titem% from the trunk
-            } else if (titem = "gsr") {
-                Clipboard = %ms% Grabs a %titem% kit from the trunk
-            } else if (titem = "spikes") {
-                Clipboard = %ms% Grabs a spikestrip from the trunk
-            } else {
-                Clipboard = %ms% Grabs a %titem% from the trunk
-            }
+            Clipboard = /clockin %towcompany%
             Send, {Rctrl down}v{Rctrl up}{enter}
-            If (titem = "medbag") {
+            Sleep, %delay%
+            Clipboard = %clipaboard%
+        }
+    Return
+
+    ; To start the tow of a front or rear facing vehicle.
+    :*:ttow:: ; Type ttow in-game
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            InputBox, towtype, Facing Direction, Type f for front b for back.
+            if (towtype = "f" || towtype = "b") {
+                clipaboard = %clipboard%
+                Sleep, %delay%
+                Clipboard = /emote kneel
+                Send, {Rctrl down}v{Rctrl up}{enter}
                 Sleep, %delay%
                 Send, {t down}
                 Sleep, %delay%
                 Send, {t up}
                 Sleep, %delay%
-                Clipboard = /inventory
+                if (towtype = "f") {
+                    Clipboard = %ttowmsg1%
+                } else if (towtype = "b") {
+                    Clipboard = %ttowmsg2%
+                }
                 Send, {Rctrl down}v{Rctrl up}{enter}
-                Msgbox, Once completed with your inventory actions. Close inventory and then press T.
-                KeyWait, t, D
+                Sleep, %delay%
+                Clipboard = /tow
+                Send, {Rctrl down}v{Rctrl up}{enter}
+                Sleep, %delay%
+                Clipboard = %clipaboard%
+            } else {
+                MsgBox, f or b only. Try again.
             }
-            Sleep, %delay%
-            Send, {t down}
-            Sleep, %delay%
-            Send, {t up}
-            Sleep, %delay%
-            Clipboard = /trunk
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Send, {l down}
-            Sleep, %delay%
-            Send, {l up}
-            Sleep, %delay%
-            Clipboard = %clipaboard%
-        } else {
-            Send, {enter}
-            MsgBox, That %titem% is not in your trunk. Try again.
         }
-    }
     Return
 
-    ; Submits the template to author an arrest.
-    :*:arrestreport::
-        Time := A_NowUTC
-        Time += -5, H
-        FormatTime, newTime, % Time, HH:mm:ss
-        FormatTime, Date,, MM/dd/yyyy
-        arrestreport := RegExReplace(arrestreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        clipboard = %arrestreport%
-        Send, {Rctrl down}v{Rctrl up}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    Return
-
-    ; Submits the template to author a citation.
-    :*:citationreport::
-        Time := A_NowUTC
-        Time += -5, H
-        FormatTime, newTime, % Time, HH:mm:ss
-        FormatTime, Date,, MM/dd/yyyy
-        citationreport := RegExReplace(citationreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        clipboard = %citationreport%
-        Send, {Rctrl down}v{Rctrl up}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    Return
-
-    ; Submits the template to author a search warrant.
-    :*:searchreport::
-        Time := A_NowUTC
-        Time += -5, H
-        FormatTime, newTime, % Time, HH:mm:ss
-        FormatTime, Date,, MM/dd/yyyy
-        searchreport := RegExReplace(searchreport, "REQUEST\sDATE:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        clipboard = %searchreport%
-        Send, {Rctrl down}v{Rctrl up}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    Return
-
-    ; Submits the template to author a warrant.
-    :*:warrantreport::
-        Time := A_NowUTC
-        Time += -5, H
-        FormatTime, newTime, % Time, HH:mm:ss
-        FormatTime, Date,, MM/dd/yyyy
-        InputBox, subject, Warrant Subject, Who do you want to put on the warrant?
-        StringUpper, subject, subject
-        warrantreport := RegExReplace(warrantreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
-        warrantreport := RegExReplace(warrantreport, "SUBJECT", subject)
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        clipboard = %warrantreport%
-        Send, {Rctrl down}v{Rctrl up}
-        Sleep, %delay%
-        clipboard = %clipaboard%
-    Return
-
-    ; ============================================ CIV Stuff ============================================
-#If (rolepick = "CIV")
-    ; ============================================ TOW Stuff ============================================
-#If (rolepick = "TOW")
-    :*:tstart:: ; Type tstart in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = /rc 105
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /clockin %towcompany%
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
-    Return
-
-    ; To start the tow of a front or rear facing vehicle.
-    :*:ttow:: ; Type ttow in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        InputBox, towtype, Facing Direction, Type f for front b for back.
-        if (towtype = "f" || towtype = "b") {
+    ; To secure the vehicle to the tow truck.
+    :*:tsecure:: ; Type tsecure in-game
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
             clipaboard = %clipboard%
             Sleep, %delay%
             Clipboard = /emote kneel
@@ -905,116 +954,87 @@ Return
             Send, {t up}
             Sleep, %delay%
             if (towtype = "f") {
-                Clipboard = %ttowmsg1%
-            } else if (towtype = "b") {
-                Clipboard = %ttowmsg2%
+                Clipboard = %tsecure1%
+            } else {
+                Clipboard = %tsecure2%
             }
             Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Clipboard = %clipaboard%
+        }
+    Return
+
+    ; To release the vehicle from the tow truck.
+    :*:trelease:: ; Type trelease in-game
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            clipaboard = %clipboard%
+            Sleep, %delay%
+            if (towtype = "f") {
+                Clipboard = %treleasemsg1%
+            } else {
+                Clipboard = %treleasemsg2%
+            }
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Send, {t down}
+            Sleep, %delay%
+            Send, {t up}
             Sleep, %delay%
             Clipboard = /tow
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay%
             Clipboard = %clipaboard%
-        } else {
-            MsgBox, f or b only. Try again.
         }
-    }
-    Return
-
-    ; To secure the vehicle to the tow truck.
-    :*:tsecure:: ; Type tsecure in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        Clipboard = /emote kneel
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        if (towtype = "f") {
-            Clipboard = %tsecure1%
-        } else {
-            Clipboard = %tsecure2%
-        }
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
-    Return
-
-    ; To release the vehicle from the tow truck.
-    :*:trelease:: ; Type trelease in-game
-    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
-        Sleep, %delay%
-        if (towtype = "f") {
-            Clipboard = %treleasemsg1%
-        } else {
-            Clipboard = %treleasemsg2%
-        }
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Send, {t down}
-        Sleep, %delay%
-        Send, {t up}
-        Sleep, %delay%
-        Clipboard = /tow
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
-    }
     Return
 
     ; To pull out Kitty Litter from tow truck for use.
     :*:tkitty:: ; Type tkitty in-game
+        if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+            clipaboard = %clipboard%
+            Sleep, %delay%
+            Clipboard = %ms% opens the toolbox and removes kitty litter from it
+            Send, {Rctrl down}v{Rctrl up}{enter}
+            Sleep, %delay%
+            Clipboard = %clipaboard%
+        }
+    Return
+; ============================================ SAFR Stuff ============================================
+#If (rolepick = "SAFR")
+; ============================================ HELP Stuff ============================================
+#IF
+; This provides the help text for micropohone fixing in local ooc chat
+:*:tmic:: ; Type tmic in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
         clipaboard = %clipboard%
         Sleep, %delay%
-        Clipboard = %ms% opens the toolbox and removes kitty litter from it
+        Clipboard = %micmsg%
         Send, {Rctrl down}v{Rctrl up}{enter}
         Sleep, %delay%
         Clipboard = %clipaboard%
     }
-    Return
-    ; ============================================ SAFR Stuff ============================================
-#If (rolepick = "SAFR")
-    ; ============================================ HELP Stuff ============================================
-#IF
-; This provides the help text for micropohone fixing in local ooc chat
-:*:tmic:: ; Type tmic in-game
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-    clipaboard = %clipboard%
-    Sleep, %delay%
-    Clipboard = %micmsg%
-    Send, {Rctrl down}v{Rctrl up}{enter}
-    Sleep, %delay%
-    Clipboard = %clipaboard%
-}
 Return
 
 ; This provides the help text for Geodexon information in local ooc chat
 :*:tgeohelp:: ; Type tgeohelp in-game
-if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-    clipaboard = %clipboard%
-    Sleep, %delay%
-    Clipboard := "GeoDexon Forums at ^1 https://geodexon.net/index.php ^0 to join the Dicksword go to ^2 https://discord.gg/QFQmpejhPT"
-    Send, {Rctrl down}v{Rctrl up}{enter}
-    Sleep, %delay%
-    Clipboard = %clipaboard%
-}
+    if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
+        clipaboard = %clipboard%
+        Sleep, %delay%
+        Clipboard := "GeoDexon Forums at ^1 https://geodexon.net/index.php ^0 to join the Dicksword go to ^2 https://discord.gg/QFQmpejhPT"
+        Send, {Rctrl down}v{Rctrl up}{enter}
+        Sleep, %delay%
+        Clipboard = %clipaboard%
+    }
 Return
 
 ; ============================================ MAIN RUN FUNCTIONS ============================================
 
 ReadConfiguration: ; Read the saved configuration
-IfExist, %config% ; First check if it was saved.
-{
-; IniRead, outputvar, filename, section, key, default
-IniRead, rolepick, %config%, Yourself, role
-GuiControl, ChooseString, rolepick, %rolepick% ; Submit
-}
+    IfExist, %config% ; First check if it was saved.
+    {
+        ; IniRead, outputvar, filename, section, key, default
+        IniRead, rolepick, %config%, Yourself, role
+        GuiControl, ChooseString, rolepick, %rolepick% ; Submit
+    }
 Return
 
 ; ============================================ TOOLTIP FUNCTION ============================================
@@ -1055,11 +1075,11 @@ Return
 ReadConfig:
     ; Back to the reading of the configuration
     IniRead, rolepick, %config%, Yourself, role, LEO
-    IniRead, callsign, %config%, Yourself, callsign, 100
+    IniRead, callsign, %config%, Yourself, callsign, 806
     IniRead, myid, %config%, Yourself, myid, 7
     IniRead, towcompany, %config%, Yourself, towcompany, PotatoWax
     IniRead, name, %config%, Yourself, name, Mallard
-    IniRead, title, %config%, Yourself, title, CMDR
+    IniRead, title, %config%, Yourself, title, CADET
     IniRead, department, %config%, Yourself, department, LSPD
     IniRead, phone, %config%, Yourself, phone, (304) 631-0826
     ; Client communication and test mode
@@ -1075,13 +1095,13 @@ ReadConfig:
     ; Police related section
     IniRead, Itemsar, %config%, Police, Itemsar, Twinkie Wrappers,Hotdog buns,Potato chip bags,Used Diappers,Tools,Keyboards
     IniRead, medicalmsg, %config%, Police, medicalmsg, Hello I am ^1%title% %name% %department%^0, Please use this time to perform the medical activities required for the wounds you have received.  Using ^1/me's ^0to simulate your actions and the Medical staff actions. -Once completed. Use ^1%ms% Medical staff waves the %title% in^0.
-    
+
     IniRead, arrestreport, %config%, Police, arrestreport, TimeLine: %Date% - %newTime% EST§§Officers Involved:§%callsign% | %name%§§Location(s): §§Any Nickname(s): §§Is he or she known to be a part of a gang: §§Incident Report:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Seized Item(s): §§Evidence: §§Plead Guilty/NotGuilty:§§Time:§Fine:§§Nothing else follows --------------- %title% %name% of the %department% ---------------
     StringReplace, arrestreport,arrestreport,§,`n,all
-    
+
     IniRead, citationreport, %config%, Police, citationreport, TimeLine: %Date% - %newTime% EST§§Location(s): §§Vehicle Plate: §Vehicle VIN: §Vehicle Description: §§Briefly describe the offense:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§Nothing else follows --------------- %title% %name% of the %department% ---------------
     StringReplace, citationreport,citationreport,§,`n,all
-    
+
     IniRead, searchreport, %config%, Police, searchreport, REQUEST DATE: %Date% - %newTime% EST§§REQUESTED BY:§%callsign% | %name%§§TO BE ENFORCED UPON: §§PROPERTIES TO SEARCH: §§SEARCH REQUEST: §§SUMMARY OF JUSTIFICATION:§-----------------------------------------------------------------------------------§§-----------------------------------------------------------------------------------§§SUPPORTING DOCUMENTS/EVIDENCE:§§§Nothing else follows --------------- %title% %name% of the %department% ---------------
     StringReplace, searchreport,searchreport,§,`n,all
 
@@ -1100,7 +1120,7 @@ ReadConfig:
 Return
 
 UpdateConfig:
-; ============================================ WRITE INI SECTION ============================================
+    ; ============================================ WRITE INI SECTION ============================================
     IniWrite, %rolepick%, %config%, Yourself, role
     IniWrite, %callsign%, %config%, Yourself, callsign
     IniWrite, %myid%, %config%, Yourself, myid
@@ -1119,13 +1139,13 @@ UpdateConfig:
     IniWrite, %vehimgsearchhk%, %config%, Keys, vehimgsearchhk
     IniWrite, %runplatehk%, %config%, Keys, runplatehk
     ; Messages that correspond with the hotkeys
-    ; Police related 
+    ; Police related
     IniWrite, %Itemsar%, %config%, Police, Itemsar
     IniWrite, %medicalmsg%, %config%, Police, medicalmsg
-    
+
     StringReplace, arrestreport,arrestreport,`n,§,all
     IniWrite, %arrestreport%, %config%, Police, arrestreport
-    
+
     StringReplace, citationreport,citationreport,`n,§,all
     IniWrite, %citationreport%, %config%, Police, citationreport
 
@@ -1144,6 +1164,6 @@ UpdateConfig:
     IniWrite, %treleasemsg2%, %config%, Towing, treleasemsg2
     ; Help related section
     IniWrite, %micmsg%, %config%, Help, micmsg
-; ============================================ READ INI SECTION ============================================
+    ; ============================================ READ INI SECTION ============================================
     Gosub, ReadConfig
 Return
