@@ -6,7 +6,7 @@
 
 ## Process (required for every change, no exceptions)
 1. Open a GitHub issue first: problem, evidence, acceptance criteria.
-2. Branch `cursor/<issue#>-<slug>`. Never commit directly to `main`.
+2. Branch `cursor/<issue#>-<slug>`. Never commit directly to `master`.
 3. One scoped PR per issue. Body: `Closes #<issue>`, what, why, evidence (run links/logs/file:line), test plan + results, risk/rollback.
 4. CI green. Never skip hooks or checks; no force-push to shared branches.
 5. Review by someone other than the author (grader ≠ doer); resolve all threads.
