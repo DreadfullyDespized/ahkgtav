@@ -1,6 +1,6 @@
 # Contributing to ahkgtav
 
-**Repo label: TEST** — All branches = TEST; the owner seat merges when the process below is complete.
+**Repo label: TEST** — All branches = TEST; the owner seat merges when the process below is complete. — verified work merges to main, and Dread tests main. Source of truth: fleet skill "Repo registry (PROD vs TEST)".
 **Owner seat:** Rig (Stream Tools).
 **Tracking:** GitHub issues.
 
