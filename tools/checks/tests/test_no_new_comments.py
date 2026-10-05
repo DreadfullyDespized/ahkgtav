@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from pathlib import Path
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -305,3 +306,81 @@ class Cli(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Round3Gaps(unittest.TestCase):
+    def test_yaml_block_scalar_ends_at_parent_indent(self):
+        self.assertTrue(hits("w.yml", "- key: |\n    text\n  # why\n"))
+
+    def test_yaml_single_line_run_is_scanned_as_shell(self):
+        self.assertTrue(hits("w.yml", "steps:\n  - run: echo hi;#why\n"))
+        self.assertTrue(hits("w.yml", "steps:\n  - run: 'echo hi # why'\n"))
+
+    def test_github_script_block_is_scanned_as_js(self):
+        text = ("steps:\n  - uses: actions/github-script@v7\n"
+                "    with:\n      script: |\n        // why\n        return 1\n")
+        self.assertTrue(hits("w.yml", text))
+
+    def test_ahk_v2_backtick_escape_keeps_string(self):
+        self.assertTrue(hits("a.ah2", 'x := "a`"b" ; why\n'))
+
+    def test_ahk_v1_command_quotes_are_literal(self):
+        self.assertTrue(hits("a.ahk", 'MsgBox, 5" tall ; why\n'))
+        self.assertTrue(hits("a.ahk", "MsgBox, 'quoted ; why\n"))
+
+    def test_batch_rem_after_paren_or_or_and_label(self):
+        for text in ("dir || rem why\n", "if exist x (rem why\n", "rem;why\n", "rem,why\n",
+                     "rem=why\n", ":# why\n"):
+            self.assertTrue(hits("a.bat", text), text)
+
+    def test_js_template_expression_comments(self):
+        self.assertTrue(hits("a.js", "const s = `${a /* why */}`;\n"))
+
+    def test_bash_ansi_c_quote_and_colon_heredoc(self):
+        self.assertTrue(hits("a.sh", "echo $'it\\'s' # why\n"))
+        self.assertTrue(hits("a.sh", ": <<'NOTE'\n# block comment via colon heredoc\nNOTE\n"))
+
+    def test_gitattributes_minus_diff_still_shows_added_comments(self):
+        with tempfile.TemporaryDirectory() as d:
+            _git(d, "init", "-q")
+            _git(d, "config", "user.email", "t@t")
+            _git(d, "config", "user.name", "t")
+            (Path(d) / "a.py").write_text("x = 1\n", encoding="utf-8")
+            _git(d, "add", "a.py")
+            _git(d, "commit", "-qm", "base")
+            base = _git(d, "rev-parse", "HEAD").strip()
+            _git(d, "checkout", "-q", "-b", "pr")
+            (Path(d) / ".gitattributes").write_text("*.py -diff\n", encoding="utf-8")
+            (Path(d) / "a.py").write_text("x = 1  # why\n", encoding="utf-8")
+            _git(d, "add", "-A")
+            _git(d, "commit", "-qm", "hide")
+            head = _git(d, "rev-parse", "HEAD").strip()
+            old = os.getcwd()
+            try:
+                os.chdir(d)
+                found = N.run(base, head)
+            finally:
+                os.chdir(old)
+            self.assertTrue(any(h.startswith("a.py:") and "why" in h for h in found), found)
+
+    def test_file_with_nul_is_scanned(self):
+        with tempfile.TemporaryDirectory() as d:
+            _git(d, "init", "-q")
+            _git(d, "config", "user.email", "t@t")
+            _git(d, "config", "user.name", "t")
+            (Path(d) / "a.py").write_text("x = 1\n", encoding="utf-8")
+            _git(d, "add", "a.py")
+            _git(d, "commit", "-qm", "base")
+            base = _git(d, "rev-parse", "HEAD").strip()
+            _git(d, "checkout", "-q", "-b", "pr")
+            (Path(d) / "a.py").write_bytes(b"x = 1  # why\n\0more\n")
+            _git(d, "add", "a.py")
+            _git(d, "commit", "-qm", "nul")
+            head = _git(d, "rev-parse", "HEAD").strip()
+            old = os.getcwd()
+            try:
+                os.chdir(d)
+                found = N.run(base, head)
+            finally:
+                os.chdir(old)
+            self.assertTrue(any(h.startswith("a.py:") and "why" in h for h in found), found)
