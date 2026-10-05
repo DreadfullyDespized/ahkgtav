@@ -17,6 +17,10 @@ jobs:
           fetch-depth: 0
       - name: Checker tests (every language, both ways)
         run: python3 -m unittest discover -s tools/checks/tests -p "test_no_new_comments.py" -v
+      - name: no cleartext passwords/secrets
+        run: python3 tools/checks/no_secrets.py
+      - name: no_secrets checker tests
+        run: python3 -m unittest discover -s tools/checks/tests -p "test_no_secrets.py" -v
       - name: AGENTS.md Required headings
         run: python3 tools/checks/agents_md_headings.py
       - name: AGENTS.md headings checker tests

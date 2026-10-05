@@ -14,7 +14,7 @@ AutoHotkey v1 scripts that automate repetitive chat and hotkey tasks in GTA V ro
 
 ## What is NOT allowed
 
-- Secrets, tokens, or personal machine paths added as defaults.
+- Passwords or secrets in git (cleartext or otherwise documented in-repo); use env vars or a secret store.
 - Code comments in added lines.
 - Images outside a password-protected archive.
 - Pushing to `master`, force-pushing, or merging your own PR.
@@ -43,6 +43,7 @@ No correction-loop doc yet — follow CONTRIBUTING if present.
 
 ## Landmines
 
+- Never commit passwords/secrets → `tools/checks/no_secrets.py` / `no-new-comments.yml`
 - Never add code comments → `tools/checks/no_new_comments.py` / `no-new-comments.yml`
 - Never omit ## Blast radius (or leave it empty) → `tools/ci/blast_radius_check.py` / `blast-radius.yml`
 - Never delete Required AGENTS.md headings → `tools/checks/agents_md_headings.py`
@@ -52,4 +53,4 @@ No correction-loop doc yet — follow CONTRIBUTING if present.
 
 - Process and rule table: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Environment and usage: [README.md](README.md)
-- CI checks in `.github/workflows/`: `no-new-comments.yml` (`tools/checks/no_new_comments.py`, `tools/checks/agents_md_headings.py`), `blast-radius.yml` (`tools/ci/blast_radius_check.py`)
+- CI checks in `.github/workflows/`: `no-new-comments.yml` (includes `no_secrets.py`; `tools/checks/no_new_comments.py`, `tools/checks/agents_md_headings.py`), `blast-radius.yml` (`tools/ci/blast_radius_check.py`)
