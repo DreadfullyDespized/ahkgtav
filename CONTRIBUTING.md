@@ -14,3 +14,8 @@
 7. After merge: confirm the issue closed and post-merge CI/deploy passed; update the tracking card with PR link + evidence.
 
 Images committed to this repo must be inside a password-protected archive.
+
+## Rules and what enforces them
+| Rule (Dread) | Enforcer | Runs |
+|---|---|---|
+| No code comments, ever, from any bot (2026-10-04). Only added lines are checked; existing comments get a separate cleanup pass | `tools/checks/no_new_comments.py`: fails a PR whose diff adds a comment in Python (tokenize-based; docstrings are not comments), mIRC, AHK, JS/TS, PowerShell, bash, HTML or CSS. Only allowlisted lines pass: a shebang on line 1, the PEP 263 encoding line, `# type: ignore[...]`, `# noqa[: code]`, `# pragma: no cover`, AHK `#` directives and PowerShell `#Requires` | `.github/workflows/no-new-comments.yml` on every PR; same command locally with `--base origin/master --head HEAD` |
