@@ -73,8 +73,16 @@ CASES = {
              ["on: push # trigger\n", "# header\nname: ci\n",
               "steps:\n  - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0\n"],
              ["name: 'a # b'\n", 'url: "https://x/#top"\n', "key: a#b\n",
-              "run: |\n  echo # shell text in a block scalar\n  ls\nnext: 1\n",
-              "steps:\n  - run: >-\n      echo # folded\n"]),
+              "description: |\n  text # in a non-run block scalar\n  more\nnext: 1\n",
+              "steps:\n  - run: |\n      echo \"a # b\"\n      n=${#arr[@]}\n      echo $#\n",
+              "steps:\n  - run: echo '# quoted'\n"]),
+    "yaml-run-block": ("ci.yml",
+                       ["steps:\n  - run: |\n      # explain the next line\n      ls\n",
+                        "jobs:\n  a:\n    steps:\n      - name: x\n        run: |\n          ls\n          echo hi # why\n",
+                        "steps:\n  - run: >-\n      echo # folded\n",
+                        "steps:\n  - shell: pwsh\n    run: |\n      Get-Item . # note\n"],
+                       ["steps:\n  - run: |\n      ls\n      echo done\n",
+                        "steps:\n  - shell: pwsh\n    run: |\n      Write-Host 'a # b'\n"]),
     "batch": ("x.bat",
               ["REM why\n", "@rem quiet\n", ":: label-style comment\n", "echo hi & rem trailing\n",
                "rem\n"],
@@ -116,6 +124,9 @@ class Allowlist(unittest.TestCase):
             ("x.ps1", "#Requires -Version 5.1\n"),
             ("x.ps1", "#Requires -Modules Pester, PSReadLine\n"),
             ("x.ps1", "#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0' }\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName=\"Az.Accounts\";RequiredVersion=\"2.12.1\"}\n"),
+            ("x.ps1", "#Requires -Modules @{ ModuleName = 'x'; GUID = 'a1b2c3d4-0000-1111-2222-333344445555'; MaximumVersion = '3.0' }\n"),
+            ("x.py", "import x  # type: ignore[attr-defined, no-untyped-call]\n"),
             ("x.ps1", "#Requires -PSEdition Core -RunAsAdministrator\n"),
         ]:
             self.assertEqual(hits(path, text), [], (path, text))
@@ -137,6 +148,12 @@ class Allowlist(unittest.TestCase):
             ("x.py", "#!/usr/bin/env python3\n# coding: utf-8  because Windows\n"),
             ("x.py", "# -*- coding: utf-8 -*- and a note\n"),
             ("x.sh", "#!/bin/bash # why bash\nls\n"),
+            ("x.py", "import os  # type: ignore[this explains why we do it]\n"),
+            ("x.py", "import os  # type: ignore[import] because reasons\n"),
+            ("x.py", "import os  # type: ignore[import, see the ticket]\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName='x'; Note='explain why this matters'}\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName='x because the server is old'}\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName='x'; ModuleVersion='1.0'; Why='old box'}\n"),
         ]:
             self.assertTrue(hits(path, text), (path, text))
 
@@ -230,6 +247,43 @@ class Cli(unittest.TestCase):
         self.write("c.py", "# an old comment stays\nx = 1\ny = 2  # new\n")
         self.commit()
         self.assertEqual(N.run("main", "HEAD"), ["c.py:3: comment added: '# new'"])
+
+    def test_rename_into_a_scanned_extension_scans_every_line(self):
+        self.write("notes.txt", "# old comment smuggled in\nx = 1\n")
+        self.commit()
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "notes.txt", "notes.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["notes.py:1: comment added: '# old comment smuggled in'"])
+        self.assertEqual(self.main(), 1)
+
+    def test_rename_from_extensionless_into_a_scanned_extension(self):
+        self.write("tools/helper", "echo hi # was unscanned\n")
+        self.commit()
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "tools/helper", "tools/helper.sh")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["tools/helper.sh:1: comment added: '# was unscanned'"])
+
+    def test_rename_between_scanned_languages_scans_every_line(self):
+        self.write("tools/x.sh", "ls # bash comment\n")
+        self.commit()
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "tools/x.sh", "tools/x.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["tools/x.py:1: comment added: '# bash comment'"])
+
+    def test_rename_within_the_same_language_stays_quiet(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "a.py", "b.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), [])
+
+    def test_workflow_run_block_comment_through_git(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        self.write(".github/workflows/ci.yml", "on: push\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          # explain the next line\n          ls\n")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), [".github/workflows/ci.yml:7: comment added: '# explain the next line'"])
 
     def test_extensionless_skip_is_reported(self):
         _git(self.d, "checkout", "-q", "-b", "pr")
