@@ -18,18 +18,37 @@ Languages, by file extension (extensionless files by their shebang):
   HTML        .html .htm            '<!-- -->', plus JS comments inside <script>
                                     and CSS comments inside <style>
   mIRC        .mrc .als             a line starting with ';', and /* */ blocks
+  mIRC .ini   .ini                  the same rules on mIRC script lines
+                                    (n0=, n1=, ... in aliases.ini, remote.ini,
+                                    popups.ini); other .ini lines are settings
+                                    and are not scanned
   AHK         .ahk .ah2 .ahk2       ';' at the start of a line or after
-                                    whitespace (not `;), and /* */ blocks
+                                    whitespace (not `;, not inside "..." or a
+                                    v2 '...' string), and /* */ blocks
+  SQL         .sql                  '--' and '/* */', outside quotes
+  YAML        .yml .yaml            '#' at the start of a line or after
+                                    whitespace, outside quotes and outside
+                                    block scalars (run: |)
+  batch       .bat .cmd             REM and :: at the start of a command
+
+Extensionless files are scanned by their shebang (python, bash/sh, pwsh,
+node). Every other extensionless file, and a shebang naming any other
+interpreter, is skipped and listed as skipped in the output. Files with any
+other extension are not code this check knows, and are not scanned.
+Renames are detected (git diff -M), so a pure rename adds no lines.
 
 The only exemptions are this allowlist (ALLOWED below):
-  - a shebang on line 1 (any language);
-  - the PEP 263 encoding line (Python, line 1 or 2);
+  - a shebang on line 1 (any language), with nothing after the command;
+  - the PEP 263 encoding line (Python, line 1 or 2), the whole line being
+    '# coding: X', '# -*- coding: X -*-' or '# vim: set fileencoding=X :';
   - '# type: ignore' and '# type: ignore[code, ...]';
   - '# noqa' and '# noqa: CODE[, CODE]';
   - '# pragma: no cover';
   - AHK '#' directives (#Requires, #SingleInstance, #NoEnv, #Include, ...):
     '#' is not a comment in AHK, so they never match;
-  - PowerShell '#Requires' at the start of a line.
+  - PowerShell '#Requires' at the start of a line, the whole line being
+    #Requires parameters (-Version, -PSEdition, -RunAsAdministrator,
+    -Modules, -PSSnapin, -Assembly) with nothing else after them.
 
 Usage (same locally and in CI):
   python3 tools/checks/no_new_comments.py --base origin/main --head HEAD
@@ -56,6 +75,10 @@ LANG_BY_EXT = {
     ".html": "html", ".htm": "html",
     ".mrc": "mirc", ".als": "mirc",
     ".ahk": "ahk", ".ah2": "ahk", ".ahk2": "ahk",
+    ".ini": "mirc-ini",
+    ".sql": "sql",
+    ".yml": "yaml", ".yaml": "yaml",
+    ".bat": "batch", ".cmd": "batch",
 }
 SHEBANG_LANG = (
     (re.compile(r"^#!.*\bpython[0-9.]*\b"), "python"),
@@ -70,19 +93,25 @@ AHK_DIRECTIVES = (
     "#NoTrayIcon", "#KeyHistory", "#Hotstring", "#ErrorStdOut", "#ClipboardTimeout",
     "#WinActivateForce", "#MaxHotkeysPerInterval", "#HotkeyInterval", "#Ahk2Exe",
 )
+SHEBANG_RX = re.compile(r"^#![ \t]*/\S+(?:[ \t]+[^\s#]+)*[ \t]*$")
 ALLOWED = {
     "python": (
         re.compile(r"^#\s*type:\s*ignore(?:\[[^\]\n]*\])?\s*$"),
         re.compile(r"^#\s*noqa(?::\s*[A-Z]+[0-9]+(?:\s*,\s*[A-Z]+[0-9]+)*)?\s*$"),
         re.compile(r"^#\s*pragma:\s*no\s+cover\s*$"),
     ),
-    "powershell": (re.compile(r"^#requires\b", re.I),),
+    "powershell": (re.compile(
+        r"^#requires(?:[ \t]+-(?:version[ \t]+[\d.]+|psedition[ \t]+\w+|runasadministrator"
+        r"|modules[ \t]+(?:@\{[^}#]*\}|[^\s#,]+)(?:[ \t]*,[ \t]*(?:@\{[^}#]*\}|[^\s#,]+))*"
+        r"|pssnapin[ \t]+[^\s#]+(?:[ \t]+-version[ \t]+[\d.]+)?|assembly[ \t]+[^\s#]+))+[ \t]*$", re.I),),
 }
-PEP263_RX = re.compile(r"^[ \t\f]*#.*?coding[:=][ \t]*[-\w.]+")
+PEP263_RX = re.compile(
+    r"^#[ \t]*(?:-\*-[ \t]*)?(?:en)?coding[:=][ \t]*[-\w.]+[ \t]*(?:-\*-)?[ \t]*$"
+    r"|^#[ \t]*vim:[ \t]*set[ \t]+fileencoding=[-\w.]+[ \t]*:[ \t]*$")
 
 
 def lang_of(path, text=""):
-    ext = os.path.splitext(path)[1].lower()
+    ext = os.path.splitext(os.path.basename(path))[1].lower()
     if ext in LANG_BY_EXT:
         return LANG_BY_EXT[ext]
     if not ext and text.startswith("#!"):
@@ -91,6 +120,15 @@ def lang_of(path, text=""):
             if rx.search(first):
                 return lang
     return None
+
+
+def skip_reason(path, text):
+    """Why an extensionless file is skipped, or None when it is scanned or not a candidate."""
+    if os.path.splitext(os.path.basename(path))[1] or lang_of(path, text):
+        return None
+    if text.startswith("#!"):
+        return "extensionless, shebang names an interpreter this check does not know"
+    return "extensionless, no shebang on line 1"
 
 
 def _hash_scan(text, word_start):
@@ -227,7 +265,7 @@ def powershell_comments(text):
     return out
 
 
-def c_comments(text, line_comments=True, js=True, line0=1):
+def c_comments(text, line_comments=True, js=True, line0=1, line_tok="//", quotes=None):
     out, i, n, line = [], 0, len(text), line0
     last = ""
     while i < n:
@@ -239,12 +277,12 @@ def c_comments(text, line_comments=True, js=True, line0=1):
         if c in " \t\r":
             i += 1
             continue
-        if c in ("'\"`" if js else "'\""):
+        if c in (quotes if quotes is not None else ("'\"`" if js else "'\"")):
             j = i + 1
             while j < n and text[j] != c:
-                if text[j] == "\\":
+                if text[j] == "\\" and line_tok == "//":
                     j += 1
-                elif text[j] == "\n" and c != "`":
+                elif text[j] == "\n" and c != "`" and line_tok == "//":
                     break
                 j += 1
             line += text.count("\n", i, j)
@@ -258,13 +296,13 @@ def c_comments(text, line_comments=True, js=True, line0=1):
             line += seg.count("\n")
             i = j
             continue
-        if line_comments and text.startswith("//", i):
+        if line_comments and text.startswith(line_tok, i):
             j = text.find("\n", i)
             j = n if j < 0 else j
             out.append((line, line, text[i:j]))
             i = j
             continue
-        if js and c == "/" and (last == "" or last in "(,=:[!&|?{};+-*%<>~^"):
+        if js and c == "/" and (last == "" or last in "(,=:[!&|?{};+-*%<>~^" or last == "kw"):
             j, cls = i + 1, False
             while j < n and text[j] != "\n":
                 if text[j] == "\\":
@@ -280,9 +318,19 @@ def c_comments(text, line_comments=True, js=True, line0=1):
             if j < n and text[j] == "/":
                 i, last = j + 1, "/"
                 continue
+        if c.isalpha() or c in "_$":
+            m = re.match(r"[A-Za-z_$][\w$]*", text[i:])
+            word = m.group(0)
+            last = "kw" if word in JS_REGEX_KEYWORDS else word[-1]
+            i += len(word)
+            continue
         last = c
         i += 1
     return out
+
+
+JS_REGEX_KEYWORDS = {"return", "typeof", "case", "do", "else", "in", "of", "new", "delete",
+                     "void", "throw", "yield", "await", "instanceof"}
 
 
 def _blank(text, a, b):
@@ -331,13 +379,70 @@ def _mirc_line(l):
 
 
 def _ahk_line(l):
-    q = False
+    q = None
     for i, c in enumerate(l):
-        if c == '"':
-            q = not q
-        elif c == ";" and not q and (i == 0 or l[i - 1] in " \t") and (i == 0 or l[i - 1] != "`"):
+        if q:
+            if c == q:
+                q = None
+        elif c == '"' or (c == "'" and (i == 0 or not (l[i - 1].isalnum() or l[i - 1] == "_"))):
+            q = c
+        elif c == ";" and (i == 0 or l[i - 1] in " \t"):
             return i
     return None
+
+
+INI_SCRIPT_RX = re.compile(r"^(n\d+=)(.*)$", re.I)
+
+
+def ini_comments(text):
+    lines = text.split("\n")
+    script = []
+    for l in lines:
+        m = INI_SCRIPT_RX.match(l)
+        script.append(m.group(2) if m else "")
+    return _block_lines("\n".join(script), _mirc_line, False)
+
+
+def yaml_comments(text):
+    out, block = [], None
+    for ln, l in enumerate(text.split("\n"), 1):
+        ind = len(l) - len(l.lstrip(" "))
+        if block is not None:
+            if not l.strip() or ind > block:
+                continue
+            block = None
+        q = None
+        for i, c in enumerate(l):
+            if q:
+                if c == q:
+                    q = None
+            elif c in "'\"" and (i == 0 or l[i - 1] in " \t:-[{,"):
+                q = c
+            elif c == "#" and (i == 0 or l[i - 1] in " \t"):
+                out.append((ln, ln, l[i:]))
+                break
+        code = l.split(" #", 1)[0].rstrip()
+        if re.search(r"(?:^|[:\-][ \t]+|^[ \t]*)[|>][-+0-9]*$", code):
+            block = ind
+    return out
+
+
+BAT_RX = re.compile(r"^[ \t]*@?[ \t]*(?:rem(?=[ \t.:/\\]|$)|::)", re.I)
+BAT_AMP_RX = re.compile(r"&[ \t]*rem(?=[ \t]|$)", re.I)
+
+
+def batch_comments(text):
+    out = []
+    for ln, l in enumerate(text.split("\n"), 1):
+        m = BAT_RX.match(l)
+        if m:
+            out.append((ln, ln, l.strip()))
+            continue
+        outside = re.sub(r'"[^"]*"', lambda x: " " * len(x.group(0)), l)
+        m = BAT_AMP_RX.search(outside)
+        if m:
+            out.append((ln, ln, l[m.start() + 1:].strip()))
+    return out
 
 
 def comments(lang, text):
@@ -357,6 +462,14 @@ def comments(lang, text):
         return _block_lines(text, _mirc_line, False)
     if lang == "ahk":
         return _block_lines(text, _ahk_line, True)
+    if lang == "mirc-ini":
+        return ini_comments(text)
+    if lang == "sql":
+        return c_comments(text, js=False, line_tok="--", quotes="'\"`")
+    if lang == "yaml":
+        return yaml_comments(text)
+    if lang == "batch":
+        return batch_comments(text)
     return []
 
 
@@ -364,7 +477,7 @@ def allowed(lang, start, body, line_text=""):
     s = body.strip()
     if not line_text.strip().startswith(s.split("\n")[0]):
         return False
-    if start == 1 and s.startswith("#!"):
+    if start == 1 and SHEBANG_RX.match(s):
         return True
     if lang == "python" and start in (1, 2) and PEP263_RX.match(s):
         return True
@@ -400,29 +513,42 @@ def decode(raw):
     return raw.decode("utf-8-sig", "replace")
 
 
-def added_lines(base, head, path):
-    diff = git("diff", "-U0", "--no-color", "--no-ext-diff", f"{base}...{head}", "--", path)
-    out = set()
-    for m in re.finditer(rb"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@", diff, re.M):
-        start, count = int(m.group(1)), int(m.group(2) or 1)
-        out.update(range(start, start + count))
+def parse_diff(diff):
+    """{new path: set(added line numbers)} from a -U0 diff (renames: new path only)."""
+    out, path = {}, None
+    for line in diff.split("\n"):
+        if line.startswith("diff --git "):
+            path = None
+        elif line.startswith("+++ "):
+            target = line[4:]
+            path = target[2:] if target.startswith("b/") else None
+            if path is not None:
+                out.setdefault(path, set())
+        elif line.startswith("@@") and path is not None:
+            m = re.match(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@", line)
+            if m:
+                start, count = int(m.group(1)), int(m.group(2) or 1)
+                out[path].update(range(start, start + count))
     return out
 
 
-def run(base, head):
-    names = git("diff", "--name-only", "-z", "--diff-filter=AMR", f"{base}...{head}").split(b"\0")
+def run(base, head, skipped=None):
+    diff = git("-c", "core.quotePath=false", "diff", "-M", "-U0", "--no-color", "--no-ext-diff",
+               "--diff-filter=AMR", f"{base}...{head}").decode("utf-8", "replace")
     hits = []
-    for raw_name in names:
-        path = raw_name.decode("utf-8", "replace")
-        if not path:
+    for path, added in sorted(parse_diff(diff).items()):
+        if not added:
             continue
         raw = git("show", f"{head}:{path}")
         if b"\0" in raw[:8000] and not raw.startswith((b"\xff\xfe", b"\xfe\xff")):
             continue
         text = decode(raw)
+        why = skip_reason(path, text)
+        if why and skipped is not None:
+            skipped.append(f"{path}: {why}")
         if not lang_of(path, text):
             continue
-        for line, body in added_comments(path, text, added_lines(base, head, path)):
+        for line, body in added_comments(path, text, added):
             hits.append(f"{path}:{line}: comment added: {body!r}")
     return hits
 
@@ -443,7 +569,10 @@ def main(argv=None):
         base, head = pr["base"]["sha"], pr["head"]["sha"]
     if not base:
         ap.error("--base (or --event) is required")
-    hits = run(base, head)
+    skipped = []
+    hits = run(base, head, skipped)
+    for sk in skipped:
+        print("no_new_comments: skipped " + sk)
     for h in hits:
         print("no-new-comments: " + h)
     if hits:
