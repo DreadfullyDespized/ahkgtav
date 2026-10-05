@@ -11,11 +11,18 @@ import blast_radius_check as B
 
 SCRIPT = os.path.join(HERE, "blast_radius_check.py")
 FIXTURES = os.path.join(HERE, "blast_radius_fixtures")
-GOOD = "- The overlay reads `quotes.json`, so the stream overlay shows the new field.\n"
+GOOD = "- The overlay reads `quotes.json`, so the stream overlay shows the new field. Checked with `rg quotes.json`.\n"
+PROMPT = ("TBD: list each area outside this diff that this change can break, or explain "
+          "why no other part needs it, and name the proof.")
+SECTION = "## Blast radius\nThe nightly sync job imports load_points so it could break; rg load_points found it.\n"
 
 
 def body(section, before="## For Dread\n**Ask:** Nothing\n\n", after="\nLevel: 2\n"):
     return before + section + after
+
+
+def br(text):
+    return body("## Blast radius\n" + text + "\n")
 
 
 class Section(unittest.TestCase):
@@ -24,6 +31,9 @@ class Section(unittest.TestCase):
 
     def test_heading_only_inside_comment_fails(self):
         self.assertTrue(B.problems("<!--\n## Blast radius\n" + GOOD + "-->\n"))
+
+    def test_heading_only_inside_unclosed_comment_fails(self):
+        self.assertTrue(B.problems("<!--\n## Blast radius\n" + GOOD))
 
     def test_heading_only_inside_code_fence_fails(self):
         self.assertTrue(B.problems("```\n## Blast radius\n" + GOOD + "```\n"))
@@ -44,7 +54,7 @@ class Section(unittest.TestCase):
         for v in ["none", "None.", "N/A", "n/a", "nothing", "Nothing!", "TBD", "tbd", "-", "--",
                   "- none", "* n/a", "**None**", "`n/a`", "TODO", "- TBD: fill in later", "none\n- n/a\n-"]:
             with self.subTest(v=v):
-                errs = B.problems(body("## Blast radius\n" + v + "\n"))
+                errs = B.problems(br(v))
                 self.assertTrue(errs and "filler" in errs[0], errs)
 
     def test_template_prompt_fails(self):
@@ -55,15 +65,15 @@ class Section(unittest.TestCase):
             self.assertTrue(B.problems(fh.read()))
 
     def test_too_thin_fails(self):
-        errs = B.problems(body("## Blast radius\nthe overlay\n"))
+        errs = B.problems(br("the overlay"))
         self.assertTrue(errs and "too thin" in errs[0], errs)
 
     def test_named_area_passes(self):
-        self.assertEqual(B.problems(body("## Blast radius\n" + GOOD)), [])
+        self.assertEqual(B.problems(br(GOOD)), [])
 
     def test_why_nothing_depends_passes(self):
-        txt = "None: this is a new standalone script, nothing imports or runs it yet.\n"
-        self.assertEqual(B.problems(body("## Blast radius\n" + txt)), [])
+        txt = "None: this is a new standalone script, nothing imports or runs it; `rg new_tool` found no hits."
+        self.assertEqual(B.problems(br(txt)), [])
 
     def test_section_ends_at_next_h2(self):
         self.assertTrue(B.problems("## Blast radius\nn/a\n## Other\n" + GOOD))
@@ -82,48 +92,144 @@ class Section(unittest.TestCase):
         self.assertTrue(B.problems(None))
 
 
+class Fences(unittest.TestCase):
+    def test_section_outside_fence_passes(self):
+        self.assertEqual(B.problems("```\ncode\n```\n" + SECTION), [])
+        self.assertEqual(B.problems("````\n```\nstill code\n````\n" + SECTION), [])
+
+    @unittest.expectedFailure
+    def test_four_backtick_fence_hides_section(self):
+        self.assertTrue(B.problems("````\n" + SECTION + "````\n"))
+
+    @unittest.expectedFailure
+    def test_four_backtick_fence_not_closed_by_three(self):
+        self.assertTrue(B.problems("````\nx\n```\n" + SECTION + "````\n"))
+
+    @unittest.expectedFailure
+    def test_unclosed_backtick_fence_hides_section(self):
+        self.assertTrue(B.problems("```\n" + SECTION))
+
+    @unittest.expectedFailure
+    def test_unclosed_tilde_fence_hides_section(self):
+        self.assertTrue(B.problems("~~~~\n" + SECTION))
+
+    @unittest.expectedFailure
+    def test_backtick_fence_not_closed_by_tildes(self):
+        self.assertTrue(B.problems("```\nx\n~~~\n" + SECTION))
+
+    @unittest.expectedFailure
+    def test_tilde_fence_not_closed_by_backticks(self):
+        self.assertTrue(B.problems("~~~\nx\n```\n" + SECTION))
+
+    def test_fence_with_info_string(self):
+        self.assertTrue(B.problems("```python\n" + SECTION + "```\n"))
+
+    @unittest.expectedFailure
+    def test_closer_with_trailing_text_does_not_close(self):
+        self.assertTrue(B.problems("```\nx\n``` not a closer\n" + SECTION))
+
+    @unittest.expectedFailure
+    def test_indented_fence_in_list_hides_section(self):
+        self.assertTrue(B.problems("1. item\n    ```\n   ## Blast radius\n   " + SECTION.split("\n")[1] + "\n"))
+
+    @unittest.expectedFailure
+    def test_deeply_indented_line_does_not_close_fence(self):
+        self.assertTrue(B.problems("```\nx\n        ```\n" + SECTION))
+
+    def test_fence_lines_inside_section_are_not_content(self):
+        self.assertTrue(B.problems("## Blast radius\n```\n" + GOOD + "```\n"))
+
+
 class Bots(unittest.TestCase):
-    def test_bots(self):
-        for login, kind in [("github-actions[bot]", "Bot"), ("dependabot[bot]", "Bot"),
-                            ("dependabot", "User"), ("renovate[bot]", ""), ("someapp", "Bot")]:
-            with self.subTest(login=login):
-                self.assertTrue(B.is_bot(login, kind))
-
-    def test_humans(self):
-        for login in ["DreadfullyDespized", "botanist", ""]:
-            with self.subTest(login=login):
-                self.assertFalse(B.is_bot(login, "User"))
-
-
-class Cli(unittest.TestCase):
-    def run_event(self, text, login="DreadfullyDespized", kind="User"):
+    def run_event(self, text, login, kind):
         ev = {"pull_request": {"body": text, "user": {"login": login, "type": kind}}}
         with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
             json.dump(ev, fh)
         try:
-            return subprocess.run([sys.executable, SCRIPT, "--event", fh.name],
-                                  capture_output=True, text=True)
+            return subprocess.run([sys.executable, SCRIPT, "--event", fh.name], capture_output=True, text=True)
+        finally:
+            os.unlink(fh.name)
+
+    @unittest.expectedFailure
+    def test_bots_are_not_exempt(self):
+        for login, kind in [("cursor[bot]", "Bot"), ("github-actions[bot]", "Bot"), ("github-actions", "User"),
+                            ("renovate[bot]", "Bot"), ("renovate", "User"), ("dependabot[bot]", "Bot"),
+                            ("dependabot", "User")]:
+            with self.subTest(login=login):
+                r = self.run_event("## For Dread\nbump\n", login, kind)
+                self.assertEqual(r.returncode, 1, r.stdout)
+                self.assertNotIn("skipped", r.stdout)
+
+
+class Substance(unittest.TestCase):
+    @unittest.expectedFailure
+    def test_noncommittal_phrases_fail(self):
+        for v in ["None \u2014 trivial change here", "None - trivial change here", "To be determined later on",
+                  "Trivial change, nothing to report here", "Unknown at this point in time",
+                  "N/A for this one really", "Not sure yet, will look"]:
+            with self.subTest(v=v):
+                self.assertTrue(B.problems(br(v)))
+
+    @unittest.expectedFailure
+    def test_vague_prose_without_area_fails(self):
+        self.assertTrue(B.problems(br("This could affect some other things in the app, I checked.")))
+
+    @unittest.expectedFailure
+    def test_area_without_evidence_fails(self):
+        errs = B.problems(br("The nightly sync job imports `load_points()` and could break."))
+        self.assertTrue(errs and "cite what was checked" in errs[0], errs)
+
+    @unittest.expectedFailure
+    def test_no_dependents_without_evidence_fails(self):
+        self.assertTrue(B.problems(br("Nothing else imports this new standalone helper script.")))
+
+    def test_no_dependents_with_evidence_passes(self):
+        self.assertEqual(B.problems(br("Nothing else imports this new helper; I searched the whole repo.")), [])
+
+    def test_issue_reference_with_evidence_passes(self):
+        self.assertEqual(B.problems(br("Open PR #42 will go red on its next push; I checked the open PR list.")), [])
+
+    @unittest.expectedFailure
+    def test_template_prompt_without_tbd_fails(self):
+        self.assertTrue(B.problems(br(PROMPT.split(": ", 1)[1])))
+
+    @unittest.expectedFailure
+    def test_template_prompt_variants_fail(self):
+        for v in [PROMPT, "- " + PROMPT, "**" + PROMPT + "**", "> " + PROMPT, "- [ ] " + PROMPT.split(": ", 1)[1]]:
+            with self.subTest(v=v):
+                self.assertTrue(B.problems(br(v)))
+
+    @unittest.expectedFailure
+    def test_template_constant_matches(self):
+        self.assertEqual(B.TEMPLATE_PROMPT, PROMPT)
+
+    @unittest.expectedFailure
+    def test_question_only_fails(self):
+        self.assertTrue(B.problems(br("Does `quotes.json` change anything for the overlay I checked?")))
+
+
+class Cli(unittest.TestCase):
+    def run_event(self, text):
+        ev = {"pull_request": {"body": text, "user": {"login": "DreadfullyDespized", "type": "User"}}}
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+            json.dump(ev, fh)
+        try:
+            return subprocess.run([sys.executable, SCRIPT, "--event", fh.name], capture_output=True, text=True)
         finally:
             os.unlink(fh.name)
 
     def test_event_fail(self):
-        r = self.run_event(body("## Blast radius\nnone\n"))
+        r = self.run_event(br("none"))
         self.assertEqual(r.returncode, 1)
         self.assertIn("::error title=Blast radius::", r.stdout)
 
     def test_event_pass(self):
-        r = self.run_event(body("## Blast radius\n" + GOOD))
+        r = self.run_event(br(GOOD))
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertIn("OK", r.stdout)
 
     def test_null_body_fails(self):
         self.assertEqual(self.run_event(None).returncode, 1)
-
-    def test_bot_skipped(self):
-        for login in ["github-actions[bot]", "dependabot[bot]"]:
-            r = self.run_event("", login=login, kind="Bot")
-            self.assertEqual(r.returncode, 0)
-            self.assertIn("skipped", r.stdout)
 
     def test_not_a_pr_event(self):
         with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
