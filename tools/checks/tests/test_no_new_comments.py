@@ -55,7 +55,30 @@ CASES = {
     "ahk": ("x.ahk",
             ["; comment\n", "MsgBox, hi ; inline\n", "/*\nblock\n*/\n", "x := 1\t; tab inline\n"],
             ["#Requires AutoHotkey v2.0\n", "#SingleInstance Force\n", "#NoEnv\n", "#Include lib.ahk\n",
-             "MsgBox, a`; b\n", 'x := "a ; b"\n', "Send, {;}\n"]),
+             "MsgBox, a`; b\n", 'x := "a ; b"\n', "Send, {;}\n", "MsgBox('a ;b')\n", "x := 'it ;s'\n"]),
+    "ahk-apostrophe": ("y.ahk", ["MsgBox, don't ; inline comment\n"], ["MsgBox, don't stop\n"]),
+    "js-regex-after-keyword": ("y.js", ["return a; // why\n"],
+                               ["function f(s) { return /\\/\\//.test(s); }\n",
+                                "if (typeof /x/ === 'object') {}\n"]),
+    "mirc-ini": ("remote.ini",
+                 ["[script]\nn0=; comment in remote.ini\nn1=on *:TEXT:!a:#:{ msg # hi }\n",
+                  "[aliases]\nn0=/*\nn1=block\nn2=*/\n", "[script]\nn0=alias a {\nn1=  ; indented\nn2=}\n"],
+                 ["[script]\nn0=alias a { echo -a hi ; there }\n", "[mirc]\n; settings comment, not script\nnick=Dread\n",
+                  "[script]\nn0=on *:TEXT:!a:#:{ msg # hi }\n"]),
+    "sql": ("x.sql",
+            ["SELECT 1; -- why\n", "-- header\nSELECT 1;\n", "/* block */\nSELECT 2;\n"],
+            ["SELECT '-- not a comment';\n", "SELECT 'it''s -- still a string';\n",
+             'SELECT "a--b" FROM t;\n', "SELECT 4 - -1;\n"]),
+    "yaml": ("x.yml",
+             ["on: push # trigger\n", "# header\nname: ci\n",
+              "steps:\n  - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0\n"],
+             ["name: 'a # b'\n", 'url: "https://x/#top"\n', "key: a#b\n",
+              "run: |\n  echo # shell text in a block scalar\n  ls\nnext: 1\n",
+              "steps:\n  - run: >-\n      echo # folded\n"]),
+    "batch": ("x.bat",
+              ["REM why\n", "@rem quiet\n", ":: label-style comment\n", "echo hi & rem trailing\n",
+               "rem\n"],
+              ["echo remember\n", "set REMOTE=1\n", "echo \"a & rem b\"\n", ":label\n"]),
 }
 
 
@@ -88,6 +111,12 @@ class Allowlist(unittest.TestCase):
             ("x.ps1", "#requires -RunAsAdministrator\n"),
             ("x.ahk", "#Requires AutoHotkey v2.0\n#SingleInstance Force\n"),
             ("x.js", "#!/usr/bin/env node\nlet a = 1;\n"),
+            ("x.py", "# -*- coding: utf-8 -*-\nx = 1\n"),
+            ("x.py", "# vim: set fileencoding=utf-8 :\nx = 1\n"),
+            ("x.ps1", "#Requires -Version 5.1\n"),
+            ("x.ps1", "#Requires -Modules Pester, PSReadLine\n"),
+            ("x.ps1", "#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0' }\n"),
+            ("x.ps1", "#Requires -PSEdition Core -RunAsAdministrator\n"),
         ]:
             self.assertEqual(hits(path, text), [], (path, text))
 
@@ -101,6 +130,13 @@ class Allowlist(unittest.TestCase):
             ("x.py", "x = 1  # TODO\n"),
             ("x.ps1", "Get-Item .\n# Requires a note\n"),
             ("x.ps1", "Get-Item . #Requires inline\n"),
+            ("x.ps1", "#Requires -Version 5 # and here is a comment\n"),
+            ("x.ps1", "#Requires -Version 5 and why we need it\n"),
+            ("x.ps1", "#Requires because the server is old\n"),
+            ("x.py", "# this is about coding: utf-8 and why we do X\nx = 1\n"),
+            ("x.py", "#!/usr/bin/env python3\n# coding: utf-8  because Windows\n"),
+            ("x.py", "# -*- coding: utf-8 -*- and a note\n"),
+            ("x.sh", "#!/bin/bash # why bash\nls\n"),
         ]:
             self.assertTrue(hits(path, text), (path, text))
 
@@ -118,7 +154,14 @@ class OnlyAddedLines(unittest.TestCase):
 
     def test_unknown_extensions_are_skipped(self):
         self.assertEqual(hits("README.md", "<!-- template help -->\n# Title\n"), [])
-        self.assertEqual(hits("x.yml", "# yaml\n"), [])
+        self.assertEqual(hits("x.toml", "# toml\n"), [])
+
+    def test_extensionless_files_are_scanned_or_skipped_explicitly(self):
+        self.assertIsNone(N.skip_reason("tools/run", "#!/bin/bash\nls\n"))
+        self.assertIn("no shebang", N.skip_reason("tools/run", "ls # x\n"))
+        self.assertIn("does not know", N.skip_reason("tools/run", "#!/usr/bin/perl\nprint 1; # x\n"))
+        self.assertIsNone(N.skip_reason("x.md", "# Title\n"))
+        self.assertEqual(hits("tools/run", "ls # x\n"), [])
 
     def test_extensionless_script_by_shebang(self):
         self.assertTrue(hits("tools/run", "#!/bin/bash\nls # list\n"))
@@ -173,6 +216,29 @@ class Cli(unittest.TestCase):
         self.commit()
         self.assertEqual(self.main(), 1)
         self.assertEqual(N.run("main", "HEAD"), ["a.py:3: comment added: '# new comment'"])
+
+    def test_pure_rename_flags_nothing(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "a.py", "c.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), [])
+        self.assertEqual(self.main(), 0)
+
+    def test_rename_with_an_added_comment_flags_only_that_line(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "a.py", "c.py")
+        self.write("c.py", "# an old comment stays\nx = 1\ny = 2  # new\n")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["c.py:3: comment added: '# new'"])
+
+    def test_extensionless_skip_is_reported(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        self.write("tools/notes", "plain text # not scanned\n")
+        self.write("tools/run", "#!/bin/sh\nls # flagged\n")
+        self.commit()
+        skipped = []
+        self.assertEqual(N.run("main", "HEAD", skipped), ["tools/run:2: comment added: '# flagged'"])
+        self.assertEqual(skipped, ["tools/notes: extensionless, no shebang on line 1"])
 
     def test_every_language_through_git(self):
         _git(self.d, "checkout", "-q", "-b", "pr")
