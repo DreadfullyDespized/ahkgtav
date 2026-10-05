@@ -182,8 +182,11 @@ def bash_comments(text):
     q, heredoc, pending = None, None, []
     for ln, l in enumerate(lines, 1):
         if heredoc:
-            word, dash = heredoc
-            if (l.lstrip("\t") if dash else l) == word:
+            word, dash, as_comment = heredoc
+            end = (l.lstrip("\t") if dash else l) == word
+            if as_comment and not end and l.strip():
+                out.append((ln, ln, l if l.lstrip().startswith("#") else "# " + l.strip()))
+            if end:
                 heredoc = pending.pop(0) if pending else None
             continue
         i = 0
@@ -200,6 +203,17 @@ def bash_comments(text):
             if c == "\\":
                 i += 2
                 continue
+            if c == "$" and l[i + 1:i + 2] == "'":
+                j = i + 2
+                while j < len(l):
+                    if l[j] == "\\":
+                        j += 2
+                        continue
+                    if l[j] == "'":
+                        break
+                    j += 1
+                i = j + 1
+                continue
             if c in "'\"":
                 q = c
             elif c == "$" and l[i + 1:i + 2] == "#":
@@ -213,10 +227,12 @@ def bash_comments(text):
                 i += 3
                 continue
             elif l.startswith("<<", i):
-                m = re.match(r"<<(-?)[ \t]*(['\"]?)([A-Za-z_][\w]*)\2", l[i:])
-                if m:
-                    pending.append((m.group(3), bool(m.group(1))))
-                    i += m.end()
+                mm = re.match(r"<<(-?)[ \t]*(['\"]?)([A-Za-z_][\w]*)\2", l[i:])
+                if mm:
+                    before = l[:i].rstrip()
+                    as_comment = before == ":" or re.search(r"(?:^|[;&|]\s*):$", before) is not None
+                    pending.append((mm.group(3), bool(mm.group(1)), as_comment))
+                    i += mm.end()
                     continue
             elif c == "#" and (i == 0 or l[i - 1] in " \t;|&()"):
                 out.append((ln, ln, l[i:]))
@@ -291,6 +307,35 @@ def c_comments(text, line_comments=True, js=True, line0=1, line_tok="//", quotes
             i += 1
             continue
         if c in (quotes if quotes is not None else ("'\"`" if js else "'\"")):
+            if c == "`" and js:
+                j = i + 1
+                while j < n and text[j] != "`":
+                    if text[j] == "\\":
+                        j += 2
+                        continue
+                    if text[j] == "\n":
+                        line += 1
+                        j += 1
+                        continue
+                    if text[j] == "$" and text[j + 1:j + 2] == "{":
+                        depth, k = 1, j + 2
+                        while k < n and depth:
+                            if text[k] == "{":
+                                depth += 1
+                            elif text[k] == "}":
+                                depth -= 1
+                            k += 1
+                        expr = text[j + 2:k - 1 if depth == 0 else k]
+                        expr_line = line + text.count("\n", i, j + 2)
+                        for a, b, t in c_comments(expr, line_comments=line_comments, js=True, line0=expr_line):
+                            out.append((a, b, t))
+                        line += text.count("\n", j, k)
+                        j = k
+                        continue
+                    j += 1
+                line += text.count("\n", i, j)
+                i, last = j + 1, c
+                continue
             j = i + 1
             while j < n and text[j] != c:
                 if text[j] == "\\" and line_tok == "//":
@@ -332,8 +377,8 @@ def c_comments(text, line_comments=True, js=True, line0=1, line_tok="//", quotes
                 i, last = j + 1, "/"
                 continue
         if c.isalpha() or c in "_$":
-            m = re.match(r"[A-Za-z_$][\w$]*", text[i:])
-            word = m.group(0)
+            mm = re.match(r"[A-Za-z_$][\w$]*", text[i:])
+            word = mm.group(0)
             last = "kw" if word in JS_REGEX_KEYWORDS else word[-1]
             i += len(word)
             continue
@@ -391,17 +436,42 @@ def _mirc_line(l):
     return len(l) - len(l.lstrip()) if l.lstrip().startswith(";") else None
 
 
+def _ahk_v1_command(l):
+    s = l.lstrip()
+    if not s or s[0] in ";#/":
+        return False
+    if ":=" in s or s.lstrip().startswith(("if ", "If ", "while ", "While ", "loop ", "Loop ", "for ", "For ")):
+        return False
+    if re.match(r"^[A-Za-z_][\w#@$]*\s*\(", s):
+        return False
+    return bool(re.match(r"^[A-Za-z_][\w#@$]*\s*,", s) or re.match(r"^[A-Za-z_][\w#@$]*\s+\S", s))
+
+
 def _ahk_line(l):
+    if _ahk_v1_command(l):
+        for i, c in enumerate(l):
+            if c == ";" and (i == 0 or l[i - 1] in " \t"):
+                return i
+        return None
     q = None
-    for i, c in enumerate(l):
+    i = 0
+    while i < len(l):
+        c = l[i]
         if q:
+            if c == "`":
+                i += 2
+                continue
             if c == q:
                 q = None
-        elif c == '"' or (c == "'" and (i == 0 or not (l[i - 1].isalnum() or l[i - 1] == "_"))):
+            i += 1
+            continue
+        if c == '"' or (c == "'" and (i == 0 or not (l[i - 1].isalnum() or l[i - 1] == "_"))):
             q = c
         elif c == ";" and (i == 0 or l[i - 1] in " \t"):
             return i
+        i += 1
     return None
+
 
 
 INI_SCRIPT_RX = re.compile(r"^(n\d+=)(.*)$", re.I)
@@ -480,30 +550,61 @@ def yaml_comments(text):
                 out.append((ln, ln, l[i:]))
                 break
         code = l.split(" #", 1)[0].rstrip()
+        if YAML_RUN_RX.match(code):
+            block = _key_col(code)
+            run = (ln + 1, _step_shell(lines, ln - 1), [])
+            continue
         if re.search(r"(?:^|[:\-][ \t]+|^[ \t]*)[|>][-+0-9]*$", code):
-            block = ind
-            if YAML_RUN_RX.match(code):
-                run = (ln + 1, _step_shell(lines, ln - 1), [])
+            block = _key_col(code)
+            if _is_github_script(lines, ln - 1) and re.search(r"\bscript[ \t]*:[ \t]*[|>]", code):
+                run = (ln + 1, "js", [])
+            continue
+        mrun = re.match(r"^([ \t]*(?:-[ \t]+)?run[ \t]*:[ \t]*)(?![|>])(.*\S.*)$", l)
+        if mrun:
+            script = mrun.group(2).strip()
+            if (script.startswith("'") and script.endswith("'")) or (script.startswith('"') and script.endswith('"')):
+                script = script[1:-1]
+            lang = _step_shell(lines, ln - 1)
+            for a, b, t in comments(lang, script + "\n"):
+                out.append((ln, ln, t))
     if run is not None:
         out.extend(_run_block(lines, run[0], run[2], run[1]))
     return sorted(out)
 
 
-BAT_RX = re.compile(r"^[ \t]*@?[ \t]*(?:rem(?=[ \t.:/\\]|$)|::)", re.I)
-BAT_AMP_RX = re.compile(r"&[ \t]*rem(?=[ \t]|$)", re.I)
+def _is_github_script(lines, i):
+    j = i
+    while j > 0 and not lines[j].lstrip().startswith("-"):
+        j -= 1
+    ind = _indent(lines[j])
+    k = j + 1
+    while k < len(lines):
+        if lines[k].strip() and _indent(lines[k]) <= ind and lines[k].lstrip().startswith("-"):
+            break
+        if lines[k].strip() and _indent(lines[k]) < ind:
+            break
+        k += 1
+    return "github-script" in "\n".join(lines[j:k])
+
+
+
+BAT_RX = re.compile(r"^[ \t]*@?[ \t]*(?:rem(?=[ \t.;,=/\\]|$)|::)", re.I)
+BAT_LABEL_RX = re.compile(r"^[ \t]*:[ \t]*#")
+BAT_INLINE_RX = re.compile(r"(?:&&|\|\||&|\()[ \t]*@?[ \t]*rem(?=[ \t.;,=/\\]|$)", re.I)
 
 
 def batch_comments(text):
     out = []
     for ln, l in enumerate(text.split("\n"), 1):
-        m = BAT_RX.match(l)
-        if m:
+        if BAT_RX.match(l) or BAT_LABEL_RX.match(l):
             out.append((ln, ln, l.strip()))
             continue
         outside = re.sub(r'"[^"]*"', lambda x: " " * len(x.group(0)), l)
-        m = BAT_AMP_RX.search(outside)
+        m = BAT_INLINE_RX.search(outside)
         if m:
-            out.append((ln, ln, l[m.start() + 1:].strip()))
+            rest = l[m.start():]
+            rm = re.search(r"rem(?=[ \t.;,=/\\]|$)", rest, re.I)
+            out.append((ln, ln, rest[rm.start():].strip() if rm else rest.strip()))
     return out
 
 
@@ -619,14 +720,13 @@ def changes_language(old, new, base, head, text):
 
 
 def run(base, head, skipped=None):
-    diff = git("-c", "core.quotePath=false", "diff", "-M", "-U0", "--no-color", "--no-ext-diff",
+    diff = git("-c", "core.quotePath=false", "-c", "core.attributesFile=/dev/null",
+               "diff", "-a", "-M", "-U0", "--no-color", "--no-ext-diff",
                "--diff-filter=AMR", f"{base}...{head}").decode("utf-8", "replace")
     renames = renamed_from(base, head)
     hits = []
     for path, added in sorted(parse_diff(diff).items()):
         raw = git("show", f"{head}:{path}")
-        if b"\0" in raw[:8000] and not raw.startswith((b"\xff\xfe", b"\xfe\xff")):
-            continue
         text = decode(raw)
         if path in renames and changes_language(renames[path], path, base, head, text):
             added = set(range(1, text.replace("\r\n", "\n").count("\n") + 2))
