@@ -17,6 +17,10 @@ jobs:
           fetch-depth: 0
       - name: Checker tests (every language, both ways)
         run: python3 -m unittest discover -s tools/checks/tests -p "test_no_new_comments.py" -v
+      - name: AGENTS.md Required headings
+        run: python3 tools/checks/agents_md_headings.py
+      - name: AGENTS.md headings checker tests
+        run: python3 -m unittest discover -s tools/checks/tests -p "test_agents_md_headings.py" -v
       - name: The PR adds no code comments (Dread's rule)
         if: always()
         run: python3 tools/checks/no_new_comments.py --event "$GITHUB_EVENT_PATH"
