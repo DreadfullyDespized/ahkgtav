@@ -97,42 +97,33 @@ class Fences(unittest.TestCase):
         self.assertEqual(B.problems("```\ncode\n```\n" + SECTION), [])
         self.assertEqual(B.problems("````\n```\nstill code\n````\n" + SECTION), [])
 
-    @unittest.expectedFailure
     def test_four_backtick_fence_hides_section(self):
         self.assertTrue(B.problems("````\n" + SECTION + "````\n"))
 
-    @unittest.expectedFailure
     def test_four_backtick_fence_not_closed_by_three(self):
         self.assertTrue(B.problems("````\nx\n```\n" + SECTION + "````\n"))
 
-    @unittest.expectedFailure
     def test_unclosed_backtick_fence_hides_section(self):
         self.assertTrue(B.problems("```\n" + SECTION))
 
-    @unittest.expectedFailure
     def test_unclosed_tilde_fence_hides_section(self):
         self.assertTrue(B.problems("~~~~\n" + SECTION))
 
-    @unittest.expectedFailure
     def test_backtick_fence_not_closed_by_tildes(self):
         self.assertTrue(B.problems("```\nx\n~~~\n" + SECTION))
 
-    @unittest.expectedFailure
     def test_tilde_fence_not_closed_by_backticks(self):
         self.assertTrue(B.problems("~~~\nx\n```\n" + SECTION))
 
     def test_fence_with_info_string(self):
         self.assertTrue(B.problems("```python\n" + SECTION + "```\n"))
 
-    @unittest.expectedFailure
     def test_closer_with_trailing_text_does_not_close(self):
         self.assertTrue(B.problems("```\nx\n``` not a closer\n" + SECTION))
 
-    @unittest.expectedFailure
     def test_indented_fence_in_list_hides_section(self):
         self.assertTrue(B.problems("1. item\n    ```\n   ## Blast radius\n   " + SECTION.split("\n")[1] + "\n"))
 
-    @unittest.expectedFailure
     def test_deeply_indented_line_does_not_close_fence(self):
         self.assertTrue(B.problems("```\nx\n        ```\n" + SECTION))
 
@@ -150,7 +141,6 @@ class Bots(unittest.TestCase):
         finally:
             os.unlink(fh.name)
 
-    @unittest.expectedFailure
     def test_bots_are_not_exempt(self):
         for login, kind in [("cursor[bot]", "Bot"), ("github-actions[bot]", "Bot"), ("github-actions", "User"),
                             ("renovate[bot]", "Bot"), ("renovate", "User"), ("dependabot[bot]", "Bot"),
@@ -162,7 +152,6 @@ class Bots(unittest.TestCase):
 
 
 class Substance(unittest.TestCase):
-    @unittest.expectedFailure
     def test_noncommittal_phrases_fail(self):
         for v in ["None \u2014 trivial change here", "None - trivial change here", "To be determined later on",
                   "Trivial change, nothing to report here", "Unknown at this point in time",
@@ -170,16 +159,13 @@ class Substance(unittest.TestCase):
             with self.subTest(v=v):
                 self.assertTrue(B.problems(br(v)))
 
-    @unittest.expectedFailure
     def test_vague_prose_without_area_fails(self):
         self.assertTrue(B.problems(br("This could affect some other things in the app, I checked.")))
 
-    @unittest.expectedFailure
     def test_area_without_evidence_fails(self):
         errs = B.problems(br("The nightly sync job imports `load_points()` and could break."))
         self.assertTrue(errs and "cite what was checked" in errs[0], errs)
 
-    @unittest.expectedFailure
     def test_no_dependents_without_evidence_fails(self):
         self.assertTrue(B.problems(br("Nothing else imports this new standalone helper script.")))
 
@@ -189,21 +175,17 @@ class Substance(unittest.TestCase):
     def test_issue_reference_with_evidence_passes(self):
         self.assertEqual(B.problems(br("Open PR #42 will go red on its next push; I checked the open PR list.")), [])
 
-    @unittest.expectedFailure
     def test_template_prompt_without_tbd_fails(self):
         self.assertTrue(B.problems(br(PROMPT.split(": ", 1)[1])))
 
-    @unittest.expectedFailure
     def test_template_prompt_variants_fail(self):
         for v in [PROMPT, "- " + PROMPT, "**" + PROMPT + "**", "> " + PROMPT, "- [ ] " + PROMPT.split(": ", 1)[1]]:
             with self.subTest(v=v):
                 self.assertTrue(B.problems(br(v)))
 
-    @unittest.expectedFailure
     def test_template_constant_matches(self):
         self.assertEqual(B.TEMPLATE_PROMPT, PROMPT)
 
-    @unittest.expectedFailure
     def test_question_only_fails(self):
         self.assertTrue(B.problems(br("Does `quotes.json` change anything for the overlay I checked?")))
 

@@ -6,60 +6,127 @@ import json
 import re
 import sys
 
-HEADING_RX = re.compile(r"^[ \t]{0,3}(#{1,2})[ \t]+(.*?)[ \t#]*$", re.M)
+HEADING_RX = re.compile(r"^[ \t]{0,3}(#{1,2})[ \t]+(.*?)[ \t#]*$")
 TITLE_RX = re.compile(r"^blast[ \t]+radius$", re.I)
-COMMENT_RX = re.compile(r"<!--.*?(?:-->|\Z)", re.S)
-FENCE_RX = re.compile(r"^[ \t]*(```|~~~).*?^[ \t]*\1[ \t]*$", re.S | re.M)
-LIST_RX = re.compile(r"^[ \t]*(?:>[ \t]*)*(?:(?:[-*+]|\d+[.)])[ \t]+)?")
-PLACEHOLDER_RX = re.compile(r"^(?:tbd|tba|todo)\b", re.I)
-LEVEL_RX = re.compile(r"^[ \t]*(?:\*\*|__)?level(?:\*\*|__)?[ \t]*:.*$", re.I | re.M)
+FENCE_OPEN_RX = re.compile(r"^([ \t]*)(`{3,}|~{3,})(.*)$")
+LIST_RX = re.compile(r"^[ \t]*(?:>[ \t]*)*(?:(?:[-*+]|\d+[.)])[ \t]+)?(?:\[[ xX]\][ \t]+)?")
+LEVEL_RX = re.compile(r"^[ \t]*(?:\*\*|__)?level(?:\*\*|__)?[ \t]*:", re.I)
+NONCOMMITTAL_RX = re.compile(
+    r"^(?:tbd|tba|todo|to be (?:determined|decided|confirmed|done)|unknown|not sure|unsure|maybe|"
+    r"later|pending|trivial|n/?a|none\W+(?:trivial|small|minor|simple|obvious|cosmetic))\b", re.I)
 FILLER = {
     "", "none", "n/a", "na", "n.a", "nothing", "tbd", "tba", "todo", "nil", "null",
     "no", "nope", "not applicable", "no impact", "none expected", "nothing else",
     "minimal", "low", "small", "see diff", "same as diff", "none known", "unknown",
 }
+TEMPLATE_PROMPT = ("TBD: list each area outside this diff that this change can break, or explain "
+                   "why no other part needs it, and name the proof.")
 MIN_WORDS = 4
-BOT_LOGINS = {"dependabot", "dependabot-preview", "github-actions", "renovate"}
-HOW = ("Name at least one area outside the diff this PR can affect (a caller, script, "
-       "workflow, scheduled job, config, user-facing flow), or say why nothing else depends on it.")
+CONCRETE_RX = re.compile(
+    r"`[^`\n]+`"
+    r"|(?<![\w/])[\w.-]+/[\w./-]+"
+    r"|\b[\w-]+\.(?:py|pyw|sh|bash|ps1|psm1|psd1|js|mjs|cjs|jsx|ts|tsx|css|html?|mrc|als|ahk|ah2|ahk2"
+    r"|ini|json|ya?ml|toml|md|txt|sql|bat|cmd|cs|lock|cfg|conf|db|csv|xml)\b"
+    r"|(?:\b[\w.-]+/[\w.-]+)?#\d+\b"
+    r"|https?://\S+"
+    r"|\b[a-z][a-z0-9]*_[a-z0-9_]+\b"
+    r"|\b[a-z]+[A-Z][A-Za-z0-9]*\b|\b[A-Z][a-z0-9]+[A-Z][A-Za-z0-9]*\b"
+    r"|\b\w+\(\)")
+NO_DEPENDENTS_RX = re.compile(
+    r"\b(?:nothing|no (?:other )?(?:code|file|script|module|job|workflow|caller|consumer|user|one|repo|"
+    r"service|system|test)s?|nobody|no one)\b(?:\s+else)?\s+(?:else\s+)?(?:\w+\s+){0,3}?"
+    r"(?:depends?|imports?|calls?|uses?|reads?|references?|runs?|loads?|includes?|sources?|needs?|relies)\b"
+    r"|\bnot (?:imported|called|used|referenced|read|loaded|included|sourced|run)\b"
+    r"|\bno (?:callers?|dependents?|consumers?|references?|importers?|hits|matches|usages?)\b", re.I)
+EVIDENCE_RX = re.compile(
+    r"\b(?:checked|searched|search(?:ing)?|grep(?:ped)?|rg|git grep|ran|tested|verified|confirmed|"
+    r"found|finds|looked|reviewed|traced|inspected|audited|listed|compared)\b", re.I)
+HOW = ("Name at least one concrete area outside the diff this PR can affect (a file, path, `module`, "
+       "feature, #N or system), or say why nothing else depends on it, and cite what you checked "
+       "(for example: `rg load_points` finds only this file and the nightly job).")
 
 
-def is_bot(login, user_type=""):
-    login = (login or "").strip().lower()
-    if (user_type or "").lower() == "bot":
-        return True
-    return login.endswith("[bot]") or login in BOT_LOGINS
+def indent_of(prefix):
+    return len(prefix.expandtabs(4))
 
 
-def clean(body):
-    text = (body or "").replace("\r\n", "\n")
-    text = COMMENT_RX.sub("", text)
-    return FENCE_RX.sub("", text)
+def visible_lines(body):
+    out = []
+    fence = None
+    in_comment = False
+    for line in (body or "").replace("\r\n", "\n").replace("\r", "\n").split("\n"):
+        if fence:
+            ch, n, ind = fence
+            m = re.match(r"^([ \t]*)" + re.escape(ch) + "{" + str(n) + r",}[ \t]*$", line)
+            if m and indent_of(m.group(1)) <= max(3, ind):
+                fence = None
+            continue
+        if not in_comment:
+            m = FENCE_OPEN_RX.match(line)
+            if m and not (m.group(2)[0] == "`" and "`" in m.group(3)):
+                fence = (m.group(2)[0], len(m.group(2)), indent_of(m.group(1)))
+                continue
+        kept = []
+        rest = line
+        while rest:
+            if in_comment:
+                end = rest.find("-->")
+                if end < 0:
+                    rest = ""
+                    break
+                rest = rest[end + 3:]
+                in_comment = False
+            else:
+                start = rest.find("<!--")
+                if start < 0:
+                    kept.append(rest)
+                    break
+                kept.append(rest[:start])
+                rest = rest[start + 4:]
+                in_comment = True
+        out.append("".join(kept))
+    return out
 
 
 def section(body):
-    text = clean(body)
-    heads = list(HEADING_RX.finditer(text))
-    for i, h in enumerate(heads):
+    lines = visible_lines(body)
+    start = None
+    for i, line in enumerate(lines):
+        h = HEADING_RX.match(line)
+        if not h:
+            continue
+        if start is not None:
+            return [l for l in lines[start:i] if not LEVEL_RX.match(l)]
         if len(h.group(1)) == 2 and TITLE_RX.match(h.group(2).strip()):
-            end = heads[i + 1].start() if i + 1 < len(heads) else len(text)
-            return LEVEL_RX.sub("", text[h.end():end])
-    return None
+            start = i + 1
+    if start is None:
+        return None
+    return [l for l in lines[start:] if not LEVEL_RX.match(l)]
 
 
 def normalize(line):
     line = LIST_RX.sub("", line, count=1)
     line = re.sub(r"[*_`~]", "", line).strip().lower()
-    return line.strip(" \t.,;:!?-–—=()[]\"'")
+    line = re.sub(r"\s+", " ", line)
+    return line.strip(" \t.,;:!?-\u2013\u2014=()[]\"'")
+
+
+def prompt_forms():
+    full = normalize(TEMPLATE_PROMPT)
+    bare = normalize(re.sub(r"^\s*tbd\s*:\s*", "", TEMPLATE_PROMPT, flags=re.I))
+    return {full, bare}
 
 
 def meaningful_lines(sec):
+    prompts = prompt_forms()
     out = []
-    for raw in sec.splitlines():
+    for raw in sec:
         norm = normalize(raw)
-        if norm in FILLER or PLACEHOLDER_RX.match(norm):
+        if norm in FILLER or norm in prompts or NONCOMMITTAL_RX.match(norm):
             continue
-        out.append(norm)
+        if raw.strip().endswith("?"):
+            continue
+        out.append(raw.strip())
     return out
 
 
@@ -67,14 +134,22 @@ def problems(body):
     sec = section(body)
     if sec is None:
         return ["the PR body has no '## Blast radius' heading. " + HOW]
-    if not sec.strip():
+    if not "".join(sec).strip():
         return ["the '## Blast radius' section is empty. " + HOW]
     lines = meaningful_lines(sec)
     if not lines:
-        return ["the '## Blast radius' section is only filler (none, n/a, nothing, TBD, -). " + HOW]
-    words = re.findall(r"[a-z0-9][\w./#-]*", " ".join(lines))
+        return ["the '## Blast radius' section is only filler, a placeholder or the template prompt "
+                "(none, n/a, nothing, TBD, -, trivial). " + HOW]
+    text = "\n".join(lines)
+    words = re.findall(r"[A-Za-z0-9][\w./#-]*", text)
     if len(words) < MIN_WORDS:
         return [f"the '## Blast radius' section is too thin ({len(words)} words). " + HOW]
+    if not (CONCRETE_RX.search(text) or NO_DEPENDENTS_RX.search(text)):
+        return ["the '## Blast radius' section names no concrete area (a file, path, `module`, "
+                "feature, #N or system) and does not say why nothing else depends on the change. " + HOW]
+    if not EVIDENCE_RX.search(text):
+        return ["the '## Blast radius' section does not cite what was checked (searched, ran, "
+                "verified, `rg ...` found ...). " + HOW]
     return []
 
 
@@ -83,20 +158,17 @@ def from_event(path):
         event = json.load(fh)
     pr = event.get("pull_request")
     if not pr:
-        return None, None, None
-    user = pr.get("user") or {}
-    return pr.get("body") or "", user.get("login", ""), user.get("type", "")
+        return None
+    return pr.get("body") or ""
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Require a filled-in '## Blast radius' section in the PR body.")
     ap.add_argument("--event", help="GitHub event JSON ($GITHUB_EVENT_PATH)")
     ap.add_argument("--body-file", help="a PR body in a file, for local runs")
-    ap.add_argument("--author", default="", help="PR author login, for local runs")
     args = ap.parse_args(argv)
-    login, user_type = args.author, ""
     if args.event:
-        body, login, user_type = from_event(args.event)
+        body = from_event(args.event)
         if body is None:
             print("blast_radius_check: not a pull_request event", file=sys.stderr)
             return 2
@@ -105,9 +177,6 @@ def main(argv=None):
             body = fh.read()
     else:
         ap.error("pass --event or --body-file")
-    if is_bot(login, user_type):
-        print(f"blast_radius_check: skipped, PR opened by bot {login}")
-        return 0
     errs = problems(body)
     if errs:
         for e in errs:
