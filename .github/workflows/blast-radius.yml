@@ -1,0 +1,33 @@
+name: blast-radius
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blast-radius-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  blast-radius:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Checker tests
+        run: python3 -m unittest discover -s tools/ci -p "blast_radius_check_test.py" -v
+      - name: Fixture bodies (fail.md must fail, pass.md must pass)
+        run: |
+          set +e
+          python3 tools/ci/blast_radius_check.py --body-file tools/ci/blast_radius_fixtures/fail.md
+          fail_rc=$?
+          python3 tools/ci/blast_radius_check.py --body-file tools/ci/blast_radius_fixtures/pass.md
+          pass_rc=$?
+          echo "fail.md exit=$fail_rc pass.md exit=$pass_rc"
+          test "$fail_rc" = 1 && test "$pass_rc" = 0
+      - name: This PR body has a filled-in '## Blast radius' section
+        if: always()
+        run: python3 tools/ci/blast_radius_check.py --event "$GITHUB_EVENT_PATH"
