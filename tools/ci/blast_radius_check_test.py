@@ -195,15 +195,12 @@ class Parser(unittest.TestCase):
         lines = SECTION.rstrip("\n").split("\n")
         return opener + "\n" + "".join(prefix + l + "\n" for l in lines) + closer + "\n"
 
-    @unittest.expectedFailure
     def test_fence_opened_on_bullet_line_hides_section(self):
         self.assertTrue(B.problems(self.hidden("- ```", "  ", "  ```")))
 
-    @unittest.expectedFailure
     def test_fence_opened_on_star_bullet_line_hides_section(self):
         self.assertTrue(B.problems(self.hidden("* ```", "  ", "  ```")))
 
-    @unittest.expectedFailure
     def test_fence_opened_on_ordered_item_line_hides_section(self):
         self.assertTrue(B.problems(self.hidden("1. ```", "   ", "   ```")))
 
@@ -213,15 +210,12 @@ class Parser(unittest.TestCase):
     def test_fence_opened_on_quoted_bullet_line_hides_section(self):
         self.assertTrue(B.problems(self.hidden("> - ```", ">   ", ">   ```")))
 
-    @unittest.expectedFailure
     def test_unclosed_fence_on_bullet_line_hides_section(self):
         self.assertTrue(B.problems(self.hidden("- ````", "  ", "")))
 
-    @unittest.expectedFailure
     def test_tilde_fence_on_ordered_item_line_hides_section(self):
         self.assertTrue(B.problems(self.hidden("1. ~~~", "   ", "   ~~~")))
 
-    @unittest.expectedFailure
     def test_list_item_fence_closed_then_real_section_passes(self):
         self.assertEqual(B.problems("- ```\n  code\n  ```\n\n" + SECTION), [])
 
@@ -240,14 +234,12 @@ class Parser(unittest.TestCase):
     def test_four_space_indented_heading_is_code(self):
         self.assertTrue(B.problems("    " + SECTION.replace("\n", "\n    ")))
 
-    @unittest.expectedFailure
     def test_heading_inside_html_block_does_not_count(self):
         self.assertTrue(B.problems("<div>\n" + SECTION + "</div>\n"))
 
     def test_escaped_heading_does_not_count(self):
         self.assertTrue(B.problems("\\" + SECTION))
 
-    @unittest.expectedFailure
     def test_indented_code_block_with_backticks_is_not_a_fence(self):
         self.assertEqual(B.problems("text\n\n    ```\n\n" + SECTION), [])
 
@@ -264,7 +256,6 @@ class Parser(unittest.TestCase):
     def test_bold_bullet_prompt_fails(self):
         self.assertTrue(B.problems(br("- **" + PROMPT.split(": ", 1)[1] + "**")))
 
-    @unittest.expectedFailure
     def test_emphasis_in_title_counts(self):
         self.assertEqual(B.problems(SECTION.replace("## Blast radius", "## **Blast radius**")), [])
 

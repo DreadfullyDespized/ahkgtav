@@ -6,9 +6,9 @@ import json
 import re
 import sys
 
-HEADING_RX = re.compile(r"^[ \t]{0,3}(#{1,2})[ \t]+(.*?)[ \t#]*$")
-TITLE_RX = re.compile(r"^blast[ \t]+radius$", re.I)
-FENCE_OPEN_RX = re.compile(r"^([ \t]*)(`{3,}|~{3,})(.*)$")
+from markdown_it import MarkdownIt
+
+TITLE_RX = re.compile(r"^blast radius$", re.I)
 LIST_RX = re.compile(r"^[ \t]*(?:>[ \t]*)*(?:(?:[-*+]|\d+[.)])[ \t]+)?(?:\[[ xX]\][ \t]+)?")
 LEVEL_RX = re.compile(r"^[ \t]*(?:\*\*|__)?level(?:\*\*|__)?[ \t]*:", re.I)
 NONCOMMITTAL_RX = re.compile(
@@ -46,62 +46,50 @@ HOW = ("Name at least one concrete area outside the diff this PR can affect (a f
        "(for example: `rg load_points` finds only this file and the nightly job).")
 
 
-def indent_of(prefix):
-    return len(prefix.expandtabs(4))
+def parser():
+    return MarkdownIt("commonmark").enable(["table", "strikethrough"])
 
 
-def visible_lines(body):
+def inline_text(tok):
     out = []
-    fence = None
-    in_comment = False
-    for line in (body or "").replace("\r\n", "\n").replace("\r", "\n").split("\n"):
-        if fence:
-            ch, n, ind = fence
-            m = re.match(r"^([ \t]*)" + re.escape(ch) + "{" + str(n) + r",}[ \t]*$", line)
-            if m and indent_of(m.group(1)) <= max(3, ind):
-                fence = None
-            continue
-        if not in_comment:
-            m = FENCE_OPEN_RX.match(line)
-            if m and not (m.group(2)[0] == "`" and "`" in m.group(3)):
-                fence = (m.group(2)[0], len(m.group(2)), indent_of(m.group(1)))
-                continue
-        kept = []
-        rest = line
-        while rest:
-            if in_comment:
-                end = rest.find("-->")
-                if end < 0:
-                    rest = ""
-                    break
-                rest = rest[end + 3:]
-                in_comment = False
-            else:
-                start = rest.find("<!--")
-                if start < 0:
-                    kept.append(rest)
-                    break
-                kept.append(rest[:start])
-                rest = rest[start + 4:]
-                in_comment = True
-        out.append("".join(kept))
-    return out
+    for c in tok.children or []:
+        if c.type in ("text", "text_special"):
+            out.append(c.content)
+        elif c.type == "code_inline":
+            out.append("`" + c.content + "`")
+        elif c.type in ("softbreak", "hardbreak"):
+            out.append("\n")
+    return "".join(out)
+
+
+def is_section_end(tok):
+    return tok.type == "heading_open" and tok.level == 0 and tok.tag in ("h1", "h2")
 
 
 def section(body):
-    lines = visible_lines(body)
+    toks = parser().parse((body or "").replace("\r\n", "\n").replace("\r", "\n"))
     start = None
-    for i, line in enumerate(lines):
-        h = HEADING_RX.match(line)
-        if not h:
-            continue
-        if start is not None:
-            return [l for l in lines[start:i] if not LEVEL_RX.match(l)]
-        if len(h.group(1)) == 2 and TITLE_RX.match(h.group(2).strip()):
-            start = i + 1
+    for i, tok in enumerate(toks):
+        if (tok.type == "heading_open" and tok.tag == "h2" and tok.level == 0 and tok.markup == "##"
+                and i + 1 < len(toks) and toks[i + 1].type == "inline"
+                and TITLE_RX.match(re.sub(r"[ \t]+", " ", inline_text(toks[i + 1])).strip())):
+            start = i + 3
+            break
     if start is None:
         return None
-    return [l for l in lines[start:] if not LEVEL_RX.match(l)]
+    lines = []
+    blocks = 0
+    for tok in toks[start:]:
+        if is_section_end(tok):
+            break
+        if tok.type in ("list_item_open", "hr"):
+            blocks += 1
+        if tok.type == "inline":
+            lines.extend(inline_text(tok).split("\n"))
+    lines = [l for l in lines if not LEVEL_RX.match(l)]
+    if blocks and not "".join(lines).strip():
+        return ["-"]
+    return lines
 
 
 def normalize(line):
