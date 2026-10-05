@@ -50,3 +50,5 @@ NDG-Config2.ini
 testy.ahk
 Test3.ahk
 Test2.ahk
+__pycache__/
+*.pyc
