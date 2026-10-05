@@ -190,6 +190,94 @@ class Substance(unittest.TestCase):
         self.assertTrue(B.problems(br("Does `quotes.json` change anything for the overlay I checked?")))
 
 
+class Parser(unittest.TestCase):
+    def hidden(self, opener, prefix, closer):
+        lines = SECTION.rstrip("\n").split("\n")
+        return opener + "\n" + "".join(prefix + l + "\n" for l in lines) + closer + "\n"
+
+    @unittest.expectedFailure
+    def test_fence_opened_on_bullet_line_hides_section(self):
+        self.assertTrue(B.problems(self.hidden("- ```", "  ", "  ```")))
+
+    @unittest.expectedFailure
+    def test_fence_opened_on_star_bullet_line_hides_section(self):
+        self.assertTrue(B.problems(self.hidden("* ```", "  ", "  ```")))
+
+    @unittest.expectedFailure
+    def test_fence_opened_on_ordered_item_line_hides_section(self):
+        self.assertTrue(B.problems(self.hidden("1. ```", "   ", "   ```")))
+
+    def test_fence_opened_on_blockquote_line_hides_section(self):
+        self.assertTrue(B.problems(self.hidden("> ```", "> ", "> ```")))
+
+    def test_fence_opened_on_quoted_bullet_line_hides_section(self):
+        self.assertTrue(B.problems(self.hidden("> - ```", ">   ", ">   ```")))
+
+    @unittest.expectedFailure
+    def test_unclosed_fence_on_bullet_line_hides_section(self):
+        self.assertTrue(B.problems(self.hidden("- ````", "  ", "")))
+
+    @unittest.expectedFailure
+    def test_tilde_fence_on_ordered_item_line_hides_section(self):
+        self.assertTrue(B.problems(self.hidden("1. ~~~", "   ", "   ~~~")))
+
+    @unittest.expectedFailure
+    def test_list_item_fence_closed_then_real_section_passes(self):
+        self.assertEqual(B.problems("- ```\n  code\n  ```\n\n" + SECTION), [])
+
+    def test_heading_inside_list_item_does_not_count(self):
+        self.assertTrue(B.problems("- " + SECTION.replace("\n", "\n  ")))
+
+    def test_heading_inside_blockquote_does_not_count(self):
+        self.assertTrue(B.problems("> " + SECTION.replace("\n", "\n> ")))
+
+    def test_setext_heading_does_not_count(self):
+        self.assertTrue(B.problems(SECTION.replace("## Blast radius\n", "Blast radius\n---\n")))
+
+    def test_zero_width_space_title_does_not_count(self):
+        self.assertTrue(B.problems(SECTION.replace("Blast radius", "Blast\u200bradius")))
+
+    def test_four_space_indented_heading_is_code(self):
+        self.assertTrue(B.problems("    " + SECTION.replace("\n", "\n    ")))
+
+    @unittest.expectedFailure
+    def test_heading_inside_html_block_does_not_count(self):
+        self.assertTrue(B.problems("<div>\n" + SECTION + "</div>\n"))
+
+    def test_escaped_heading_does_not_count(self):
+        self.assertTrue(B.problems("\\" + SECTION))
+
+    @unittest.expectedFailure
+    def test_indented_code_block_with_backticks_is_not_a_fence(self):
+        self.assertEqual(B.problems("text\n\n    ```\n\n" + SECTION), [])
+
+    def test_inline_comment_text_is_not_content(self):
+        self.assertTrue(B.problems("## Blast radius\nn/a <!-- `x.py` checked with rg -->\n"))
+
+    def test_html_block_comment_inside_section_is_not_content(self):
+        self.assertTrue(B.problems("## Blast radius\nn/a\n<!--\n`x.py` checked with rg\n-->\n"))
+
+    def test_prompt_split_over_two_lines_fails(self):
+        a, b = PROMPT.split(", or ")
+        self.assertTrue(B.problems(br(a + ",\nor " + b)))
+
+    def test_bold_bullet_prompt_fails(self):
+        self.assertTrue(B.problems(br("- **" + PROMPT.split(": ", 1)[1] + "**")))
+
+    @unittest.expectedFailure
+    def test_emphasis_in_title_counts(self):
+        self.assertEqual(B.problems(SECTION.replace("## Blast radius", "## **Blast radius**")), [])
+
+    def test_closing_hashes_in_title_count(self):
+        self.assertEqual(B.problems(SECTION.replace("## Blast radius", "## Blast radius ##")), [])
+
+    def test_section_ends_at_next_h1(self):
+        self.assertTrue(B.problems("## Blast radius\nn/a\n# Other\n" + GOOD))
+
+    def test_table_cells_are_content(self):
+        self.assertEqual(B.problems("## Blast radius\n| area | proof |\n|---|---|\n| `quotes.json` | checked with rg |\n"), [])
+
+
 class Cli(unittest.TestCase):
     def run_event(self, text):
         ev = {"pull_request": {"body": text, "user": {"login": "DreadfullyDespized", "type": "User"}}}
