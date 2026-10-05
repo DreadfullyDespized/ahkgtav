@@ -1,0 +1,22 @@
+name: no-new-comments
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  no-new-comments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Checker tests (every language, both ways)
+        run: python3 -m unittest discover -s tools/checks/tests -p "test_no_new_comments.py" -v
+      - name: The PR adds no code comments (Dread's rule)
+        if: always()
+        run: python3 tools/checks/no_new_comments.py --event "$GITHUB_EVENT_PATH"
