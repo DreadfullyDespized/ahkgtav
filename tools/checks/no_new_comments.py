@@ -28,27 +28,36 @@ Languages, by file extension (extensionless files by their shebang):
   SQL         .sql                  '--' and '/* */', outside quotes
   YAML        .yml .yaml            '#' at the start of a line or after
                                     whitespace, outside quotes and outside
-                                    block scalars (run: |)
+                                    block scalars; a workflow 'run: |' or
+                                    'run: >' block is scanned as bash, or as
+                                    PowerShell, batch or Python when the step
+                                    says 'shell: pwsh', 'cmd' or 'python'
   batch       .bat .cmd             REM and :: at the start of a command
 
 Extensionless files are scanned by their shebang (python, bash/sh, pwsh,
 node). Every other extensionless file, and a shebang naming any other
 interpreter, is skipped and listed as skipped in the output. Files with any
 other extension are not code this check knows, and are not scanned.
-Renames are detected (git diff -M), so a pure rename adds no lines.
+Renames are detected (git diff -M), so a pure rename adds no lines, unless
+the rename moves the file into a scanned language it was not in before
+(notes.txt -> notes.py, tools/helper -> tools/helper.sh, x.sh -> x.py): then
+every line of the new file counts as added.
 
 The only exemptions are this allowlist (ALLOWED below):
   - a shebang on line 1 (any language), with nothing after the command;
   - the PEP 263 encoding line (Python, line 1 or 2), the whole line being
     '# coding: X', '# -*- coding: X -*-' or '# vim: set fileencoding=X :';
-  - '# type: ignore' and '# type: ignore[code, ...]';
+  - '# type: ignore' and '# type: ignore[code, ...]', codes being words and
+    dashes only (no free text inside the brackets);
   - '# noqa' and '# noqa: CODE[, CODE]';
   - '# pragma: no cover';
   - AHK '#' directives (#Requires, #SingleInstance, #NoEnv, #Include, ...):
     '#' is not a comment in AHK, so they never match;
   - PowerShell '#Requires' at the start of a line, the whole line being
     #Requires parameters (-Version, -PSEdition, -RunAsAdministrator,
-    -Modules, -PSSnapin, -Assembly) with nothing else after them.
+    -Modules, -PSSnapin, -Assembly) with nothing else after them; a
+    -Modules @{...} table may hold only ModuleName, ModuleVersion,
+    RequiredVersion, MaximumVersion and GUID keys with plain values.
 
 Usage (same locally and in CI):
   python3 tools/checks/no_new_comments.py --base origin/main --head HEAD
@@ -94,15 +103,19 @@ AHK_DIRECTIVES = (
     "#WinActivateForce", "#MaxHotkeysPerInterval", "#HotkeyInterval", "#Ahk2Exe",
 )
 SHEBANG_RX = re.compile(r"^#![ \t]*/\S+(?:[ \t]+[^\s#]+)*[ \t]*$")
+PS_VALUE = r"""(?:'[\w.\-]+'|"[\w.\-]+"|[\w.\-]+)"""
+PS_PAIR = r"(?:ModuleName|ModuleVersion|RequiredVersion|MaximumVersion|GUID)[ \t]*=[ \t]*" + PS_VALUE
+PS_MODULE = (r"@\{[ \t]*" + PS_PAIR + r"(?:[ \t]*;[ \t]*" + PS_PAIR + r")*[ \t]*;?[ \t]*\}"
+             r"|[\w.\-]+")
 ALLOWED = {
     "python": (
-        re.compile(r"^#\s*type:\s*ignore(?:\[[^\]\n]*\])?\s*$"),
+        re.compile(r"^#\s*type:\s*ignore(?:\[[\w-]+(?:[ \t]*,[ \t]*[\w-]+)*\])?\s*$"),
         re.compile(r"^#\s*noqa(?::\s*[A-Z]+[0-9]+(?:\s*,\s*[A-Z]+[0-9]+)*)?\s*$"),
         re.compile(r"^#\s*pragma:\s*no\s+cover\s*$"),
     ),
     "powershell": (re.compile(
         r"^#requires(?:[ \t]+-(?:version[ \t]+[\d.]+|psedition[ \t]+\w+|runasadministrator"
-        r"|modules[ \t]+(?:@\{[^}#]*\}|[^\s#,]+)(?:[ \t]*,[ \t]*(?:@\{[^}#]*\}|[^\s#,]+))*"
+        r"|modules[ \t]+(?:" + PS_MODULE + r")(?:[ \t]*,[ \t]*(?:" + PS_MODULE + r"))*"
         r"|pssnapin[ \t]+[^\s#]+(?:[ \t]+-version[ \t]+[\d.]+)?|assembly[ \t]+[^\s#]+))+[ \t]*$", re.I),),
 }
 PEP263_RX = re.compile(
@@ -403,14 +416,59 @@ def ini_comments(text):
     return _block_lines("\n".join(script), _mirc_line, False)
 
 
+YAML_RUN_RX = re.compile(r"^[ \t]*(?:-[ \t]+)?run[ \t]*:[ \t]*[|>][-+0-9]*[ \t]*$")
+YAML_SHELL_RX = re.compile(r"^[ \t]*(?:-[ \t]+)?shell[ \t]*:[ \t]*['\"]?([\w-]+)")
+YAML_SHELL_LANG = {"pwsh": "powershell", "powershell": "powershell", "cmd": "batch", "python": "python"}
+
+
+def _key_col(l):
+    return re.match(r"^[ \t]*(?:-[ \t]+)?", l).end()
+
+
+def _indent(l):
+    return len(l) - len(l.lstrip(" "))
+
+
+def _step_shell(lines, i):
+    """Language of the `run:` script on line index i, from a sibling `shell:` key."""
+    col = _key_col(lines[i])
+    j = i
+    while j > 0 and not lines[j].lstrip().startswith("-"):
+        prev = lines[j - 1]
+        if prev.strip() and _key_col(prev) != col and _indent(prev) < col:
+            break
+        j -= 1
+    k = i + 1
+    while k < len(lines) and (not lines[k].strip() or _indent(lines[k]) >= col):
+        k += 1
+    for l in lines[j:k]:
+        m = YAML_SHELL_RX.match(l)
+        if m and _key_col(l) == col:
+            return YAML_SHELL_LANG.get(m.group(1).lower(), "bash")
+    return "bash"
+
+
+def _run_block(lines, first, body, lang):
+    """Comments in a workflow `run:` script whose first line is line number `first`."""
+    ind = min((_indent(l) for l in body if l.strip()), default=0)
+    script = "\n".join(l[ind:] for l in body) + "\n"
+    return [(first + a - 1, first + b - 1, t) for a, b, t in comments(lang, script)]
+
+
 def yaml_comments(text):
-    out, block = [], None
-    for ln, l in enumerate(text.split("\n"), 1):
-        ind = len(l) - len(l.lstrip(" "))
+    out, block, run = [], None, None
+    lines = text.split("\n")
+    for ln, l in enumerate(lines, 1):
+        ind = _indent(l)
         if block is not None:
             if not l.strip() or ind > block:
+                if run is not None:
+                    run[2].append(l)
                 continue
             block = None
+            if run is not None:
+                out.extend(_run_block(lines, run[0], run[2], run[1]))
+                run = None
         q = None
         for i, c in enumerate(l):
             if q:
@@ -424,7 +482,11 @@ def yaml_comments(text):
         code = l.split(" #", 1)[0].rstrip()
         if re.search(r"(?:^|[:\-][ \t]+|^[ \t]*)[|>][-+0-9]*$", code):
             block = ind
-    return out
+            if YAML_RUN_RX.match(code):
+                run = (ln + 1, _step_shell(lines, ln - 1), [])
+    if run is not None:
+        out.extend(_run_block(lines, run[0], run[2], run[1]))
+    return sorted(out)
 
 
 BAT_RX = re.compile(r"^[ \t]*@?[ \t]*(?:rem(?=[ \t.:/\\]|$)|::)", re.I)
@@ -514,11 +576,13 @@ def decode(raw):
 
 
 def parse_diff(diff):
-    """{new path: set(added line numbers)} from a -U0 diff (renames: new path only)."""
+    """{new path: set(added line numbers)} from a -U0 diff (renames: new path only, even a pure rename)."""
     out, path = {}, None
     for line in diff.split("\n"):
         if line.startswith("diff --git "):
             path = None
+        elif line.startswith("rename to "):
+            out.setdefault(line[len("rename to "):], set())
         elif line.startswith("+++ "):
             target = line[4:]
             path = target[2:] if target.startswith("b/") else None
@@ -532,17 +596,42 @@ def parse_diff(diff):
     return out
 
 
+def renamed_from(base, head):
+    """{new path: old path} for renames between the merge base and head."""
+    out = git("-c", "core.quotePath=false", "diff", "-M", "--name-status", "--diff-filter=R", "-z",
+              f"{base}...{head}").decode("utf-8", "replace").split("\0")
+    pairs, i = {}, 0
+    while i + 2 < len(out):
+        if out[i].startswith("R"):
+            pairs[out[i + 2]] = out[i + 1]
+            i += 3
+        else:
+            i += 1
+    return pairs
+
+
+def changes_language(old, new, base, head, text):
+    """True when a rename moves a file into a scanned language it was not in before."""
+    mb = git("merge-base", base, head).decode().strip()
+    old_text = decode(git("show", f"{mb}:{old}")).replace("\r\n", "\n")
+    new_lang = lang_of(new, text.replace("\r\n", "\n"))
+    return new_lang is not None and lang_of(old, old_text) != new_lang
+
+
 def run(base, head, skipped=None):
     diff = git("-c", "core.quotePath=false", "diff", "-M", "-U0", "--no-color", "--no-ext-diff",
                "--diff-filter=AMR", f"{base}...{head}").decode("utf-8", "replace")
+    renames = renamed_from(base, head)
     hits = []
     for path, added in sorted(parse_diff(diff).items()):
-        if not added:
-            continue
         raw = git("show", f"{head}:{path}")
         if b"\0" in raw[:8000] and not raw.startswith((b"\xff\xfe", b"\xfe\xff")):
             continue
         text = decode(raw)
+        if path in renames and changes_language(renames[path], path, base, head, text):
+            added = set(range(1, text.replace("\r\n", "\n").count("\n") + 2))
+        if not added:
+            continue
         why = skip_reason(path, text)
         if why and skipped is not None:
             skipped.append(f"{path}: {why}")
