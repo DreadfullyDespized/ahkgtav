@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from pathlib import Path
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -55,7 +56,38 @@ CASES = {
     "ahk": ("x.ahk",
             ["; comment\n", "MsgBox, hi ; inline\n", "/*\nblock\n*/\n", "x := 1\t; tab inline\n"],
             ["#Requires AutoHotkey v2.0\n", "#SingleInstance Force\n", "#NoEnv\n", "#Include lib.ahk\n",
-             "MsgBox, a`; b\n", 'x := "a ; b"\n', "Send, {;}\n"]),
+             "MsgBox, a`; b\n", 'x := "a ; b"\n', "Send, {;}\n", "MsgBox('a ;b')\n", "x := 'it ;s'\n"]),
+    "ahk-apostrophe": ("y.ahk", ["MsgBox, don't ; inline comment\n"], ["MsgBox, don't stop\n"]),
+    "js-regex-after-keyword": ("y.js", ["return a; // why\n"],
+                               ["function f(s) { return /\\/\\//.test(s); }\n",
+                                "if (typeof /x/ === 'object') {}\n"]),
+    "mirc-ini": ("remote.ini",
+                 ["[script]\nn0=; comment in remote.ini\nn1=on *:TEXT:!a:#:{ msg # hi }\n",
+                  "[aliases]\nn0=/*\nn1=block\nn2=*/\n", "[script]\nn0=alias a {\nn1=  ; indented\nn2=}\n"],
+                 ["[script]\nn0=alias a { echo -a hi ; there }\n", "[mirc]\n; settings comment, not script\nnick=Dread\n",
+                  "[script]\nn0=on *:TEXT:!a:#:{ msg # hi }\n"]),
+    "sql": ("x.sql",
+            ["SELECT 1; -- why\n", "-- header\nSELECT 1;\n", "/* block */\nSELECT 2;\n"],
+            ["SELECT '-- not a comment';\n", "SELECT 'it''s -- still a string';\n",
+             'SELECT "a--b" FROM t;\n', "SELECT 4 - -1;\n"]),
+    "yaml": ("x.yml",
+             ["on: push # trigger\n", "# header\nname: ci\n",
+              "steps:\n  - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0\n"],
+             ["name: 'a # b'\n", 'url: "https://x/#top"\n', "key: a#b\n",
+              "description: |\n  text # in a non-run block scalar\n  more\nnext: 1\n",
+              "steps:\n  - run: |\n      echo \"a # b\"\n      n=${#arr[@]}\n      echo $#\n",
+              "steps:\n  - run: echo '# quoted'\n"]),
+    "yaml-run-block": ("ci.yml",
+                       ["steps:\n  - run: |\n      # explain the next line\n      ls\n",
+                        "jobs:\n  a:\n    steps:\n      - name: x\n        run: |\n          ls\n          echo hi # why\n",
+                        "steps:\n  - run: >-\n      echo # folded\n",
+                        "steps:\n  - shell: pwsh\n    run: |\n      Get-Item . # note\n"],
+                       ["steps:\n  - run: |\n      ls\n      echo done\n",
+                        "steps:\n  - shell: pwsh\n    run: |\n      Write-Host 'a # b'\n"]),
+    "batch": ("x.bat",
+              ["REM why\n", "@rem quiet\n", ":: label-style comment\n", "echo hi & rem trailing\n",
+               "rem\n"],
+              ["echo remember\n", "set REMOTE=1\n", "echo \"a & rem b\"\n", ":label\n"]),
 }
 
 
@@ -88,6 +120,15 @@ class Allowlist(unittest.TestCase):
             ("x.ps1", "#requires -RunAsAdministrator\n"),
             ("x.ahk", "#Requires AutoHotkey v2.0\n#SingleInstance Force\n"),
             ("x.js", "#!/usr/bin/env node\nlet a = 1;\n"),
+            ("x.py", "# -*- coding: utf-8 -*-\nx = 1\n"),
+            ("x.py", "# vim: set fileencoding=utf-8 :\nx = 1\n"),
+            ("x.ps1", "#Requires -Version 5.1\n"),
+            ("x.ps1", "#Requires -Modules Pester, PSReadLine\n"),
+            ("x.ps1", "#Requires -Modules @{ ModuleName='Pester'; ModuleVersion='5.0' }\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName=\"Az.Accounts\";RequiredVersion=\"2.12.1\"}\n"),
+            ("x.ps1", "#Requires -Modules @{ ModuleName = 'x'; GUID = 'a1b2c3d4-0000-1111-2222-333344445555'; MaximumVersion = '3.0' }\n"),
+            ("x.py", "import x  # type: ignore[attr-defined, no-untyped-call]\n"),
+            ("x.ps1", "#Requires -PSEdition Core -RunAsAdministrator\n"),
         ]:
             self.assertEqual(hits(path, text), [], (path, text))
 
@@ -101,6 +142,19 @@ class Allowlist(unittest.TestCase):
             ("x.py", "x = 1  # TODO\n"),
             ("x.ps1", "Get-Item .\n# Requires a note\n"),
             ("x.ps1", "Get-Item . #Requires inline\n"),
+            ("x.ps1", "#Requires -Version 5 # and here is a comment\n"),
+            ("x.ps1", "#Requires -Version 5 and why we need it\n"),
+            ("x.ps1", "#Requires because the server is old\n"),
+            ("x.py", "# this is about coding: utf-8 and why we do X\nx = 1\n"),
+            ("x.py", "#!/usr/bin/env python3\n# coding: utf-8  because Windows\n"),
+            ("x.py", "# -*- coding: utf-8 -*- and a note\n"),
+            ("x.sh", "#!/bin/bash # why bash\nls\n"),
+            ("x.py", "import os  # type: ignore[this explains why we do it]\n"),
+            ("x.py", "import os  # type: ignore[import] because reasons\n"),
+            ("x.py", "import os  # type: ignore[import, see the ticket]\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName='x'; Note='explain why this matters'}\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName='x because the server is old'}\n"),
+            ("x.ps1", "#Requires -Modules @{ModuleName='x'; ModuleVersion='1.0'; Why='old box'}\n"),
         ]:
             self.assertTrue(hits(path, text), (path, text))
 
@@ -118,7 +172,14 @@ class OnlyAddedLines(unittest.TestCase):
 
     def test_unknown_extensions_are_skipped(self):
         self.assertEqual(hits("README.md", "<!-- template help -->\n# Title\n"), [])
-        self.assertEqual(hits("x.yml", "# yaml\n"), [])
+        self.assertEqual(hits("x.toml", "# toml\n"), [])
+
+    def test_extensionless_files_are_scanned_or_skipped_explicitly(self):
+        self.assertIsNone(N.skip_reason("tools/run", "#!/bin/bash\nls\n"))
+        self.assertIn("no shebang", N.skip_reason("tools/run", "ls # x\n"))
+        self.assertIn("does not know", N.skip_reason("tools/run", "#!/usr/bin/perl\nprint 1; # x\n"))
+        self.assertIsNone(N.skip_reason("x.md", "# Title\n"))
+        self.assertEqual(hits("tools/run", "ls # x\n"), [])
 
     def test_extensionless_script_by_shebang(self):
         self.assertTrue(hits("tools/run", "#!/bin/bash\nls # list\n"))
@@ -174,6 +235,66 @@ class Cli(unittest.TestCase):
         self.assertEqual(self.main(), 1)
         self.assertEqual(N.run("main", "HEAD"), ["a.py:3: comment added: '# new comment'"])
 
+    def test_pure_rename_flags_nothing(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "a.py", "c.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), [])
+        self.assertEqual(self.main(), 0)
+
+    def test_rename_with_an_added_comment_flags_only_that_line(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "a.py", "c.py")
+        self.write("c.py", "# an old comment stays\nx = 1\ny = 2  # new\n")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["c.py:3: comment added: '# new'"])
+
+    def test_rename_into_a_scanned_extension_scans_every_line(self):
+        self.write("notes.txt", "# old comment smuggled in\nx = 1\n")
+        self.commit()
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "notes.txt", "notes.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["notes.py:1: comment added: '# old comment smuggled in'"])
+        self.assertEqual(self.main(), 1)
+
+    def test_rename_from_extensionless_into_a_scanned_extension(self):
+        self.write("tools/helper", "echo hi # was unscanned\n")
+        self.commit()
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "tools/helper", "tools/helper.sh")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["tools/helper.sh:1: comment added: '# was unscanned'"])
+
+    def test_rename_between_scanned_languages_scans_every_line(self):
+        self.write("tools/x.sh", "ls # bash comment\n")
+        self.commit()
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "tools/x.sh", "tools/x.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), ["tools/x.py:1: comment added: '# bash comment'"])
+
+    def test_rename_within_the_same_language_stays_quiet(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        _git(self.d, "mv", "a.py", "b.py")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), [])
+
+    def test_workflow_run_block_comment_through_git(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        self.write(".github/workflows/ci.yml", "on: push\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          # explain the next line\n          ls\n")
+        self.commit()
+        self.assertEqual(N.run("main", "HEAD"), [".github/workflows/ci.yml:7: comment added: '# explain the next line'"])
+
+    def test_extensionless_skip_is_reported(self):
+        _git(self.d, "checkout", "-q", "-b", "pr")
+        self.write("tools/notes", "plain text # not scanned\n")
+        self.write("tools/run", "#!/bin/sh\nls # flagged\n")
+        self.commit()
+        skipped = []
+        self.assertEqual(N.run("main", "HEAD", skipped), ["tools/run:2: comment added: '# flagged'"])
+        self.assertEqual(skipped, ["tools/notes: extensionless, no shebang on line 1"])
+
     def test_every_language_through_git(self):
         _git(self.d, "checkout", "-q", "-b", "pr")
         for lang, (path, bad, _) in CASES.items():
@@ -185,3 +306,81 @@ class Cli(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Round3Gaps(unittest.TestCase):
+    def test_yaml_block_scalar_ends_at_parent_indent(self):
+        self.assertTrue(hits("w.yml", "- key: |\n    text\n  # why\n"))
+
+    def test_yaml_single_line_run_is_scanned_as_shell(self):
+        self.assertTrue(hits("w.yml", "steps:\n  - run: echo hi;#why\n"))
+        self.assertTrue(hits("w.yml", "steps:\n  - run: 'echo hi # why'\n"))
+
+    def test_github_script_block_is_scanned_as_js(self):
+        text = ("steps:\n  - uses: actions/github-script@v7\n"
+                "    with:\n      script: |\n        // why\n        return 1\n")
+        self.assertTrue(hits("w.yml", text))
+
+    def test_ahk_v2_backtick_escape_keeps_string(self):
+        self.assertTrue(hits("a.ah2", 'x := "a`"b" ; why\n'))
+
+    def test_ahk_v1_command_quotes_are_literal(self):
+        self.assertTrue(hits("a.ahk", 'MsgBox, 5" tall ; why\n'))
+        self.assertTrue(hits("a.ahk", "MsgBox, 'quoted ; why\n"))
+
+    def test_batch_rem_after_paren_or_or_and_label(self):
+        for text in ("dir || rem why\n", "if exist x (rem why\n", "rem;why\n", "rem,why\n",
+                     "rem=why\n", ":# why\n"):
+            self.assertTrue(hits("a.bat", text), text)
+
+    def test_js_template_expression_comments(self):
+        self.assertTrue(hits("a.js", "const s = `${a /* why */}`;\n"))
+
+    def test_bash_ansi_c_quote_and_colon_heredoc(self):
+        self.assertTrue(hits("a.sh", "echo $'it\\'s' # why\n"))
+        self.assertTrue(hits("a.sh", ": <<'NOTE'\n# block comment via colon heredoc\nNOTE\n"))
+
+    def test_gitattributes_minus_diff_still_shows_added_comments(self):
+        with tempfile.TemporaryDirectory() as d:
+            _git(d, "init", "-q")
+            _git(d, "config", "user.email", "t@t")
+            _git(d, "config", "user.name", "t")
+            (Path(d) / "a.py").write_text("x = 1\n", encoding="utf-8")
+            _git(d, "add", "a.py")
+            _git(d, "commit", "-qm", "base")
+            base = _git(d, "rev-parse", "HEAD").strip()
+            _git(d, "checkout", "-q", "-b", "pr")
+            (Path(d) / ".gitattributes").write_text("*.py -diff\n", encoding="utf-8")
+            (Path(d) / "a.py").write_text("x = 1  # why\n", encoding="utf-8")
+            _git(d, "add", "-A")
+            _git(d, "commit", "-qm", "hide")
+            head = _git(d, "rev-parse", "HEAD").strip()
+            old = os.getcwd()
+            try:
+                os.chdir(d)
+                found = N.run(base, head)
+            finally:
+                os.chdir(old)
+            self.assertTrue(any(h.startswith("a.py:") and "why" in h for h in found), found)
+
+    def test_file_with_nul_is_scanned(self):
+        with tempfile.TemporaryDirectory() as d:
+            _git(d, "init", "-q")
+            _git(d, "config", "user.email", "t@t")
+            _git(d, "config", "user.name", "t")
+            (Path(d) / "a.py").write_text("x = 1\n", encoding="utf-8")
+            _git(d, "add", "a.py")
+            _git(d, "commit", "-qm", "base")
+            base = _git(d, "rev-parse", "HEAD").strip()
+            _git(d, "checkout", "-q", "-b", "pr")
+            (Path(d) / "a.py").write_bytes(b"x = 1  # why\n\0more\n")
+            _git(d, "add", "a.py")
+            _git(d, "commit", "-qm", "nul")
+            head = _git(d, "rev-parse", "HEAD").strip()
+            old = os.getcwd()
+            try:
+                os.chdir(d)
+                found = N.run(base, head)
+            finally:
+                os.chdir(old)
+            self.assertTrue(any(h.startswith("a.py:") and "why" in h for h in found), found)
