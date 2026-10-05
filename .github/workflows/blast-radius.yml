@@ -21,7 +21,9 @@ jobs:
         with:
           python-version: "3.13"
       - name: Install the pinned markdown parser (hash-checked)
-        run: python -m pip install --require-hashes --only-binary :all: --no-deps -r tools/ci/blast_radius_requirements.txt
+        run: |
+          python -m pip install --require-hashes --only-binary=:all: --no-deps -r tools/ci/blast_radius_requirements.txt
+          python -c "import markdown_it; print('markdown-it-py', markdown_it.__version__)"
       - name: Checker tests
         run: python -m unittest discover -s tools/ci -p "blast_radius_check_test.py" -v
       - name: Fixture bodies (fail.md must fail, pass.md must pass)
