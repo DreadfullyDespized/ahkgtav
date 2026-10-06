@@ -3,6 +3,8 @@ name: blast-radius
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
+    paths-ignore:
+      - '**/*.md'
 
 permissions:
   contents: read
