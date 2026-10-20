@@ -1,6 +1,6 @@
 # AutoHotkey Grand Theft Auto V
 
-**Repo label: TEST** — see [CONTRIBUTING.md](CONTRIBUTING.md). Verified work merges to master, and Dread tests master.
+Every PR here is graded by the Review grader, and Dread alone merges — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 AutoHotkey v1 scripts that automate repetitive chat commands and hotkey tasks in GTA V roleplay (FiveM), used on the gaming PC while streaming.
 
