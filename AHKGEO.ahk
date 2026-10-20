@@ -41,17 +41,6 @@ global logurl = % script.logurl script.change
 ; https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/Changelog-GEO.txt
 global chrglog = % A_ScriptDir "\Charge_log.txt"
 
-RunWait %ComSpec% /c "Ping -n 1 -w 3000 google.com",, Hide  ; Check if we are connected to the internet
-if connected := !ErrorLevel {
-    UrlDownloadToFile, %logurl%, %updatefile%
-    if (ErrorLevel = 1) {
-        MsgBox, 16, Unable to communicate with github...well fuck...
-        Return
-    }
-    FileRead, BIGFILE, %updatefile%
-    StringGetPos, last25Location, BIGFILE,`n, L12
-    StringTrimLeft, smallfile, BIGFILE, %last25Location%
-}
 ochecky := script.version "." script.moddate
 
 ; ============================================ SCRIPT AUTO UPDATER ============================================
@@ -64,6 +53,10 @@ update(ochecky) {
             Return
         }
         FileReadLine, line, %updatefile%, 13
+        FileRead, BIGFILE, %updatefile%
+        StringGetPos, last25Location, BIGFILE,`n, L12
+        StringTrimLeft, smallfile, BIGFILE, %last25Location%
+        GuiControl, 6:, updatetext, %smallfile%
         RegexMatch(line, "\d.\d{8}", Version)
         ; MsgBox, 64, % "REGEXMATCH CHECK"
         ;         ,   % "FileReadLine: " line "`n"
