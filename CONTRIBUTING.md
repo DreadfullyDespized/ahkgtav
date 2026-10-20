@@ -1,10 +1,10 @@
 # Contributing to ahkgtav
 
-**Repo label: TEST** — verified work merges to `master`; Dread exercises what lands there. Fleet registry: skill "Repo registry (PROD vs TEST)".
+Every PR in this repo is graded by the Review grader, and Dread alone merges. Verified work merges to `master`.
 
 What these scripts are for and how to run them on the gaming PC: [README.md](README.md). Agent outline, landmines, and the exact local proof commands: [AGENTS.md](AGENTS.md).
 
-**Owner seat:** Rig (Stream Tools). **Tracking:** GitHub issues.
+**Tracking:** GitHub issues.
 
 ## Setup and run
 
@@ -21,6 +21,8 @@ Every PR runs CI (`no-new-comments.yml`, `blast-radius.yml`). Before you ask for
 
 Landmines and enforcers: [AGENTS.md](AGENTS.md) **Landmines** and **Pointers**.
 
+What the no-comments check actually does (`tools/checks/no_new_comments.py`; only added lines are checked): it fails a PR whose diff adds a comment in Python (tokenize-based; docstrings are not comments), mIRC (including `nN=` lines in `.ini` script files), AHK, JS/TS, PowerShell, bash, HTML, CSS, SQL (`--`, `/* */`), YAML (`#`, block scalars excluded), or batch (`REM`, `::`). Extensionless files are scanned by their shebang; others are skipped and named in a `skipped` line. A pure rename adds nothing. Only whole allowlisted lines pass: a shebang on line 1, the PEP 263 encoding line, `# type: ignore[...]`, `# noqa[: code]`, `# pragma: no cover`, bare AHK `#` directives, and bare PowerShell `#Requires`; a comment riding on such a line (`#Requires -Version 7  # note`, `# coding: utf-8 note`) fails.
+
 ## Branch and PR flow
 
 1. Open a GitHub issue: problem, evidence, acceptance criteria.
@@ -29,13 +31,12 @@ Landmines and enforcers: [AGENTS.md](AGENTS.md) **Landmines** and **Pointers**.
 4. PR body (see `.github/pull_request_template.md` and `tools/ci/blast_radius_fixtures/pass.md`):
    - `Closes #<issue>` (or equivalent link to the issue).
    - `## For Dread` with **Ask**, **What changes for you**, **Proof** (`https://` links to Actions runs or SHA-pinned blob URLs), **NOT done**.
-   - **Owner seat:** Rig (name here if someone else will merge).
    - `## Blast radius` — concrete areas this diff can affect outside the changed files, or why nothing else depends on it, plus what you checked (not TBD).
    - Standalone `Level: 1` or `Level: 2` line when the change needs it (see pass fixture).
    - What changed, why, test plan and results, risk or rollback as needed.
 5. CI green. Never skip hooks or checks; no force-push to shared branches.
-6. **Grader** (not the author) reviews; default verdict **FAIL** until evidence supports **PASS**. Horde QA posts a PR comment like `**Horde QA independent grade: PASS|FAIL @ <sha7>**`.
-7. **Merge:** on TEST repos, the **owner seat** merges only after **Horde QA PASS** (CI green + grader PASS) **and** your local proof from [AGENTS.md](AGENTS.md). Do not merge your own PR.
+6. **Grader** (not the author) reviews; default verdict **FAIL** until evidence supports **PASS**. Reviews route through the Review grader, which returns its verdict with findings.
+7. **Merge:** **Dread** merges ahkgtav PRs, only after **Review grader PASS** (CI green + grader PASS) **and** your local proof from [AGENTS.md](AGENTS.md). No one else merges this repo; do not merge your own PR.
 8. After merge: confirm the issue closed and post-merge CI passed; note the PR link on the issue.
 
 Images committed to this repo must be inside a password-protected archive.
