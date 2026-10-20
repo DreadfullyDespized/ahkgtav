@@ -79,9 +79,6 @@ update(ochecky) {
                 return debug ? "* Update message timed out" : 1
             IfMsgbox, No
                 return debug ? "* Update aborted by user" : 2
-            ; Fixes #22: rfile (the raw GitHub URL of this script) was built
-            ; above but never passed to UrlDownloadToFile, so "Download
-            ; Complete" was shown while the old local file was simply re-run.
             deposit := A_ScriptFullPath
             tmpfile := A_Temp "\AHKGEO_new.ahk"
             UrlDownloadToFile, %rfile%, %tmpfile%
@@ -93,10 +90,15 @@ update(ochecky) {
                 Return
             }
             FileGetSize, tmpsize, %tmpfile%
-            if (tmpsize = 0) {
+            if (ErrorLevel = 1 or tmpsize = 0) {
                 MsgBox, 16, Download failed
                     , % "The downloaded file was empty. Your current version is unchanged."
                 FileDelete, %tmpfile%
+                Return
+            }
+            if !FileExist(tmpfile) {
+                MsgBox, 16, Update failed
+                    , % "The new version was downloaded but could not replace the old file."
                 Return
             }
             FileMove, %tmpfile%, %deposit%, 1
