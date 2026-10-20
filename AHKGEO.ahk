@@ -642,43 +642,50 @@ Return
             delay2s := 2200
             Sleep, %delay%
             ; Turns on the vehicle engine
-            PasteChat("/engine")
+            if (!PasteChat("/engine"))
+                return
             ; Puts on your seatbelt
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/belt")
+            if (!PasteChat("/belt"))
+                return
             ; Toggle GPS position to top center
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/gps")
+            if (!PasteChat("/gps"))
+                return
             ; Toggle 911 phone calling
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/911t")
+            if (!PasteChat("/911t"))
+                return
             ; Set Radio Channel to 1 (emergency)
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/rc 1")
+            if (!PasteChat("/rc 1"))
+                return
             ; Set Radio Volume to 0.8
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/rvol 0.8")
+            if (!PasteChat("/rvol 0.8"))
+                return
             ; Display the Radio, turn on the Radio, Remove Radio
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/r", true, delay2x)
+            if (!PasteChat("/r", true, delay2x))
+                return
             Click, %radioclickx% %radioclicky%, Left
             Sleep, %delay2x%
             Send, {TAB down}{TAB up}
@@ -688,7 +695,8 @@ Return
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/radar_remote")
+            if (!PasteChat("/radar_remote"))
+                return
         }
     Return
 
@@ -736,7 +744,8 @@ Return
                     Sleep, %delay%
                     Send, {t up}
                     Sleep, %delay%
-                    PasteChat("/trunk")
+                    if (!PasteChat("/trunk"))
+                        return
                     Send, {t down}
                     Sleep, %delay%
                     Send, {t up}
@@ -750,14 +759,16 @@ Return
                     } else {
                         grabmsg = %ms% Grabs a %titem% from the trunk
                     }
-                    PasteChat(grabmsg)
+                    if (!PasteChat(grabmsg))
+                        return
                     If (titem = "medbag") {
                         Sleep, %delay%
                         Send, {t down}
                         Sleep, %delay%
                         Send, {t up}
                         Sleep, %delay%
-                        PasteChat("/inventory")
+                        if (!PasteChat("/inventory"))
+                            return
                         Msgbox, Once completed with your inventory actions. Close inventory and then press T.
                         KeyWait, t, D
                     }
@@ -766,7 +777,8 @@ Return
                     Sleep, %delay%
                     Send, {t up}
                     Sleep, %delay%
-                    PasteChat("/trunk")
+                    if (!PasteChat("/trunk"))
+                        return
                     Send, {l down}
                     Sleep, %delay%
                     Send, {l up}
@@ -847,12 +859,14 @@ Return
     :*:tstart:: ; Type tstart in-game
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
             Sleep, %delay%
-            PasteChat("/rc 105")
+            if (!PasteChat("/rc 105"))
+                return
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/clockin " . towcompany)
+            if (!PasteChat("/clockin " . towcompany))
+                return
         }
     Return
 
@@ -862,7 +876,8 @@ Return
             InputBox, towtype, Facing Direction, Type f for front b for back.
             if (towtype = "f" || towtype = "b") {
                 Sleep, %delay%
-                PasteChat("/emote kneel")
+                if (!PasteChat("/emote kneel"))
+                    return
                 Send, {t down}
                 Sleep, %delay%
                 Send, {t up}
@@ -872,8 +887,10 @@ Return
                 } else if (towtype = "b") {
                     towmsg = %ttowmsg2%
                 }
-                PasteChat(towmsg)
-                PasteChat("/tow")
+                if (!PasteChat(towmsg))
+                    return
+                if (!PasteChat("/tow"))
+                    return
             } else {
                 MsgBox, f or b only. Try again.
             }
@@ -884,7 +901,8 @@ Return
     :*:tsecure:: ; Type tsecure in-game
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
             Sleep, %delay%
-            PasteChat("/emote kneel")
+            if (!PasteChat("/emote kneel"))
+                return
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
@@ -894,7 +912,8 @@ Return
             } else {
                 securemsg = %tsecure2%
             }
-            PasteChat(securemsg)
+            if (!PasteChat(securemsg))
+                return
         }
     Return
 
@@ -907,12 +926,14 @@ Return
             } else {
                 releasemsg = %treleasemsg2%
             }
-            PasteChat(releasemsg)
+            if (!PasteChat(releasemsg))
+                return
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            PasteChat("/tow")
+            if (!PasteChat("/tow"))
+                return
         }
     Return
 
@@ -950,8 +971,9 @@ PasteChat(text, enter := true, wait := "") {
     saved := ClipboardAll
     Clipboard := ""
     Clipboard := text
-    ClipWait, 1
-    if (!ErrorLevel) {
+    ClipWait, 0.25
+    pasted := !ErrorLevel
+    if (pasted) {
         if (enter)
             Send, {Rctrl down}v{Rctrl up}{enter}
         else
@@ -960,9 +982,8 @@ PasteChat(text, enter := true, wait := "") {
     }
     Clipboard := ""
     Clipboard := saved
-    if (saved != "")
-        ClipWait, 1
     saved := ""
+    return pasted
 }
 
 ReadConfiguration: ; Read the saved configuration
