@@ -33,13 +33,11 @@ AutoHotkey v1 scripts that automate repetitive chat commands and hotkey tasks in
 
 ## Typed commands
 
-Type these in the FiveM chat. Which set is active depends on the role chosen in the config (LEO or TOW).
+Type these in the FiveM chat. The first set is always active, whatever role is chosen in the config. Choosing the TOW role adds the tow set on top — it does not replace the first set.
 
-LEO: `tdutystart` (go on duty), `arrestreport`, `citationreport`, `searchreport`, `warrantreport`, `tmedical`, `ttrunk` (medbag, lockpick, cones, gsr, breathalizer, bodybag, spikes)
+Always active: `tdutystart` (go on duty), `arrestreport`, `citationreport`, `searchreport`, `warrantreport`, `tmedical`, `ttrunk` (medbag, lockpick, cones, gsr, breathalizer, bodybag, spikes), `ttest` (timing test), `tmic` (microphone fix help text), `tgeohelp` (server help text)
 
-TOW: `tstart` (start tow shift), `ttow`, `tsecure`, `trelease`, `tkitty`
-
-Any role: `tmic` (microphone fix help text), `tgeohelp` (server help text)
+Added when the role is TOW: `tstart` (start tow shift), `ttow`, `tsecure`, `trelease`, `tkitty`
 
 ## The other scripts are legacy
 
