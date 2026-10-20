@@ -606,16 +606,12 @@ Return
     ; ^.:: ; Control + . in-game
     sphk:
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-            clipaboard = %clipboard%
             Sleep, %delay%
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /spikes
-            Send, {RCtrl down}v{RCtrl up}{enter}
-            Sleep, %delay%
-            Clipboard = %clipaboard%
+            PasteChat("/spikes")
         }
     Return
 
@@ -628,6 +624,7 @@ Return
             Send, {t up}
             Sleep, %delay%
             Clipboard := "/runplate "
+            ClipWait, 1
             Send, {Rctrl down}v{Rctrl up}
         }
     Return
@@ -641,62 +638,47 @@ Return
             if (!name) {
                 Inputbox, name, Name, Enter your name to use.
             }
-            clipaboard = %clipboard%
             delay2x := delay * 1.5
             delay2s := 2200
             Sleep, %delay%
             ; Turns on the vehicle engine
-            Clipboard = /engine
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/engine")
             ; Puts on your seatbelt
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /belt
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/belt")
             ; Toggle GPS position to top center
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /gps
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/gps")
             ; Toggle 911 phone calling
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /911t
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/911t")
             ; Set Radio Channel to 1 (emergency)
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /rc 1
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/rc 1")
             ; Set Radio Volume to 0.8
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /rvol 0.8
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/rvol 0.8")
             ; Display the Radio, turn on the Radio, Remove Radio
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /r
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay2x%
+            PasteChat("/r", true, delay2x)
             Click, %radioclickx% %radioclicky%, Left
             Sleep, %delay2x%
             Send, {TAB down}{TAB up}
@@ -706,9 +688,7 @@ Return
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /radar_remote
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Clipboard = %clipaboard%
+            PasteChat("/radar_remote")
         }
     Return
 
@@ -728,19 +708,13 @@ Return
     ; Test running through timing.
     :*:ttest:: ; Type ttest in-game
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-            clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = /e notepad
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/e notepad")
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = %ms% notes a few things to himself that he thinks are important.
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Clipboard = %clipaboard%
+            PasteChat(ms . " notes a few things to himself that he thinks are important.")
         }
     Return
 
@@ -752,7 +726,6 @@ Return
                 Return
             else
                 if (titem = "medbag" || titem = "lockpick" || titem = "cones" || titem = "gsr" || titem = "breathalizer" || titem = "bodybag" || titem = "spikes") {
-                    clipaboard = %clipboard%
                     Send, {enter}
                     Sleep, %delay%
                     Send, {l down}
@@ -763,31 +736,28 @@ Return
                     Sleep, %delay%
                     Send, {t up}
                     Sleep, %delay%
-                    Clipboard = /trunk
-                    Send, {Rctrl down}v{Rctrl up}{enter}
-                    Sleep, %delay%
+                    PasteChat("/trunk")
                     Send, {t down}
                     Sleep, %delay%
                     Send, {t up}
                     Sleep, %delay%
                     if (titem = "cones") {
-                        Clipboard = %ms% Grabs a few %titem% from the trunk
+                        grabmsg = %ms% Grabs a few %titem% from the trunk
                     } else if (titem = "gsr") {
-                        Clipboard = %ms% Grabs a %titem% kit from the trunk
+                        grabmsg = %ms% Grabs a %titem% kit from the trunk
                     } else if (titem = "spikes") {
-                        Clipboard = %ms% Grabs a spikestrip from the trunk
+                        grabmsg = %ms% Grabs a spikestrip from the trunk
                     } else {
-                        Clipboard = %ms% Grabs a %titem% from the trunk
+                        grabmsg = %ms% Grabs a %titem% from the trunk
                     }
-                    Send, {Rctrl down}v{Rctrl up}{enter}
+                    PasteChat(grabmsg)
                     If (titem = "medbag") {
                         Sleep, %delay%
                         Send, {t down}
                         Sleep, %delay%
                         Send, {t up}
                         Sleep, %delay%
-                        Clipboard = /inventory
-                        Send, {Rctrl down}v{Rctrl up}{enter}
+                        PasteChat("/inventory")
                         Msgbox, Once completed with your inventory actions. Close inventory and then press T.
                         KeyWait, t, D
                     }
@@ -796,14 +766,11 @@ Return
                     Sleep, %delay%
                     Send, {t up}
                     Sleep, %delay%
-                    Clipboard = /trunk
-                    Send, {Rctrl down}v{Rctrl up}{enter}
-                    Sleep, %delay%
+                    PasteChat("/trunk")
                     Send, {l down}
                     Sleep, %delay%
                     Send, {l up}
                     Sleep, %delay%
-                    Clipboard = %clipaboard%
                 } else {
                     Send, {enter}
                     MsgBox, That %titem% is not in your trunk. Try again.
@@ -842,12 +809,7 @@ Return
             FormatTime, newTime, % Time, HH:mm:ss
             FormatTime, Date,, MM/dd/yyyy
             citationreport := RegExReplace(citationreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
-            clipaboard = %clipboard%
-            Sleep, %delay%
-            clipboard = %citationreport%
-            Send, {Rctrl down}v{Rctrl up}
-            Sleep, %delay%
-            clipboard = %clipaboard%
+            PasteChat(citationreport, false)
         }
     Return
 
@@ -859,12 +821,7 @@ Return
             FormatTime, newTime, % Time, HH:mm:ss
             FormatTime, Date,, MM/dd/yyyy
             searchreport := RegExReplace(searchreport, "REQUEST\sDATE:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
-            clipaboard = %clipboard%
-            Sleep, %delay%
-            clipboard = %searchreport%
-            Send, {Rctrl down}v{Rctrl up}
-            Sleep, %delay%
-            clipboard = %clipaboard%
+            PasteChat(searchreport, false)
         }
     Return
 
@@ -879,12 +836,7 @@ Return
             StringUpper, subject, subject
             warrantreport := RegExReplace(warrantreport, "TimeLine:(\s{2}-\s{2}EST|\s\d{2}.\d{2}.\d{4}\s-\s\d{2}.\d{2}.\d{2}\sEST)", "TimeLine: " Date " - " newTime " EST")
             warrantreport := RegExReplace(warrantreport, "SUBJECT", subject)
-            clipaboard = %clipboard%
-            Sleep, %delay%
-            clipboard = %warrantreport%
-            Send, {Rctrl down}v{Rctrl up}
-            Sleep, %delay%
-            clipboard = %clipaboard%
+            PasteChat(warrantreport, false)
         }
     Return
 
@@ -894,19 +846,13 @@ Return
 #If (rolepick = "TOW")
     :*:tstart:: ; Type tstart in-game
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-            clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = /rc 105
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/rc 105")
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /clockin %towcompany%
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Clipboard = %clipaboard%
+            PasteChat("/clockin " . towcompany)
         }
     Return
 
@@ -915,26 +861,19 @@ Return
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
             InputBox, towtype, Facing Direction, Type f for front b for back.
             if (towtype = "f" || towtype = "b") {
-                clipaboard = %clipboard%
                 Sleep, %delay%
-                Clipboard = /emote kneel
-                Send, {Rctrl down}v{Rctrl up}{enter}
-                Sleep, %delay%
+                PasteChat("/emote kneel")
                 Send, {t down}
                 Sleep, %delay%
                 Send, {t up}
                 Sleep, %delay%
                 if (towtype = "f") {
-                    Clipboard = %ttowmsg1%
+                    towmsg = %ttowmsg1%
                 } else if (towtype = "b") {
-                    Clipboard = %ttowmsg2%
+                    towmsg = %ttowmsg2%
                 }
-                Send, {Rctrl down}v{Rctrl up}{enter}
-                Sleep, %delay%
-                Clipboard = /tow
-                Send, {Rctrl down}v{Rctrl up}{enter}
-                Sleep, %delay%
-                Clipboard = %clipaboard%
+                PasteChat(towmsg)
+                PasteChat("/tow")
             } else {
                 MsgBox, f or b only. Try again.
             }
@@ -944,58 +883,44 @@ Return
     ; To secure the vehicle to the tow truck.
     :*:tsecure:: ; Type tsecure in-game
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-            clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = /emote kneel
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat("/emote kneel")
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
             if (towtype = "f") {
-                Clipboard = %tsecure1%
+                securemsg = %tsecure1%
             } else {
-                Clipboard = %tsecure2%
+                securemsg = %tsecure2%
             }
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Clipboard = %clipaboard%
+            PasteChat(securemsg)
         }
     Return
 
     ; To release the vehicle from the tow truck.
     :*:trelease:: ; Type trelease in-game
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-            clipaboard = %clipboard%
             Sleep, %delay%
             if (towtype = "f") {
-                Clipboard = %treleasemsg1%
+                releasemsg = %treleasemsg1%
             } else {
-                Clipboard = %treleasemsg2%
+                releasemsg = %treleasemsg2%
             }
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
+            PasteChat(releasemsg)
             Send, {t down}
             Sleep, %delay%
             Send, {t up}
             Sleep, %delay%
-            Clipboard = /tow
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Clipboard = %clipaboard%
+            PasteChat("/tow")
         }
     Return
 
     ; To pull out Kitty Litter from tow truck for use.
     :*:tkitty:: ; Type tkitty in-game
         if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-            clipaboard = %clipboard%
             Sleep, %delay%
-            Clipboard = %ms% opens the toolbox and removes kitty litter from it
-            Send, {Rctrl down}v{Rctrl up}{enter}
-            Sleep, %delay%
-            Clipboard = %clipaboard%
+            PasteChat(ms . " opens the toolbox and removes kitty litter from it")
         }
     Return
 ; ============================================ SAFR Stuff ============================================
@@ -1005,28 +930,40 @@ Return
 ; This provides the help text for micropohone fixing in local ooc chat
 :*:tmic:: ; Type tmic in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
         Sleep, %delay%
-        Clipboard = %micmsg%
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
+        PasteChat(micmsg)
     }
 Return
 
 ; This provides the help text for Geodexon information in local ooc chat
 :*:tgeohelp:: ; Type tgeohelp in-game
     if (WinActive("FiveM") || WinActive("Untitled - Notepad") || WinActive("*Untitled - Notepad") || (testmode = 1)) {
-        clipaboard = %clipboard%
         Sleep, %delay%
-        Clipboard := "GeoDexon Forums at ^1 https://geodexon.net/index.php ^0 to join the Dicksword go to ^2 https://discord.gg/QFQmpejhPT"
-        Send, {Rctrl down}v{Rctrl up}{enter}
-        Sleep, %delay%
-        Clipboard = %clipaboard%
+        PasteChat("GeoDexon Forums at ^1 https://geodexon.net/index.php ^0 to join the Dicksword go to ^2 https://discord.gg/QFQmpejhPT")
     }
 Return
 
 ; ============================================ MAIN RUN FUNCTIONS ============================================
+
+PasteChat(text, enter := true, wait := "") {
+    global delay
+    saved := ClipboardAll
+    Clipboard := ""
+    Clipboard := text
+    ClipWait, 1
+    if (!ErrorLevel) {
+        if (enter)
+            Send, {Rctrl down}v{Rctrl up}{enter}
+        else
+            Send, {Rctrl down}v{Rctrl up}
+        Sleep, % (wait != "" ? wait : delay) %
+    }
+    Clipboard := ""
+    Clipboard := saved
+    if (saved != "")
+        ClipWait, 1
+    saved := ""
+}
 
 ReadConfiguration: ; Read the saved configuration
     IfExist, %config% ; First check if it was saved.
