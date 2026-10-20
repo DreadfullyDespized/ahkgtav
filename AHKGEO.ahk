@@ -79,9 +79,36 @@ update(ochecky) {
                 return debug ? "* Update message timed out" : 1
             IfMsgbox, No
                 return debug ? "* Update aborted by user" : 2
-            deposit := A_ScriptDir "\AHKGEO.ahk"
+            deposit := A_ScriptFullPath
+            tmpfile := A_Temp "\AHKGEO_new.ahk"
+            UrlDownloadToFile, %rfile%, %tmpfile%
+            if (ErrorLevel = 1) {
+                MsgBox, 16, Download failed
+                    , % "The update could not be downloaded from GitHub.`n"
+                    . "Your current version is unchanged."
+                FileDelete, %tmpfile%
+                Return
+            }
+            FileGetSize, tmpsize, %tmpfile%
+            if (ErrorLevel = 1 or tmpsize = 0) {
+                MsgBox, 16, Download failed
+                    , % "The downloaded file was empty. Your current version is unchanged."
+                FileDelete, %tmpfile%
+                Return
+            }
+            if !FileExist(tmpfile) {
+                MsgBox, 16, Update failed
+                    , % "The new version was downloaded but could not replace the old file."
+                Return
+            }
+            FileMove, %tmpfile%, %deposit%, 1
+            if (ErrorLevel = 1) {
+                MsgBox, 16, Update failed
+                    , % "The new version was downloaded but could not replace the old file."
+                Return
+            }
             Msgbox, 64, % "Download Complete"
-                , % "New version is now running and the old version will now close'n"
+                , % "The new version has been downloaded and is now running.`n"
                 . "Enjoy the latest version!"
             Run, %deposit%
             ExitApp
