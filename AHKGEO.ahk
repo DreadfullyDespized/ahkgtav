@@ -423,7 +423,7 @@ SetScrollLockState, AlwaysOff
     Gui, 1:Add, Edit, w110 vtowcompany, %towcompany%
     towcompany_TT := "Towing company you work for. Name for /clockin command"
     Gui, 1:Add, Edit, w110 vname, %name%
-    name_TT := "Name format Fist Initial.Last Name - D.Mallard for instance"
+    name_TT := "Name format Fist Initial.Last Name - D.Lastname for instance"
     Gui, 1:Add, Edit, w110 vtitle, %title%
     title_TT := "Title or Rank of your character"
     Gui, 1:Add, Edit, w110 vdepartment, %department%
@@ -1075,13 +1075,13 @@ Return
 ReadConfig:
     ; Back to the reading of the configuration
     IniRead, rolepick, %config%, Yourself, role, LEO
-    IniRead, callsign, %config%, Yourself, callsign, 806
-    IniRead, myid, %config%, Yourself, myid, 7
-    IniRead, towcompany, %config%, Yourself, towcompany, PotatoWax
-    IniRead, name, %config%, Yourself, name, Mallard
+    IniRead, callsign, %config%, Yourself, callsign, 000
+    IniRead, myid, %config%, Yourself, myid, 0
+    IniRead, towcompany, %config%, Yourself, towcompany, Example Towing
+    IniRead, name, %config%, Yourself, name, Lastname
     IniRead, title, %config%, Yourself, title, CADET
     IniRead, department, %config%, Yourself, department, LSPD
-    IniRead, phone, %config%, Yourself, phone, (304) 631-0826
+    IniRead, phone, %config%, Yourself, phone, (###) ###-####
     ; Client communication and test mode
     IniRead, delay, %config%, Yourself, delay, 70
     IniRead, testmode, %config%, Yourself, testmode, 0
