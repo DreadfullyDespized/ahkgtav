@@ -697,7 +697,7 @@ Return
             Clipboard = /r
             Send, {Rctrl down}v{Rctrl up}{enter}
             Sleep, %delay2x%
-            Click, 2388 1000, Left
+            Click, %radioclickx% %radioclicky%, Left
             Sleep, %delay2x%
             Send, {TAB down}{TAB up}
             Sleep, %delay%
@@ -1087,6 +1087,8 @@ ReadConfig:
     IniRead, testmode, %config%, Yourself, testmode, 0
     ; Server related section
     IniRead, ms, %config%, Server, ms, /me
+    IniRead, radioclickx, %config%, Server, radioclickx, 2388
+    IniRead, radioclicky, %config%, Server, radioclicky, 1000
     ; The hotkey related section
     IniRead, spikeshk, %config%, Keys, spikeshk, ^.
     IniRead, vehimgsearchhk, %config%, Keys, vehimgsearchhk, ^/
