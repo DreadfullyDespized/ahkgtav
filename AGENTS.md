@@ -35,7 +35,7 @@ Put the PR body in `pr.md` for the blast-radius check. Docs-only wording changes
 
 ## Grader and merge
 
-Grader starts at FAIL. The person who wrote the change does not grade it. TEST = owner merges after PASS + local proof. PROD = Dread merges only. ASK (ahkglrp) = Dread sets tier.
+Reviews route through the Review grader. The grader starts at FAIL. The person who wrote the change does not grade it. Dread alone merges ahkgtav PRs, after Review grader PASS + local proof.
 
 ## Correction loop
 
