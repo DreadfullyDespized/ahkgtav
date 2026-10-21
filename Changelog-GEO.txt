@@ -10,6 +10,15 @@ Versioning:
     ^ Update
 ==================
 
+AHKGEO V1.20261021
+Date: 20261021 02:46
+    Changes:
+    ! Updater claimed "Download Complete" without downloading the new script. It now downloads to a temp file, verifies the file arrived non-empty, and only then replaces the script and relaunches.
+    * Launching the script no longer downloads the changelog from the internet. The changelog is fetched only when the Update Checker runs.
+    + tdutystart: the radio click position is now configurable (radioclickx / radioclicky in GEO-Config.ini, [Server] section). Defaults unchanged (2388 / 1000).
+    * The script starts with sensible defaults when GEO-Config.ini is missing; GEO-Config.example.ini documents every setting. The live GEO-Config.ini is no longer tracked in the repo.
+    ^ Chat macros: pastes wait for the clipboard to be ready (bounded at 0.25s) and restore your full clipboard afterwards, and multi-command sequences (tdutystart, ttrunk, the tow commands) stop instead of continuing out of order if a paste fails.
+
 AHKGEO V1.20251205
 Date: 20251205 18:00
     Changes:

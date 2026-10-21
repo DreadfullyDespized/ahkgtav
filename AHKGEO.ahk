@@ -28,7 +28,7 @@ global script := {  based               : scriptobj
     ,author             : "DreadfullyDespized"
     ,homepage           : "https://github.com/DreadfullyDespized/ahkgtav/releases"
     ,crtdate            : "20201214"
-    ,moddate            : "20251205" ; This line should be updated on each new release.
+    ,moddate            : "20261021"
     ,conf               : "GEO-Config.ini"
     ,logurl             : "https://raw.githubusercontent.com/DreadfullyDespized/ahkgtav/master/"
     ,change             : "Changelog-GEO.txt"
