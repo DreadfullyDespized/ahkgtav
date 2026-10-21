@@ -998,7 +998,7 @@ PasteChat(text, enter := true, wait := "") {
             Send, {Rctrl down}v{Rctrl up}{enter}
         else
             Send, {Rctrl down}v{Rctrl up}
-        Sleep, % (wait != "" ? wait : delay) %
+        Sleep, % wait != "" ? wait : delay
     }
     Clipboard := ""
     Clipboard := saved
