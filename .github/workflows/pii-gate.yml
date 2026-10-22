@@ -1,0 +1,28 @@
+name: pii-gate
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pii-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Checker tests
+        run: python3 -m unittest discover -s tools/checks/tests -p "test_pii_check.py" -v
+      - name: No PII in the PR body, added lines, or commit messages
+        if: always()
+        env:
+          PII_TERMS: ${{ secrets.PII_TERMS }}
+        run: python3 tools/checks/pii_check.py --event "$GITHUB_EVENT_PATH"
