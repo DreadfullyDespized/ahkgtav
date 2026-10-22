@@ -53,6 +53,13 @@ class TestGenericClasses(unittest.TestCase):
         self.assertEqual(pii_check.scan(r"C:\Users\username\file.txt", "text", []), [])
 
 
+class TestSelfScan(unittest.TestCase):
+    def test_checker_source_scans_clean(self):
+        path = os.path.join(os.path.dirname(__file__), "..", "pii_check.py")
+        with open(path, encoding="utf-8") as fh:
+            self.assertEqual(pii_check.scan(fh.read(), "text", []), [])
+
+
 class TestPrivateTerms(unittest.TestCase):
     def test_term_hit_case_insensitive(self):
         hits = pii_check.scan("tested on MYHOSTNAME today", "text", ["myhostname"])
