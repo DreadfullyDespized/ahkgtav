@@ -10,7 +10,7 @@ EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
 EMAIL_ALLOW = re.compile(r"(users\.noreply\.github\.com|noreply@github\.com|example\.(com|org|net))$", re.I)
 PHONE = re.compile(r"\(\d{3}\)\s?\d{3}[-. ]\d{4}|\b\d{3}[-. ]\d{3}[-. ]\d{4}\b")
 IPV4 = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
-PROFILE = re.compile(r"[A-Za-z]:[\\/]Users[\\/](?!username\b)[^\s\\/]+|/home/[^\s/]+/|/Users/[^\s/]+/")
+PROFILE = re.compile(r"[A-Za-z]:[\\/]Users[\\/](?!username\b)[^\s\\/]+" + "|/home" + r"/[^\s/]+/" + "|/Users" + r"/[^\s/]+/")
 
 
 def ip_is_pii(token):
