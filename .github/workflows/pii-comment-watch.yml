@@ -1,0 +1,46 @@
+name: pii-comment-watch
+
+on:
+  issue_comment:
+    types: [created, edited]
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Scan the comment or issue body
+        id: scan
+        env:
+          PII_TERMS: ${{ secrets.PII_TERMS }}
+          BODY: ${{ github.event.comment.body || github.event.issue.body }}
+        run: |
+          set +e
+          printf '%s' "$BODY" | python3 tools/checks/pii_check.py --stdin > scan.txt 2>&1
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+          if [ -s scan.txt ]; then
+            grep -o 'email\|phone\|ipv4\|profile-path\|private-term' scan.txt | head -1 > class.txt || true
+          fi
+      - name: Delete a comment that carries PII and post the generic notice
+        if: steps.scan.outputs.rc == '1' && github.event.comment.id
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cls="$(cat class.txt 2>/dev/null || echo pii)"
+          gh api -X DELETE "/repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}"
+          gh api -X POST "/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="A comment was removed automatically: it contained information in the ${cls} class covered by this repository's no-PII rule. Please repost without the identifier."
+      - name: Post the generic notice on an issue body that carries PII
+        if: steps.scan.outputs.rc == '1' && !github.event.comment.id
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cls="$(cat class.txt 2>/dev/null || echo pii)"
+          gh api -X POST "/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="This issue's text contains information in the ${cls} class covered by this repository's no-PII rule. Please edit the text to remove the identifier."
