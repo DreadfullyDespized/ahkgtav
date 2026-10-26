@@ -4,7 +4,7 @@ Short outline for agents. Process detail lives in CONTRIBUTING.md.
 
 ## What this repo is for
 
-AutoHotkey v1 scripts that automate repetitive chat and hotkey tasks in GTA V roleplay (GEO, NDG, NSRP), used on stream from the gaming PC. This is a TEST repo.
+AutoHotkey v1 scripts that automate repetitive chat and hotkey tasks in GTA V roleplay (GEO, NDG, NSRP), used on stream from the gaming PC. This is a TEST repo; the tier is set by the `Repo label: TEST` first line of [README.md](README.md).
 
 ## What is allowed in this repo
 
